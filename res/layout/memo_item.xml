@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:padding="@dimen/item_outer_padding" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:paddingLeft="@dimen/item_padding_left"
+        android:paddingRight="@dimen/item_padding_right" >
+
+        <com.zhan_dui.custom.MinMaxTextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:maxHeight="@dimen/content_max_height"
+            android:minHeight="@dimen/content_min_height"
+            android:textColor="@color/content_text_color" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/content"
+            android:gravity="center|right"
+            android:text="9.3"
+            android:textColor="@color/date_color" />
+    </RelativeLayout>
+
+</RelativeLayout>
