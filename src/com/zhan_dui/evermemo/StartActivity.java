@@ -2,13 +2,15 @@ package com.zhan_dui.evermemo;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +20,7 @@ import com.huewu.pla.lib.internal.PLA_AdapterView.OnItemClickListener;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.data.MemoDB;
 
-public class StartActivity extends Activity {
+public class StartActivity extends Activity implements OnTouchListener {
 
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
@@ -27,6 +29,7 @@ public class StartActivity extends Activity {
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
 	private LayoutInflater mLayoutInflater;
+	private int mBottomMarginLeft;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public class StartActivity extends Activity {
 		mContext = this;
 		mLayoutInflater = (LayoutInflater) mContext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mBottomMarginLeft = -mContext.getResources().getDimensionPixelOffset(
+				R.dimen.bottom_margin_left);
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
@@ -62,7 +67,7 @@ public class StartActivity extends Activity {
 
 		});
 		mMemosAdapter.notifyDataSetChanged();
-//		startActivity(new Intent(mContext, MemoActivity.class));
+		mMemosGrid.setOnTouchListener(this);
 	}
 
 	@Override
@@ -71,4 +76,63 @@ public class StartActivity extends Activity {
 		return true;
 	}
 
+	private float downX, downY, upX, upY;
+	private float MIN_DISTANCE = 100;
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		switch (event.getActionMasked()) {
+		case MotionEvent.ACTION_DOWN: {
+			downX = event.getX();
+			downY = event.getY();
+			return false;
+		}
+		case MotionEvent.ACTION_UP: {
+			upX = event.getX();
+			upY = event.getY();
+			float deltaX, deltaY;
+			deltaX = downX - upX;
+			deltaY = downY - upY;
+			if (Math.abs(deltaX) > MIN_DISTANCE && Math.abs(deltaY) < 80) {
+				float currentXPosition = (upX + downX) / 2;
+				float currentYPosition = (upY + downY) / 2;
+				int position = mMemosGrid.pointToPosition(
+						(int) currentXPosition, (int) currentYPosition);
+
+				if (position == 0) {
+					return false;
+				} else {
+					View view = null;
+					int start = mMemosGrid.getFirstVisiblePosition();
+					int offset = position - start;
+					if (offset >= mMemosGrid.getChildCount() || offset < 0) {
+						return false;
+					} else {
+						view = mMemosGrid.getChildAt(offset);
+					}
+					if (view == null) {
+						return false;
+					}
+					LinearLayout target = (LinearLayout) (view
+							.findViewById(R.id.bottom));
+					LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) target
+							.getLayoutParams();
+					if (deltaX > 0) {
+						// 右向左滑
+						layoutParams.setMargins(-mBottomMarginLeft, 0, 0, 0);
+					} else {
+						// 左向右滑
+						layoutParams.setMargins(0, 0, 0, 0);
+						mMemosAdapter.setOutItem(position);
+						mMemosAdapter.notifyDataSetChanged();
+					}
+					target.setLayoutParams(layoutParams);
+					return true;
+				}
+			}
+		}
+		}
+
+		return false;
+	}
 }

@@ -7,18 +7,32 @@ import android.database.MergeCursor;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.evermemo.R;
 
-public class MemosAdapter extends CursorAdapter {
+public class MemosAdapter extends CursorAdapter implements OnClickListener {
 
 	private LayoutInflater mLayoutInflater;
+	private int mOutItemId;
+	private int mBottomMargin;
+
+	public void setOutItem(int id) {
+		if (id < 0 && id > getCount()) {
+			mOutItemId = 0;
+		}
+		mOutItemId = id;
+	}
 
 	public MemosAdapter(Context context, Cursor c, boolean autoRequery) {
 		super(context, c, autoRequery);
+		mBottomMargin = -mContext.getResources().getDimensionPixelSize(
+				R.dimen.bottom_margin_left);
 		mLayoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		MatrixCursor matrixCursor = new MatrixCursor(new String[] { "_id" });
@@ -46,6 +60,16 @@ public class MemosAdapter extends CursorAdapter {
 			if (v.getTag() == null && position == 0) {
 				v = newView(mContext, mCursor, parent);
 			}
+			if (position != 0) {
+				LinearLayout.LayoutParams layoutParams = (LayoutParams) v
+						.findViewById(R.id.bottom).getLayoutParams();
+				if (position == mOutItemId) {
+					layoutParams.setMargins(0, 0, 0, 0);
+				} else {
+					layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
+				}
+				v.findViewById(R.id.bottom).setLayoutParams(layoutParams);
+			}
 		}
 		bindView(v, mContext, mCursor);
 
@@ -55,9 +79,10 @@ public class MemosAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int _id = cursor.getInt(cursor.getColumnIndex("_id"));
-		TextView content = (TextView) view.findViewById(R.id.content);
+
 		if (cursor != null && view != null && _id != 0) {
 			Memo memo = new Memo(cursor);
+			TextView content = (TextView) view.findViewById(R.id.content);
 			content.setText(memo.getContent());
 		}
 	}
@@ -72,6 +97,12 @@ public class MemosAdapter extends CursorAdapter {
 		} else {
 			return mLayoutInflater.inflate(R.layout.memo_item, parent, false);
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

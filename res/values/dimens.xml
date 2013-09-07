@@ -19,10 +19,14 @@
     <dimen name="item_padding_left">10dp</dimen>
     <dimen name="item_padding_right">7dp</dimen>
     <dimen name="item_padding_top">13dp</dimen>
-    <dimen name="item_padding_bottom">26dp</dimen>
     <dimen name="item_rounded">2dp</dimen>
     <dimen name="content_max_height">150dp</dimen>
     <dimen name="content_min_height">50dp</dimen>
+    <dimen name="content_padding_left">7dp</dimen>
+    <dimen name="content_padding_right">5dp</dimen>
+    <dimen name="bottom_width">45dp</dimen>
+    <dimen name="bottom_margin_left">-40dp</dimen>
+    <dimen name="hover_margin_left">-7dp</dimen>
     <!-- Memo item -->
 
 

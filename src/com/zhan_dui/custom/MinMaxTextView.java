@@ -34,5 +34,6 @@ public class MinMaxTextView extends TextView {
 			targetHeight = maxHeight;
 		}
 		setMeasuredDimension(widthSize, targetHeight);
+		requestLayout();
 	}
 }
