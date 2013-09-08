@@ -15,9 +15,11 @@ public class DateHelper {
 			SimpleDateFormat dateFormat, long timemillisecond) {
 		long span = System.currentTimeMillis() - timemillisecond;
 		long timeSpan = span / ONE_DAY_TIMESTAMP;
-		if (timeSpan == 1) {
+		if (timeSpan == 0) {
+			return context.getString(R.string.today);
+		} else if(timeSpan == 1){
 			return context.getString(R.string.yesterday);
-		} else {
+		}else{
 			return dateFormat.format(new Date(timemillisecond));
 		}
 	}

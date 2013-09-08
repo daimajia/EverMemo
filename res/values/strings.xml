@@ -5,8 +5,8 @@
     <string name="app_ever">Ever</string>
     <string name="app_memo">Memo</string>
     <string name="action_settings">Settings</string>
+    <string name="today">今天</string>
     <string name="yesterday">昨天</string>
     <string name="date_format">M.d</string>
-    
 
 </resources>

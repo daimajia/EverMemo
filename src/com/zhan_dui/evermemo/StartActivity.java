@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.huewu.pla.lib.MultiColumnListView;
 import com.zhan_dui.adapters.MemosAdapter;
-import com.zhan_dui.data.MemoContentProvider;
+import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.data.MemoDB;
 
 public class StartActivity extends FragmentActivity implements
@@ -68,7 +68,7 @@ public class StartActivity extends FragmentActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		CursorLoader cursorLoader = new CursorLoader(mContext,
-				MemoContentProvider.MEMO_URI, null, null, null, null);
+				MemoProvider.MEMO_URI, null, null, null, null);
 		return cursorLoader;
 	}
 

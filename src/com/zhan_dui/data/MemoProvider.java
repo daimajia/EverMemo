@@ -1,7 +1,5 @@
 package com.zhan_dui.data;
 
-import java.io.Console;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -12,7 +10,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class MemoContentProvider extends ContentProvider {
+public class MemoProvider extends ContentProvider {
 
 	public static final int MEMOS = 1;
 	public static final int MEMO_ID = 2;
