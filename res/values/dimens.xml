@@ -28,6 +28,10 @@
     <dimen name="bottom_margin_left">-40dp</dimen>
     <dimen name="hover_margin_left">-8dp</dimen>
     <!-- Memo item -->
+    
+    <!-- Bottom Bar -->
+    <dimen name="bottom_bar_height">45dp</dimen>
+    <!-- Bottom Bar -->
 
 
     <!-- Memo activity -->

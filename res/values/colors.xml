@@ -9,5 +9,7 @@
     
     <color name="bottom_background_color">#000000</color>
     <color name="plus_color">#B6B6B4</color>
+    <color name="bottom_bar_background">#D9000000</color>
+    <color name="transparent_image_button">#00000000</color>
 
 </resources>
