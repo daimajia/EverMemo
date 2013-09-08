@@ -56,6 +56,9 @@ public class Memo implements Serializable {
 	public void setContent(String content) {
 		mContent = content;
 		mUpdatedTime = System.currentTimeMillis();
+		mStatus = "";
+		mOrder = 0;
+		mAttributes = "";
 		mHash = MD5.digest(mContent);
 	}
 

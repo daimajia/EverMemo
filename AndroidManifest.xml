@@ -13,6 +13,13 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <provider
+            android:name="com.zhan_dui.data.MemoContentProvider"
+            android:authorities="com.zhan_dui.data.MemoContentProvider"
+            android:exported="false"
+            android:multiprocess="true" >
+        </provider>
+
         <activity
             android:name="com.zhan_dui.evermemo.StartActivity"
             android:label="@string/app_name" >

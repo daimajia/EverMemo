@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:gravity="center|right"
-            android:text="9.3"
+            android:text="@null"
             android:textColor="@color/date_color" />
     </LinearLayout>
 

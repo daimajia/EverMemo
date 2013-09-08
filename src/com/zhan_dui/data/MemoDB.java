@@ -9,7 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MemoDB extends SQLiteOpenHelper {
 
-	private final String CREATE_MEMO_TABLE = "create table Memo(_id integer primary key autoincrement,"
+	public final static String ID = "_id";
+	
+
+	private final String CREATE_MEMO_TABLE = "create table Memo(`_id` integer primary key autoincrement,"
 			+ "`content` text,"
 			+ "`createdtime` text,"
 			+ "`updatedtime` text,"
@@ -24,11 +27,15 @@ public class MemoDB extends SQLiteOpenHelper {
 	public static final String Name = "EverMemo";
 	public static final int VERSION = 1;
 
-	public final String MEMO_TABLE_NAME = "Memo";
+	public final static String MEMO_TABLE_NAME = "Memo";
 
 	public MemoDB(Context context, String name, CursorFactory factory,
 			int version) {
 		super(context, name, factory, version);
+	}
+
+	public MemoDB(Context context) {
+		this(context, Name, null, VERSION);
 	}
 
 	@Override
@@ -68,17 +75,8 @@ public class MemoDB extends SQLiteOpenHelper {
 		}
 	}
 
-	public Cursor getMemos(int start, int count) {
-		if (count == 0) {
-			return getReadableDatabase().query(MEMO_TABLE_NAME, null, null,
-					null, null, null, "updatedtime desc");
-		}
-		return getReadableDatabase().query(MEMO_TABLE_NAME, null, null, null,
-				null, null, "updatedtime desc", "" + start + "," + count);
-	}
-
 	public Cursor getAllMemos() {
-		return getReadableDatabase().query(MEMO_TABLE_NAME, null, null, null,
-				null, null, null);
+		return getReadableDatabase().query(MEMO_TABLE_NAME, null, "status!=?",
+				new String[] { Memo.STATUS_DELETE }, null, null, null);
 	}
 }
