@@ -164,7 +164,12 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		} else {
 			switch (v.getId()) {
 			case R.id.bottom:
-				
+
+				break;
+			case R.id.hover:
+				Intent intent = new Intent(mContext, MemoActivity.class);
+				intent.putExtra("memo", (Memo) v.getTag(R.string.memo_data));
+				mContext.startActivity(intent);
 				break;
 			default:
 				break;

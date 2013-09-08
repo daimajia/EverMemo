@@ -29,7 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.zhan_dui.evermemo.MemoActivity" >
+        <activity
+            android:name="com.zhan_dui.evermemo.MemoActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
     </application>
 
