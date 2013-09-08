@@ -8,5 +8,6 @@
     <string name="today">今天</string>
     <string name="yesterday">昨天</string>
     <string name="date_format">M.d</string>
+    <string name="plus">+</string>
 
 </resources>

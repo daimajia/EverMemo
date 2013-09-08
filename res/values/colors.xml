@@ -3,10 +3,11 @@
 
     <color name="background_color">#E7E7E7</color>
     <color name="divider_line_color">#CFCFCF</color>
-    <color name="content_text_color">#505050</color>
+    <color name="content_text_color">#666666</color>
     <color name="date_color">#B1B1B1</color>
     <color name="item_background_color">#f9f9f9</color>
     
     <color name="bottom_background_color">#000000</color>
+    <color name="plus_color">#B6B6B4</color>
 
 </resources>

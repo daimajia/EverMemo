@@ -14,6 +14,7 @@
         android:paddingRight="@dimen/item_padding_right" >
 
         <com.zhan_dui.custom.MinMaxTextView
+            android:id="@+id/plus"
             android:layout_width="match_parent"
             android:layout_height="@dimen/content_max_height"
             android:layout_centerInParent="true"
@@ -21,10 +22,9 @@
             android:gravity="center"
             android:maxHeight="@dimen/content_max_height"
             android:minHeight="@dimen/content_min_height"
-            android:text="+"
-            android:textColor="@color/content_text_color"
+            android:text="@string/plus"
+            android:textColor="@color/plus_color"
             android:textSize="80sp" />
-
     </RelativeLayout>
 
 </RelativeLayout>

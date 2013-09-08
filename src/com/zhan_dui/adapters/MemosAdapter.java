@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -34,9 +35,16 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private int mBottomMargin;
 	private SimpleDateFormat mSimpleDateFormat;
 	private GestureDetectorCompat mGestureDetectorCompat;
+
+	@SuppressWarnings("unused")
+	private View mTempAnimationView;
+	@SuppressWarnings("unused")
+	private View mPreviousTouchHover;
+	private View mPreviousTouchBottom;
 	private View mCurrentTouchHover;
 	private View mCurrentTouchBottom;
 	private int mCurrentTouchPosition;
+	private Typeface mRobotoThin;
 
 	public void setOpenerItem(int id) {
 		if (id < 0 && id > getCount()) {
@@ -55,6 +63,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 				context.getString(R.string.date_format));
 		mGestureDetectorCompat = new GestureDetectorCompat(mContext,
 				new ItemGuestureDetector());
+		mRobotoThin = Typeface.createFromAsset(context.getAssets(),
+				"fonts/Roboto-Thin.ttf");
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -86,7 +96,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			if (position == mOutItemId) {
 				layoutParams.setMargins(0, 0, 0, 0);
 			} else {
-				layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
+				if (layoutParams.leftMargin == 0)
+					layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
 			}
 			v.findViewById(R.id.bottom).setLayoutParams(layoutParams);
 			v.findViewById(R.id.hover).setTag(R.string.memo_position, position);
@@ -121,6 +132,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			View firstView = mLayoutInflater.inflate(R.layout.memo_add, parent,
 					false);
 			firstView.setTag(R.string.memo_first, true);
+			TextView textView = (TextView) firstView.findViewById(R.id.plus);
+			textView.setTypeface(mRobotoThin);
 			firstView.setOnClickListener(this);
 			return firstView;
 		} else {
@@ -145,12 +158,13 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			return;
 		}
 
-		if (v.getTag() == "1") {
+		if (v.getTag(R.string.memo_first) != null
+				&& (Boolean) v.getTag(R.string.memo_first) == true) {
 			mContext.startActivity(new Intent(mContext, MemoActivity.class));
 		} else {
 			switch (v.getId()) {
 			case R.id.bottom:
-
+				
 				break;
 			default:
 				break;
@@ -173,6 +187,10 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {
+
+			if (distanceY > 20)
+				return true;
+
 			float moveDistance = e1.getX() - e2.getX();
 
 			if (moveDistance > 0 && moveDistance < 20) {
@@ -193,8 +211,17 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 						(LinearLayout) mCurrentTouchBottom, 0));
 			}
 
+			if (mPreviousTouchBottom != null
+					&& mPreviousTouchBottom != mCurrentTouchBottom) {
+				LayoutParams layoutParams = (LayoutParams) mPreviousTouchBottom
+						.getLayoutParams();
+				layoutParams.leftMargin = -mBottomMargin;
+				mPreviousTouchBottom.setLayoutParams(layoutParams);
+			}
+			mPreviousTouchBottom = mCurrentTouchBottom;
+			mTempAnimationView = mCurrentTouchBottom;
+			mPreviousTouchHover = mCurrentTouchHover;
 			mLastChangeStatus = System.currentTimeMillis();
-			// mCurrentTouchBottom.setLayoutParams(layoutParams);
 			return true;
 		}
 	}
