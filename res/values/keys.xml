@@ -2,5 +2,7 @@
 <resources>
 
     <string name="memo_data">memo_data</string>
-
+	<string name="memo_position">memo_position</string>
+	<string name="memo_id">memo_id</string>
+	<string name="memo_first">memo_first</string>
 </resources>

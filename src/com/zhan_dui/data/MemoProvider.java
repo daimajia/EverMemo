@@ -42,7 +42,7 @@ public class MemoProvider extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
 		case MEMOS:
-			Log.e("type", uriType+"");
+			Log.e("type", uriType + "");
 			break;
 		case MEMO_ID:
 			queryBuilder

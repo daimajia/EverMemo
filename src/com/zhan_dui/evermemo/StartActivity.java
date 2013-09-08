@@ -12,7 +12,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.Window;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.data.MemoProvider;
-import com.zhan_dui.data.MemoDB;
 
 public class StartActivity extends FragmentActivity implements
 		LoaderCallbacks<Cursor> {
@@ -28,10 +26,8 @@ public class StartActivity extends FragmentActivity implements
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
 	private MultiColumnListView mMemosGrid;
-	private MemoDB mMemoDB;
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
-	private LayoutInflater mLayoutInflater;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +35,6 @@ public class StartActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		mContext = this;
-		mLayoutInflater = (LayoutInflater) mContext
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);

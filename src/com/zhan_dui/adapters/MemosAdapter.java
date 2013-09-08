@@ -2,12 +2,12 @@ package com.zhan_dui.adapters;
 
 import java.text.SimpleDateFormat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,11 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.zhan_dui.animation.MarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
 import com.zhan_dui.utils.DateHelper;
 
+@SuppressLint("SimpleDateFormat")
 public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		OnTouchListener {
 
@@ -34,8 +36,9 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private GestureDetectorCompat mGestureDetectorCompat;
 	private View mCurrentTouchHover;
 	private View mCurrentTouchBottom;
+	private int mCurrentTouchPosition;
 
-	public void setOutItem(int id) {
+	public void setOpenerItem(int id) {
 		if (id < 0 && id > getCount()) {
 			mOutItemId = 0;
 		}
@@ -68,24 +71,25 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			v = newView(mContext, mCursor, parent);
 		} else {
 			v = convertView;
-			Log.e("position", position + "");
-			if (v.getTag() != null && position != 0) {
+			boolean isFirst = (Boolean) v.getTag(R.string.memo_first);
+			if (isFirst && position != 0) {
 				v = newView(mContext, mCursor, parent);
 			}
-			if (v.getTag() == null && position == 0) {
+			if (!isFirst && position == 0) {
 				v = newView(mContext, mCursor, parent);
 			}
+		}
 
-			if (position != 0) {
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) v
-						.findViewById(R.id.bottom).getLayoutParams();
-				if (position == mOutItemId) {
-					layoutParams.setMargins(0, 0, 0, 0);
-				} else {
-					layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
-				}
-				v.findViewById(R.id.bottom).setLayoutParams(layoutParams);
+		if (position != 0) {
+			LinearLayout.LayoutParams layoutParams = (LayoutParams) v
+					.findViewById(R.id.bottom).getLayoutParams();
+			if (position == mOutItemId) {
+				layoutParams.setMargins(0, 0, 0, 0);
+			} else {
+				layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
 			}
+			v.findViewById(R.id.bottom).setLayoutParams(layoutParams);
+			v.findViewById(R.id.hover).setTag(R.string.memo_position, position);
 		}
 		bindView(v, mContext, mCursor);
 
@@ -105,27 +109,31 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			View bottomView = view.findViewById(R.id.bottom);
 			View hoverView = view.findViewById(R.id.hover);
 			bottomView.setTag(R.string.memo_data, memo);
+			bottomView.setTag(R.string.memo_id, _id);
 			hoverView.setTag(R.string.memo_data, memo);
+			hoverView.setTag(R.string.memo_id, _id);
 		}
 	}
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		if (cursor.getInt(cursor.getColumnIndex("_id")) == 0) {
-			View FirstView = mLayoutInflater.inflate(R.layout.memo_add, parent,
+			View firstView = mLayoutInflater.inflate(R.layout.memo_add, parent,
 					false);
-			FirstView.setTag("1");
-			FirstView.setOnClickListener(this);
-			return FirstView;
+			firstView.setTag(R.string.memo_first, true);
+			firstView.setOnClickListener(this);
+			return firstView;
 		} else {
 			View commonView = mLayoutInflater.inflate(R.layout.memo_item,
 					parent, false);
+			commonView.setTag(R.string.memo_first, false);
 			View bottom = commonView.findViewById(R.id.bottom);
 			View hover = commonView.findViewById(R.id.hover);
 			hover.setTag(bottom);
 			bottom.setOnClickListener(this);
 			hover.setOnClickListener(this);
 			hover.setOnTouchListener(this);
+
 			return commonView;
 		}
 	}
@@ -157,6 +165,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	public boolean onTouch(View v, MotionEvent event) {
 		mCurrentTouchHover = v;
 		mCurrentTouchBottom = (View) v.getTag();
+		mCurrentTouchPosition = (Integer) v.getTag(R.string.memo_position);
 		return mGestureDetectorCompat.onTouchEvent(event);
 	}
 
@@ -173,20 +182,21 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			if (moveDistance > -25 && moveDistance < 0) {
 				return true;
 			}
-			LinearLayout.LayoutParams layoutParams = (LayoutParams) mCurrentTouchBottom
-					.getLayoutParams();
 			if (moveDistance > 0) {
 				// 右向左滑
-				layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
+				mCurrentTouchBottom.startAnimation(new MarginAnimation(
+						(LinearLayout) mCurrentTouchBottom, -mBottomMargin));
 			} else if (moveDistance < -0) {
 				// 左向右滑
-				layoutParams.setMargins(0, 0, 0, 0);
+				setOpenerItem(mCurrentTouchPosition);
+				mCurrentTouchBottom.startAnimation(new MarginAnimation(
+						(LinearLayout) mCurrentTouchBottom, 0));
 			}
+
 			mLastChangeStatus = System.currentTimeMillis();
-			mCurrentTouchBottom.setLayoutParams(layoutParams);
+			// mCurrentTouchBottom.setLayoutParams(layoutParams);
 			return true;
 		}
-
 	}
 
 }
