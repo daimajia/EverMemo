@@ -1,7 +1,8 @@
 package com.zhan_dui.evermemo;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.zhan_dui.animation.TopBottomMarginAnimation;
 import com.zhan_dui.data.Memo;
+import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.utils.DateHelper;
 
 public class MemoActivity extends FragmentActivity implements OnClickListener,
@@ -222,14 +224,19 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 				mPullSaveLinearLayout
 						.startAnimation(new TopBottomMarginAnimation(
 								mPullSaveLinearLayout, 0));
-//				new SaveAsyncTask().execute();
-				getSupportLoaderManager().ini
+				memo.setContent(mContentEditText.getText().toString());
+				ContentValues values = memo.toContentValues();
+				if (mCreateNew) {
+					getContentResolver().insert(MemoProvider.MEMO_URI, values);
+				} else {
+					getContentResolver().update(
+							ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+									memo.getId()), values, null, null);
+				}
+				finish();
 			}
 			break;
 		}
 		return false;
 	}
-
-
-
 }

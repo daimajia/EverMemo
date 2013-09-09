@@ -10,14 +10,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MemoDB extends SQLiteOpenHelper {
 
 	public final static String ID = "_id";
-	
 
 	private final String CREATE_MEMO_TABLE = "create table Memo(`_id` integer primary key autoincrement,"
 			+ "`content` text,"
 			+ "`createdtime` text,"
 			+ "`updatedtime` text,"
 			+ "`hash` text,"
-			+ "`order` int,"
+			+ "`orderid` int,"
 			+ "`lastsynctime` text,"
 			+ "`status` text,"
 			+ "`guid` text,"
@@ -60,6 +59,7 @@ public class MemoDB extends SQLiteOpenHelper {
 		contentValues.put("enid", memo.getEnid());
 		contentValues.put("wallid", memo.getWallId());
 		contentValues.put("attributes", memo.getAttributes());
+		contentValues.put("orderid", memo.getOrder());
 		return getWritableDatabase().insert(MEMO_TABLE_NAME, null,
 				contentValues);
 	}

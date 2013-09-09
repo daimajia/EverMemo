@@ -1,14 +1,15 @@
 package com.zhan_dui.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class MemoProvider extends ContentProvider {
 
@@ -42,7 +43,6 @@ public class MemoProvider extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
 		case MEMOS:
-			Log.e("type", uriType + "");
 			break;
 		case MEMO_ID:
 			queryBuilder
@@ -91,13 +91,51 @@ public class MemoProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		return null;
+		if (values.containsKey(MemoDB.ID)) {
+			values.remove(MemoDB.ID);
+		}
+		int uriType = sURIMatcher.match(uri);
+		SQLiteDatabase database = memoDB.getWritableDatabase();
+		Uri itemUri = null;
+		switch (uriType) {
+		case MEMOS:
+			long newID = database.insert(MemoDB.MEMO_TABLE_NAME, null, values);
+			if (newID > 0) {
+				itemUri = ContentUris.withAppendedId(uri, newID);
+				getContext().getContentResolver().notifyChange(itemUri, null);
+			} else {
+				throw new SQLException("can not insert right");
+			}
+		default:
+			break;
+		}
+		return itemUri;
+
 	}
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		return 0;
-	}
+		int updateCount = 0;
+		switch (sURIMatcher.match(uri)) {
+		case MEMOS:
+			updateCount = memoDB.getWritableDatabase().update(
+					MemoDB.MEMO_TABLE_NAME, values, selection, selectionArgs);
+			break;
+		case MEMO_ID:
+			String where = "";
+			if (!TextUtils.isEmpty(selection)) {
+				where += " and " + selection;
+			}
+			updateCount = memoDB.getWritableDatabase().update(
+					MemoDB.MEMO_TABLE_NAME, values,
+					MemoDB.ID + "=" + uri.getLastPathSegment() + where,
+					selectionArgs);
+			break;
 
+		default:
+			break;
+		}
+		return updateCount;
+	}
 }

@@ -2,6 +2,7 @@ package com.zhan_dui.data;
 
 import java.io.Serializable;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.zhan_dui.utils.MD5;
@@ -46,7 +47,24 @@ public class Memo implements Serializable {
 		mGuid = cursor.getInt(cursor.getColumnIndex("guid"));
 		mEnid = cursor.getInt(cursor.getColumnIndex("enid"));
 		mWallId = cursor.getInt(cursor.getColumnIndex("wallid"));
-		mOrder = cursor.getInt(cursor.getColumnIndex("order"));
+		mOrder = cursor.getInt(cursor.getColumnIndex("orderid"));
+	}
+
+	public ContentValues toContentValues() {
+		ContentValues values = new ContentValues();
+		values.put("_id", _id);
+		values.put("guid", mGuid);
+		values.put("enid", mEnid);
+		values.put("wallid", mWallId);
+		values.put("orderid", mOrder);
+		values.put("lastsynctime", mLastSyncTime);
+		values.put("createdtime", mCreatedTime);
+		values.put("updatedtime", mUpdatedTime);
+		values.put("status", mStatus);
+		values.put("attributes", mAttributes);
+		values.put("content", mContent);
+		values.put("hash", mHash);
+		return values;
 	}
 
 	public void setId(int _id) {
