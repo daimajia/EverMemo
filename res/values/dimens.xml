@@ -28,7 +28,8 @@
     <dimen name="bottom_margin_left">-40dp</dimen>
     <dimen name="hover_margin_left">-8dp</dimen>
     <!-- Memo item -->
-    
+
+
     <!-- Bottom Bar -->
     <dimen name="bottom_bar_height">45dp</dimen>
     <!-- Bottom Bar -->
@@ -41,13 +42,24 @@
     <dimen name="padding_top">13dp</dimen>
     <dimen name="padding_bottom">13dp</dimen>
     <!-- Memo activity -->
-	
-	<!-- Pull Save -->
-	<dimen name="pull_save_layout_height">50dp</dimen>
-	<dimen name="pull_save_layout_margin_top">-50dp</dimen>
-	<!-- Pull Save -->
+
+
+    <!-- Pull Save -->
+    <dimen name="pull_save_layout_height">50dp</dimen>
+    <dimen name="pull_save_layout_margin_top">-50dp</dimen>
+    <!-- Pull Save -->
+
+
+    <!-- Delete Panel -->
+    <dimen name="delete_panel_height">45dp</dimen>
+    <dimen name="delete_padnel_margin_bottom">-45dp</dimen>
+    <dimen name="delete_panel_padding_left">15dp</dimen>
+    <dimen name="delete_panel_padding_right">15dp</dimen>
+    <!-- Delete Panel -->
+
 
     <!-- Animation -->
+
 
     <!-- Animation -->
 

@@ -10,5 +10,7 @@
     <string name="new_memo">新建</string>
     <string name="pull_save_leave">下拉保存退出</string>
     <string name="relaxe_save_leave">松手保存退出</string>
+    <string name="one_delete">1 memo deleted</string>
+    <string name="undo">Undo</string>
 
 </resources>

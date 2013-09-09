@@ -14,20 +14,25 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.view.Menu;
 import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.huewu.pla.lib.MultiColumnListView;
 import com.zhan_dui.adapters.MemosAdapter;
+import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
+import com.zhan_dui.animation.MarginAnimation;
+import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 
 public class StartActivity extends FragmentActivity implements
-		LoaderCallbacks<Cursor> {
+		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener {
 
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
 	private MultiColumnListView mMemosGrid;
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
+	private LinearLayout mUndoPanel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,7 @@ public class StartActivity extends FragmentActivity implements
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
-
+		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
 		Typeface roboto_bold = Typeface.createFromAsset(getAssets(),
 				"fonts/Roboto-Bold.ttf");
 		Typeface roboto_thin = Typeface.createFromAsset(getAssets(),
@@ -48,8 +53,9 @@ public class StartActivity extends FragmentActivity implements
 		mMemoTextView.setTypeface(roboto_thin);
 		LoaderManager manager = getSupportLoaderManager();
 		mMemosAdapter = new MemosAdapter(mContext, null,
-				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
+
 		manager.initLoader(1, null, this);
 	}
 
@@ -77,6 +83,11 @@ public class StartActivity extends FragmentActivity implements
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		mMemosAdapter.swapCursor(null);
+	}
+
+	@Override
+	public void wakeRecoveryPanel(Memo memo) {
+		mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0, 0));
 	}
 
 }

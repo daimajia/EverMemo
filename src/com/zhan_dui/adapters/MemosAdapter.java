@@ -21,7 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.zhan_dui.animation.LeftRightMarginAnimation;
+import com.zhan_dui.animation.MarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
@@ -47,6 +47,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private View mCurrentTouchBottom;
 	private int mCurrentTouchPosition;
 	private Typeface mRobotoThin;
+	private final DeleteRecoverPanelLisener mDeleteRecoverPanelLisener;
 
 	public void setOpenerItem(int id) {
 		if (id < 0 && id > getCount()) {
@@ -55,7 +56,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		mOutItemId = id;
 	}
 
-	public MemosAdapter(Context context, Cursor c, int flags) {
+	public MemosAdapter(Context context, Cursor c, int flags,
+			DeleteRecoverPanelLisener l) {
 		super(context, c, flags);
 		mBottomMargin = -mContext.getResources().getDimensionPixelSize(
 				R.dimen.bottom_margin_left);
@@ -67,6 +69,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 				new ItemGuestureDetector());
 		mRobotoThin = Typeface.createFromAsset(context.getAssets(),
 				"fonts/Roboto-Thin.ttf");
+		mDeleteRecoverPanelLisener = l;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -171,6 +174,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 				mContext.getContentResolver().delete(
 						ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 								memo.getId()), null, null);
+				mDeleteRecoverPanelLisener.wakeRecoveryPanel(memo);
 				break;
 			case R.id.hover:
 				Intent intent = new Intent(mContext, MemoActivity.class);
@@ -213,16 +217,15 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			}
 			if (moveDistance > 0) {
 				// 右向左滑
-				mCurrentTouchBottom
-						.startAnimation(new LeftRightMarginAnimation(
-								(LinearLayout) mCurrentTouchBottom,
-								-mBottomMargin));
+				mCurrentTouchBottom.startAnimation(new MarginAnimation(
+						(LinearLayout) mCurrentTouchBottom, -mBottomMargin, 0,
+						0, 0));
+				setOpenerItem(0);
 			} else if (moveDistance < -0) {
 				// 左向右滑
 				setOpenerItem(mCurrentTouchPosition);
-				mCurrentTouchBottom
-						.startAnimation(new LeftRightMarginAnimation(
-								(LinearLayout) mCurrentTouchBottom, 0));
+				mCurrentTouchBottom.startAnimation(new MarginAnimation(
+						(LinearLayout) mCurrentTouchBottom, 0, 0, 0, 0));
 			}
 
 			if (mPreviousTouchBottom != null
@@ -238,6 +241,10 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			mLastChangeStatus = System.currentTimeMillis();
 			return true;
 		}
+	}
+
+	public interface DeleteRecoverPanelLisener {
+		public void wakeRecoveryPanel(Memo memo);
 	}
 
 }

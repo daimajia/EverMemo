@@ -6,10 +6,11 @@
     <color name="content_text_color">#666666</color>
     <color name="date_color">#B1B1B1</color>
     <color name="item_background_color">#f9f9f9</color>
-    
     <color name="bottom_background_color">#000000</color>
     <color name="plus_color">#B6B6B4</color>
     <color name="bottom_bar_background">#D9000000</color>
     <color name="transparent_image_button">#00000000</color>
+    <color name="delete_panel_background">#FF4900</color>
+    <color name="delete_panel_text_color">#FFFFFF</color>
 
 </resources>

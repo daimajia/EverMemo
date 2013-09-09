@@ -54,4 +54,38 @@
         pla:plaLandscapeColumnNumber="3" >
     </com.huewu.pla.lib.MultiColumnListView>
 
+    <LinearLayout
+        android:id="@+id/undo_panel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/delete_panel_height"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/delete_padnel_margin_bottom"
+        android:background="@color/delete_panel_background"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/delete_panel_padding_left"
+        android:paddingRight="@dimen/delete_panel_padding_right" >
+
+        <TextView
+            android:id="@+id/delete_tips"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:gravity="center|left"
+            android:text="@string/one_delete"
+            android:textColor="@color/delete_panel_text_color" />
+
+        <Button
+            android:id="@+id/undo_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="@string/undo"
+            android:textColor="@color/delete_panel_text_color"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </RelativeLayout>

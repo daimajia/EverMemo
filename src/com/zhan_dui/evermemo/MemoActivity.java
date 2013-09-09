@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.zhan_dui.animation.TopBottomMarginAnimation;
+import com.zhan_dui.animation.MarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.utils.DateHelper;
@@ -204,10 +203,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private LayoutParams mPullLayoutParams;
 
-	public void onSaveAndLeave() {
-
-	}
-
 	private int dy;
 	private int maxMarginTop = 60;
 	private final float DRAG_RATIO = 0.3f;
@@ -233,14 +228,12 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			return true;
 		case MotionEvent.ACTION_UP:
 			if (mPullLayoutParams.topMargin < 0) {
-				mPullSaveLinearLayout
-						.startAnimation(new TopBottomMarginAnimation(
-								mPullSaveLinearLayout, mPullMarginTop));
+				mPullSaveLinearLayout.startAnimation(new MarginAnimation(
+						mPullSaveLinearLayout, 0, mPullMarginTop, 0, 0));
 			}
 			if (mPullLayoutParams.topMargin > 0) {
-				mPullSaveLinearLayout
-						.startAnimation(new TopBottomMarginAnimation(
-								mPullSaveLinearLayout, 0));
+				mPullSaveLinearLayout.startAnimation(new MarginAnimation(
+						mPullSaveLinearLayout, 0, 0, 0, 0));
 				saveMemoAndLeave();
 			}
 			break;
@@ -253,7 +246,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			mLastSaveContent = mContentEditText.getText().toString();
 		} else {
 			if (mLastSaveContent.equals(mContentEditText.getText().toString())) {
-				Log.e("leave", true + "");
 				return;
 			}
 		}
