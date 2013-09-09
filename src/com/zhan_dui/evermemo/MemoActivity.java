@@ -1,10 +1,14 @@
 package com.zhan_dui.evermemo;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +43,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private TextView mPullSaveTextView;
 	private int mPullMarginTop;
 
+	private String mLastSaveContent;
+
+	private Timer mTimer;
+
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
 
@@ -52,6 +60,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (bundle != null && bundle.getSerializable("memo") != null) {
 			memo = (Memo) bundle.getSerializable("memo");
 			mCreateNew = false;
+			mLastSaveContent = memo.getContent();
 		} else {
 			memo = new Memo();
 			mCreateNew = true;
@@ -82,15 +91,23 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mContentEditText.setOnTouchListener(this);
 		mPullLayoutParams = (LayoutParams) mPullSaveLinearLayout
 				.getLayoutParams();
+		mTimer = new Timer();
 	}
+
+	private TimerTask mSaveTask = new TimerTask() {
+
+		@Override
+		public void run() {
+			saveMemo();
+		}
+	};
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 		case KeyEvent.KEYCODE_BACK:
-			finish();
-			overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
-			break;
+			saveMemoAndLeave();
+			return true;
 		default:
 			break;
 		}
@@ -224,19 +241,48 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 				mPullSaveLinearLayout
 						.startAnimation(new TopBottomMarginAnimation(
 								mPullSaveLinearLayout, 0));
-				memo.setContent(mContentEditText.getText().toString());
-				ContentValues values = memo.toContentValues();
-				if (mCreateNew) {
-					getContentResolver().insert(MemoProvider.MEMO_URI, values);
-				} else {
-					getContentResolver().update(
-							ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-									memo.getId()), values, null, null);
-				}
-				finish();
+				saveMemoAndLeave();
 			}
 			break;
 		}
 		return false;
+	}
+
+	private void saveMemo() {
+		if (mLastSaveContent == null) {
+			mLastSaveContent = mContentEditText.getText().toString();
+		} else {
+			if (mLastSaveContent.equals(mContentEditText.getText().toString())) {
+				Log.e("leave", true + "");
+				return;
+			}
+		}
+		memo.setContent(mContentEditText.getText().toString());
+		ContentValues values = memo.toContentValues();
+		if (mCreateNew) {
+			getContentResolver().insert(MemoProvider.MEMO_URI, values);
+		} else {
+			getContentResolver().update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							memo.getId()), values, null, null);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mTimer.cancel();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mTimer.schedule(mSaveTask, 10000, 10000);
+	}
+
+	private void saveMemoAndLeave() {
+		saveMemo();
+		finish();
+		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
 }
