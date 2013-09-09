@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
@@ -45,7 +46,7 @@ public class StartActivity extends FragmentActivity implements
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
 	private LinearLayout mUndoPanel;
-	private Button mUndo;
+	private Button mUndo, mSetting;
 	private int mUndoPanelHeight;
 
 	@Override
@@ -59,6 +60,7 @@ public class StartActivity extends FragmentActivity implements
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
 		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
 		mUndo = (Button) findViewById(R.id.undo_btn);
+		mSetting = (Button) findViewById(R.id.setting_btn);
 		mUndoPanelHeight = mUndoPanel.getLayoutParams().height;
 		Typeface roboto_bold = Typeface.createFromAsset(getAssets(),
 				"fonts/Roboto-Bold.ttf");
@@ -72,6 +74,7 @@ public class StartActivity extends FragmentActivity implements
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
 		mUndo.setOnClickListener(this);
+		mSetting.setOnClickListener(this);
 		manager.initLoader(1, null, this);
 	}
 
@@ -134,6 +137,8 @@ public class StartActivity extends FragmentActivity implements
 			getContentResolver().update(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							mCurrentMemo.getId()), values, null, null);
+		} else if (v.getId() == R.id.setting_btn) {
+			startActivity(new Intent(mContext, SettingActivity.class));
 		}
 	}
 }

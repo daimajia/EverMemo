@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -79,6 +80,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mList.setOnClickListener(this);
 		mShare.setOnClickListener(this);
 		mContentEditText.setText(memo.getContent());
+		mContentEditText.setSelection(memo.getCursorPosition());
 		if (mCreateNew) {
 			mDateText.setText(R.string.new_memo);
 		} else {
@@ -205,6 +207,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			dy = (int) event.getY();
 			break;
 		case MotionEvent.ACTION_MOVE:
+
 			int y = (int) event.getY();
 			int newTop = (int) (mPullLayoutParams.topMargin + (y - dy)
 					* DRAG_RATIO);
@@ -216,6 +219,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 			mPullLayoutParams.topMargin = newTop;
 			mPullSaveLinearLayout.setLayoutParams(mPullLayoutParams);
+
 			return true;
 		case MotionEvent.ACTION_UP:
 			if (mPullLayoutParams.topMargin < 0) {
@@ -233,6 +237,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	private void saveMemo() {
+		if (mContentEditText.getText().toString().trim().length() == 0) {
+			return;
+		}
+
 		if (mLastSaveContent == null) {
 			mLastSaveContent = mContentEditText.getText().toString();
 		} else {
@@ -241,9 +249,13 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 		memo.setContent(mContentEditText.getText().toString());
+		memo.setCursorPosition(mContentEditText.getSelectionStart());
 		ContentValues values = memo.toContentValues();
 		if (mCreateNew) {
-			getContentResolver().insert(MemoProvider.MEMO_URI, values);
+			mCreateNew = false;
+			Uri retUri = getContentResolver().insert(MemoProvider.MEMO_URI,
+					values);
+			memo.setId(Integer.valueOf(retUri.getLastPathSegment()));
 		} else {
 			getContentResolver().update(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
@@ -266,7 +278,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			public void run() {
 				saveMemo();
 			}
-		}, 10000, 10000);
+		}, 1000, 10000);
 	}
 
 	private void saveMemoAndLeave() {

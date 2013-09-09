@@ -33,6 +33,8 @@
             android:name="com.zhan_dui.evermemo.MemoActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" >
         </activity>
+        <activity android:name="com.zhan_dui.evermemo.SettingActivity" >
+        </activity>
     </application>
 
 </manifest>

@@ -20,7 +20,10 @@ public class MemoDB extends SQLiteOpenHelper {
 			+ "`status` text,"
 			+ "`guid` text,"
 			+ "`enid` text,"
-			+ "`wallid` text," + "`attributes` text);";
+			+ "`wallid` text,"
+			+ "`attributes` text,"
+			+ "`cursorposition` int"
+			+ ");";
 
 	public static final String Name = "EverMemo";
 	public static final int VERSION = 1;

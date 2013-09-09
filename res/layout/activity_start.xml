@@ -32,6 +32,14 @@
             android:layout_toRightOf="@+id/ever"
             android:text="@string/app_memo"
             android:textSize="@dimen/title_text_size" />
+
+        <Button
+            android:id="@+id/setting_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/gear" />
     </RelativeLayout>
 
     <View

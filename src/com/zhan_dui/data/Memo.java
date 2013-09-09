@@ -23,6 +23,7 @@ public class Memo implements Serializable {
 	private int mEnid;
 	private int mWallId;
 	private int mOrder;
+	private int mCursorPosition;
 
 	private String mHash;
 	private String mContent;
@@ -49,6 +50,8 @@ public class Memo implements Serializable {
 		mEnid = cursor.getInt(cursor.getColumnIndex("enid"));
 		mWallId = cursor.getInt(cursor.getColumnIndex("wallid"));
 		mOrder = cursor.getInt(cursor.getColumnIndex("orderid"));
+		mCursorPosition = cursor
+				.getInt(cursor.getColumnIndex("cursorposition"));
 	}
 
 	public ContentValues toContentValues() {
@@ -65,6 +68,7 @@ public class Memo implements Serializable {
 		values.put("attributes", mAttributes);
 		values.put("content", mContent);
 		values.put("hash", mHash);
+		values.put("cursorposition", mCursorPosition);
 		return values;
 	}
 
@@ -83,6 +87,7 @@ public class Memo implements Serializable {
 		memo.mCreatedTime = values.getAsLong("createdtime");
 		memo.mUpdatedTime = values.getAsLong("updatedtime");
 		memo.mLastSyncTime = values.getAsLong("lastsynctime");
+		memo.mCursorPosition = values.getAsInteger("cursorposition");
 		return memo;
 	}
 
@@ -97,6 +102,10 @@ public class Memo implements Serializable {
 		mOrder = 0;
 		mAttributes = "";
 		mHash = MD5.digest(mContent);
+	}
+
+	public void setCursorPosition(int cursorPosition) {
+		mCursorPosition = cursorPosition;
 	}
 
 	public long getUpdatedTime() {
@@ -129,6 +138,10 @@ public class Memo implements Serializable {
 
 	public int getWallId() {
 		return mWallId;
+	}
+
+	public int getCursorPosition() {
+		return mCursorPosition;
 	}
 
 	public String getHash() {
