@@ -20,9 +20,9 @@ import android.widget.TextView;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
-import com.zhan_dui.animation.MarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
+import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
 		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener {

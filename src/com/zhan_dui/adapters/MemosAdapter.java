@@ -21,12 +21,12 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.zhan_dui.animation.MarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
 import com.zhan_dui.utils.DateHelper;
+import com.zhan_dui.utils.MarginAnimation;
 
 @SuppressLint("SimpleDateFormat")
 public class MemosAdapter extends CursorAdapter implements OnClickListener,

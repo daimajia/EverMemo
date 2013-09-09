@@ -22,10 +22,10 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
-import com.zhan_dui.animation.MarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.utils.DateHelper;
+import com.zhan_dui.utils.MarginAnimation;
 
 public class MemoActivity extends FragmentActivity implements OnClickListener,
 		OnKeyListener, OnTouchListener {
