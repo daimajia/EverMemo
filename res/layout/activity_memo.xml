@@ -4,11 +4,26 @@
     android:layout_height="match_parent"
     android:background="@color/background_color" >
 
+    <LinearLayout
+        android:id="@+id/pull_save"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pull_save_layout_height"
+        android:layout_marginTop="@dimen/pull_save_layout_margin_top"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/pull_save_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pull_save_leave" />
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/memo_title_bar_height"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/pull_save"
         android:paddingLeft="@dimen/padding_left"
         android:paddingRight="@dimen/padding_right" >
 

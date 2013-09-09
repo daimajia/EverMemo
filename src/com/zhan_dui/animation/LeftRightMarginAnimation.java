@@ -5,14 +5,14 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-public class MarginAnimation extends Animation {
+public class LeftRightMarginAnimation extends Animation {
 	private LinearLayout mTarget;
 	private final int mOriginMarginLeft;
 	private final int mFinalMarginLeft;
 	private int mSpan;
 	private LayoutParams mOriginLayoutParams;
 
-	public MarginAnimation(LinearLayout target, int finalLeft) {
+	public LeftRightMarginAnimation(LinearLayout target, int finalLeft) {
 		mTarget = target;
 		mFinalMarginLeft = finalLeft;
 		mOriginMarginLeft = ((LinearLayout.LayoutParams) target

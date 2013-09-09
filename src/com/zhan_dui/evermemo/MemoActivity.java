@@ -1,22 +1,29 @@
 package com.zhan_dui.evermemo;
 
-import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.zhan_dui.animation.TopBottomMarginAnimation;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.utils.DateHelper;
 
-public class MemoActivity extends Activity implements OnClickListener,
-		OnKeyListener {
+public class MemoActivity extends FragmentActivity implements OnClickListener,
+		OnKeyListener, OnTouchListener {
 
 	private EditText mContentEditText;
 	private TextView mDateText;
@@ -26,6 +33,9 @@ public class MemoActivity extends Activity implements OnClickListener,
 	private Button mList;
 	private Button mShare;
 	private View mBottomBar;
+	private LinearLayout mPullSaveLinearLayout;
+	private TextView mPullSaveTextView;
+	private int mPullMarginTop;
 
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
@@ -50,6 +60,11 @@ public class MemoActivity extends Activity implements OnClickListener,
 		mList = (Button) findViewById(R.id.list);
 		mShare = (Button) findViewById(R.id.share);
 		mBottomBar = findViewById(R.id.bottom_bar);
+		mPullSaveLinearLayout = (LinearLayout) findViewById(R.id.pull_save);
+		mPullSaveTextView = (TextView) mPullSaveLinearLayout
+				.findViewById(R.id.pull_save_text);
+		mPullMarginTop = ((RelativeLayout.LayoutParams) mPullSaveLinearLayout
+				.getLayoutParams()).topMargin;
 		mBottomBar.setOnClickListener(this);
 		mList.setOnClickListener(this);
 		mShare.setOnClickListener(this);
@@ -62,6 +77,9 @@ public class MemoActivity extends Activity implements OnClickListener,
 					memo.getCreatedTime()));
 		}
 		mContentEditText.setOnKeyListener(this);
+		mContentEditText.setOnTouchListener(this);
+		mPullLayoutParams = (LayoutParams) mPullSaveLinearLayout
+				.getLayoutParams();
 	}
 
 	@Override
@@ -164,4 +182,54 @@ public class MemoActivity extends Activity implements OnClickListener,
 		}
 		return false;
 	}
+
+	private LayoutParams mPullLayoutParams;
+
+	public void onSaveAndLeave() {
+
+	}
+
+	private int dy;
+	private int maxMarginTop = 60;
+	private final float DRAG_RATIO = 0.3f;
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			dy = (int) event.getY();
+			break;
+		case MotionEvent.ACTION_MOVE:
+			int y = (int) event.getY();
+			int newTop = (int) (mPullLayoutParams.topMargin + (y - dy)
+					* DRAG_RATIO);
+			newTop = (newTop > maxMarginTop) ? maxMarginTop : newTop;
+			if (newTop > 0) {
+				mPullSaveTextView.setText(R.string.relaxe_save_leave);
+			} else {
+				mPullSaveTextView.setText(R.string.pull_save_leave);
+			}
+			mPullLayoutParams.topMargin = newTop;
+			mPullSaveLinearLayout.setLayoutParams(mPullLayoutParams);
+			return true;
+		case MotionEvent.ACTION_UP:
+			if (mPullLayoutParams.topMargin < 0) {
+				mPullSaveLinearLayout
+						.startAnimation(new TopBottomMarginAnimation(
+								mPullSaveLinearLayout, mPullMarginTop));
+			}
+			if (mPullLayoutParams.topMargin > 0) {
+				mPullSaveLinearLayout
+						.startAnimation(new TopBottomMarginAnimation(
+								mPullSaveLinearLayout, 0));
+//				new SaveAsyncTask().execute();
+				getSupportLoaderManager().ini
+			}
+			break;
+		}
+		return false;
+	}
+
+
+
 }
