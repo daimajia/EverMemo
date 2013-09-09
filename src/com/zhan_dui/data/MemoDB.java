@@ -1,8 +1,6 @@
 package com.zhan_dui.data;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -10,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MemoDB extends SQLiteOpenHelper {
 
 	public final static String ID = "_id";
+	public final static String STATUS = "status";
 
 	private final String CREATE_MEMO_TABLE = "create table Memo(`_id` integer primary key autoincrement,"
 			+ "`content` text,"
@@ -47,36 +46,4 @@ public class MemoDB extends SQLiteOpenHelper {
 
 	}
 
-	public long insertMemo(Memo memo) {
-		ContentValues contentValues = new ContentValues();
-		contentValues.put("content", memo.getContent());
-		contentValues.put("createdtime", memo.getCreatedTime());
-		contentValues.put("updatedtime", memo.getUpdatedTime());
-		contentValues.put("hash", memo.getHash());
-		contentValues.put("lastsynctime", memo.getLastSyncTime());
-		contentValues.put("status", memo.getStatus());
-		contentValues.put("guid", memo.getGuid());
-		contentValues.put("enid", memo.getEnid());
-		contentValues.put("wallid", memo.getWallId());
-		contentValues.put("attributes", memo.getAttributes());
-		contentValues.put("orderid", memo.getOrder());
-		return getWritableDatabase().insert(MEMO_TABLE_NAME, null,
-				contentValues);
-	}
-
-	public long removeMemo(Memo memo) {
-		if (memo.getId() != 0) {
-			ContentValues values = new ContentValues();
-			values.put("status", Memo.STATUS_DELETE);
-			return getWritableDatabase().update(MEMO_TABLE_NAME, values,
-					"_id=?", new String[] { String.valueOf(memo.getId()) });
-		} else {
-			return 0;
-		}
-	}
-
-	public Cursor getAllMemos() {
-		return getReadableDatabase().query(MEMO_TABLE_NAME, null, "status!=?",
-				new String[] { Memo.STATUS_DELETE }, null, null, null);
-	}
 }

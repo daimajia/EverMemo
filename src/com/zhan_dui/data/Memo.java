@@ -12,6 +12,7 @@ public class Memo implements Serializable {
 	private static final long serialVersionUID = -1123549346312970903L;
 
 	public static final String STATUS_DELETE = "delete";
+	public static final String STATUS_COMMON = "common";
 
 	private long mCreatedTime;
 	private long mUpdatedTime;
@@ -92,7 +93,7 @@ public class Memo implements Serializable {
 	public void setContent(String content) {
 		mContent = content;
 		mUpdatedTime = System.currentTimeMillis();
-		mStatus = "";
+		mStatus = STATUS_COMMON;
 		mOrder = 0;
 		mAttributes = "";
 		mHash = MD5.digest(mContent);

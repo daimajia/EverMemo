@@ -90,16 +90,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mContentEditText.setOnTouchListener(this);
 		mPullLayoutParams = (LayoutParams) mPullSaveLinearLayout
 				.getLayoutParams();
-		mTimer = new Timer();
 	}
-
-	private TimerTask mSaveTask = new TimerTask() {
-
-		@Override
-		public void run() {
-			saveMemo();
-		}
-	};
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -269,7 +260,13 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mTimer.schedule(mSaveTask, 10000, 10000);
+		mTimer = new Timer();
+		mTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				saveMemo();
+			}
+		}, 10000, 10000);
 	}
 
 	private void saveMemoAndLeave() {

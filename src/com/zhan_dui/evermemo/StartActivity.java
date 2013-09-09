@@ -1,11 +1,19 @@
 package com.zhan_dui.evermemo;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.annotation.SuppressLint;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -13,7 +21,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,11 +32,12 @@ import com.huewu.pla.lib.MultiColumnListView;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
 import com.zhan_dui.data.Memo;
+import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
-		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener {
+		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener {
 
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
@@ -33,6 +45,8 @@ public class StartActivity extends FragmentActivity implements
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
 	private LinearLayout mUndoPanel;
+	private Button mUndo;
+	private int mUndoPanelHeight;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +58,8 @@ public class StartActivity extends FragmentActivity implements
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
 		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
+		mUndo = (Button) findViewById(R.id.undo_btn);
+		mUndoPanelHeight = mUndoPanel.getLayoutParams().height;
 		Typeface roboto_bold = Typeface.createFromAsset(getAssets(),
 				"fonts/Roboto-Bold.ttf");
 		Typeface roboto_thin = Typeface.createFromAsset(getAssets(),
@@ -55,7 +71,7 @@ public class StartActivity extends FragmentActivity implements
 		mMemosAdapter = new MemosAdapter(mContext, null,
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
-
+		mUndo.setOnClickListener(this);
 		manager.initLoader(1, null, this);
 	}
 
@@ -85,9 +101,39 @@ public class StartActivity extends FragmentActivity implements
 		mMemosAdapter.swapCursor(null);
 	}
 
+	private Memo mCurrentMemo;
+	@SuppressLint("HandlerLeak")
+	private Handler mHidePanelHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0,
+					-mUndoPanelHeight));
+		};
+	};
+
 	@Override
 	public void wakeRecoveryPanel(Memo memo) {
+		mCurrentMemo = memo;
 		mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0, 0));
+		new Timer().schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				Looper.prepare();
+				mHidePanelHandler.sendEmptyMessage(0);
+				Looper.loop();
+			}
+		}, 7000);
 	}
 
+	@Override
+	public void onClick(View v) {
+		if (v.getId() == R.id.undo_btn) {
+			ContentValues values = mCurrentMemo.toContentValues();
+			values.put(MemoDB.STATUS, Memo.STATUS_COMMON);
+			mHidePanelHandler.sendEmptyMessage(0);
+			getContentResolver().update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							mCurrentMemo.getId()), values, null, null);
+		}
+	}
 }

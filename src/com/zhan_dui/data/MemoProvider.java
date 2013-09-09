@@ -42,6 +42,8 @@ public class MemoProvider extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
 		case MEMOS:
+			queryBuilder.appendWhere(MemoDB.STATUS + "!='" + Memo.STATUS_DELETE
+					+ "'");
 			break;
 		case MEMO_ID:
 			queryBuilder
@@ -62,6 +64,8 @@ public class MemoProvider extends ContentProvider {
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase database = memoDB.getWritableDatabase();
 		int rowAffected = 0;
+		ContentValues values = new ContentValues();
+		values.put(MemoDB.STATUS, Memo.STATUS_DELETE);
 		switch (uriType) {
 		case MEMOS:
 			rowAffected = database.delete(MemoDB.MEMO_TABLE_NAME, selection,
@@ -70,11 +74,12 @@ public class MemoProvider extends ContentProvider {
 		case MEMO_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowAffected = database.delete(MemoDB.MEMO_TABLE_NAME, MemoDB.ID
-						+ "=" + id, null);
+				rowAffected = database.update(MemoDB.MEMO_TABLE_NAME, values,
+						MemoDB.ID + "=" + id, null);
 			} else {
-				rowAffected = database.delete(MemoDB.MEMO_TABLE_NAME, selection
-						+ " and " + MemoDB.ID + "=" + id, null);
+				rowAffected = database.update(MemoDB.MEMO_TABLE_NAME, values,
+						selection + " and " + MemoDB.ID + "=" + id,
+						selectionArgs);
 			}
 		default:
 			break;
