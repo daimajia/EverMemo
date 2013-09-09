@@ -3,6 +3,7 @@ package com.zhan_dui.adapters;
 import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.zhan_dui.animation.LeftRightMarginAnimation;
 import com.zhan_dui.data.Memo;
+import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
 import com.zhan_dui.utils.DateHelper;
@@ -164,7 +166,11 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		} else {
 			switch (v.getId()) {
 			case R.id.bottom:
-
+				Memo memo = (Memo) v.getTag(R.string.memo_data);
+				setOpenerItem(0);
+				mContext.getContentResolver().delete(
+						ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+								memo.getId()), null, null);
 				break;
 			case R.id.hover:
 				Intent intent = new Intent(mContext, MemoActivity.class);

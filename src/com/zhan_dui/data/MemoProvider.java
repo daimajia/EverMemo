@@ -5,7 +5,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
@@ -94,6 +93,10 @@ public class MemoProvider extends ContentProvider {
 		if (values.containsKey(MemoDB.ID)) {
 			values.remove(MemoDB.ID);
 		}
+		Memo memo = Memo.build(values);
+		if (memo.getContent().trim().length() == 0) {
+			return null;
+		}
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase database = memoDB.getWritableDatabase();
 		Uri itemUri = null;
@@ -103,8 +106,6 @@ public class MemoProvider extends ContentProvider {
 			if (newID > 0) {
 				itemUri = ContentUris.withAppendedId(uri, newID);
 				getContext().getContentResolver().notifyChange(itemUri, null);
-			} else {
-				throw new SQLException("can not insert right");
 			}
 		default:
 			break;
@@ -135,6 +136,9 @@ public class MemoProvider extends ContentProvider {
 
 		default:
 			break;
+		}
+		if (updateCount > 0) {
+			getContext().getContentResolver().notifyChange(uri, null);
 		}
 		return updateCount;
 	}

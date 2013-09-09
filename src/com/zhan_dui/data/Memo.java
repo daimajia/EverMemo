@@ -67,6 +67,24 @@ public class Memo implements Serializable {
 		return values;
 	}
 
+	public static Memo build(ContentValues values) {
+		Memo memo = new Memo();
+		if (values.containsKey("_id")) {
+			memo._id = values.getAsInteger("_id");
+		}
+		memo.mGuid = values.getAsInteger("guid");
+		memo.mEnid = values.getAsInteger("enid");
+		memo.mWallId = values.getAsInteger("wallid");
+		memo.mOrder = values.getAsInteger("orderid");
+		memo.setContent(values.getAsString("content"));
+		memo.mAttributes = values.getAsString("attributes");
+		memo.mStatus = values.getAsString("status");
+		memo.mCreatedTime = values.getAsLong("createdtime");
+		memo.mUpdatedTime = values.getAsLong("updatedtime");
+		memo.mLastSyncTime = values.getAsLong("lastsynctime");
+		return memo;
+	}
+
 	public void setId(int _id) {
 		this._id = _id;
 	}
