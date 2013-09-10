@@ -1,11 +1,15 @@
 package com.zhan_dui.data;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.zhan_dui.utils.MD5;
+import com.evernote.client.android.EvernoteUtil;
+import com.evernote.edam.type.Note;
 
 public class Memo implements Serializable {
 
@@ -19,12 +23,13 @@ public class Memo implements Serializable {
 	private long mLastSyncTime;
 
 	private int _id;
-	private int mGuid;
-	private int mEnid;
+
 	private int mWallId;
 	private int mOrder;
 	private int mCursorPosition;
 
+	private String mGuid;
+	private String mEnid;
 	private String mHash;
 	private String mContent;
 	private String mAttributes;
@@ -40,14 +45,14 @@ public class Memo implements Serializable {
 		mContent = cursor.getString(cursor.getColumnIndex("content"));
 		mAttributes = cursor.getString(cursor.getColumnIndex("attributes"));
 		mStatus = cursor.getString(cursor.getColumnIndex("status"));
+		mGuid = cursor.getString(cursor.getColumnIndex("guid"));
+		mEnid = cursor.getString(cursor.getColumnIndex("enid"));
 
 		mLastSyncTime = cursor.getLong(cursor.getColumnIndex("lastsynctime"));
 		mCreatedTime = cursor.getLong(cursor.getColumnIndex("createdtime"));
 		mUpdatedTime = cursor.getLong(cursor.getColumnIndex("updatedtime"));
 
 		_id = cursor.getInt(cursor.getColumnIndex("_id"));
-		mGuid = cursor.getInt(cursor.getColumnIndex("guid"));
-		mEnid = cursor.getInt(cursor.getColumnIndex("enid"));
 		mWallId = cursor.getInt(cursor.getColumnIndex("wallid"));
 		mOrder = cursor.getInt(cursor.getColumnIndex("orderid"));
 		mCursorPosition = cursor
@@ -77,8 +82,8 @@ public class Memo implements Serializable {
 		if (values.containsKey("_id")) {
 			memo._id = values.getAsInteger("_id");
 		}
-		memo.mGuid = values.getAsInteger("guid");
-		memo.mEnid = values.getAsInteger("enid");
+		memo.mGuid = values.getAsString("guid");
+		memo.mEnid = values.getAsString("enid");
 		memo.mWallId = values.getAsInteger("wallid");
 		memo.mOrder = values.getAsInteger("orderid");
 		memo.setContent(values.getAsString("content"));
@@ -95,17 +100,58 @@ public class Memo implements Serializable {
 		this._id = _id;
 	}
 
+	public String getTitle() {
+		BufferedReader reader = new BufferedReader(new StringReader(
+				getContent()));
+		try {
+			return reader.readLine();
+		} catch (IOException e) {
+			return "No Title";
+		}
+	}
+
+	public Note toNote(String notebookGuid) {
+		Note note = toNote();
+		note.setNotebookGuid(notebookGuid);
+		return note;
+	}
+
+	public Note toNote() {
+		Note note = new Note();
+		note.setTitle(getTitle());
+		note.setContent(convertContentToEvernote());
+		return note;
+	}
+
+	private String convertContentToEvernote() {
+		String EvernoteContent = EvernoteUtil.NOTE_PREFIX
+				+ getContent().replace("\n", "<br/>")
+				+ EvernoteUtil.NOTE_SUFFIX;
+		return EvernoteContent;
+	}
+
 	public void setContent(String content) {
 		mContent = content;
 		mUpdatedTime = System.currentTimeMillis();
 		mStatus = STATUS_COMMON;
 		mOrder = 0;
 		mAttributes = "";
-		mHash = MD5.digest(mContent);
 	}
 
 	public void setCursorPosition(int cursorPosition) {
 		mCursorPosition = cursorPosition;
+	}
+
+	public void setGuid(String guid) {
+		mGuid = guid;
+	}
+
+	public void setEnid(String enid) {
+		mEnid = enid;
+	}
+
+	public void setHash(String hash) {
+		mHash = hash;
 	}
 
 	public long getUpdatedTime() {
@@ -124,14 +170,6 @@ public class Memo implements Serializable {
 		return _id;
 	}
 
-	public int getEnid() {
-		return mEnid;
-	}
-
-	public int getGuid() {
-		return mGuid;
-	}
-
 	public int getOrder() {
 		return mOrder;
 	}
@@ -142,6 +180,14 @@ public class Memo implements Serializable {
 
 	public int getCursorPosition() {
 		return mCursorPosition;
+	}
+
+	public String getEnid() {
+		return mEnid;
+	}
+
+	public String getGuid() {
+		return mGuid;
 	}
 
 	public String getHash() {

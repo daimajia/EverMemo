@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 public class MD5 {
 	static final String HEXES = "0123456789abcdef";
 
-	private static String getHex(byte[] raw) {
+	public static String getHex(byte[] raw) {
 		if (raw == null) {
 			return null;
 		}

@@ -111,10 +111,12 @@ public class MemoProvider extends ContentProvider {
 			if (newID > 0) {
 				itemUri = ContentUris.withAppendedId(uri, newID);
 				getContext().getContentResolver().notifyChange(itemUri, null);
+				memo.setId((int) newID);
 			}
 		default:
 			break;
 		}
+
 		return itemUri;
 
 	}

@@ -9,6 +9,8 @@ public class MemoDB extends SQLiteOpenHelper {
 
 	public final static String ID = "_id";
 	public final static String STATUS = "status";
+	public final static String EUID = "enid";
+	public final static String HASH = "hash";
 
 	private final String CREATE_MEMO_TABLE = "create table Memo(`_id` integer primary key autoincrement,"
 			+ "`content` text,"

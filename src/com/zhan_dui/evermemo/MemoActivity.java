@@ -9,6 +9,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,21 +21,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.evernote.edam.type.Note;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
+import com.zhan_dui.sync.Evernote;
+import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.DateHelper;
+import com.zhan_dui.utils.MD5;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class MemoActivity extends FragmentActivity implements OnClickListener,
-		OnKeyListener, OnTouchListener {
+		OnKeyListener, OnTouchListener, EvernoteSyncCallback {
 
 	private EditText mContentEditText;
 	private TextView mDateText;
 	private Memo memo;
-	private Boolean mCreateNew;
+	private boolean mOriginCreateNew;
+	private boolean mCreateNew;
 	private Context mContext;
 	private Button mList;
 	private Button mShare;
@@ -46,6 +53,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private String mLastSaveContent;
 
 	private Timer mTimer;
+	private Evernote mEvernote;
+	private boolean mInserting;
+	private boolean mInsertResult;
 
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
@@ -59,12 +69,15 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null && bundle.getSerializable("memo") != null) {
 			memo = (Memo) bundle.getSerializable("memo");
+			mOriginCreateNew = false;
 			mCreateNew = false;
 			mLastSaveContent = memo.getContent();
 		} else {
 			memo = new Memo();
+			mOriginCreateNew = true;
 			mCreateNew = true;
 		}
+		mInserting = false;
 		setContentView(R.layout.activity_memo);
 		mDateText = (TextView) findViewById(R.id.time);
 		mContentEditText = (EditText) findViewById(R.id.content);
@@ -92,6 +105,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mContentEditText.setOnTouchListener(this);
 		mPullLayoutParams = (LayoutParams) mPullSaveLinearLayout
 				.getLayoutParams();
+		mEvernote = new Evernote(mContext,this);
 	}
 
 	@Override
@@ -236,13 +250,13 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		return false;
 	}
 
-	private void saveMemo() {
+	private void saveMemo(Boolean toLeave) {
 		if (mContentEditText.getText().toString().trim().length() == 0) {
 			return;
 		}
 
 		if (mLastSaveContent == null) {
-			mLastSaveContent = mContentEditText.getText().toString();
+			mLastSaveContent = new String(mContentEditText.getText().toString());
 		} else {
 			if (mLastSaveContent.equals(mContentEditText.getText().toString())) {
 				return;
@@ -251,16 +265,21 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		memo.setContent(mContentEditText.getText().toString());
 		memo.setCursorPosition(mContentEditText.getSelectionStart());
 		ContentValues values = memo.toContentValues();
+
 		if (mCreateNew) {
 			mCreateNew = false;
+			mInserting = true;
 			Uri retUri = getContentResolver().insert(MemoProvider.MEMO_URI,
 					values);
 			memo.setId(Integer.valueOf(retUri.getLastPathSegment()));
+			mEvernote.syncMemo(memo);
 		} else {
 			getContentResolver().update(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), values, null, null);
+			mEvernote.syncMemo(memo);
 		}
+
 	}
 
 	@Override
@@ -276,14 +295,34 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				saveMemo();
+				saveMemo(false);
 			}
-		}, 1000, 10000);
+		}, 5000, 10000);
 	}
 
 	private void saveMemoAndLeave() {
-		saveMemo();
+		saveMemo(true);
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
+	}
+
+	@Override
+	public void CreateCallback(boolean result, Memo memo, Note data) {
+		mInserting = false;
+		if (result == true) {
+			this.memo.setHash(MD5.getHex(data.getContentHash()));
+			this.memo.setEnid(data.getGuid());
+			Log.e("插入结果", this.memo.getEnid());
+		} else {
+			Log.e("插入失败", "shibai");
+		}
+		mInsertResult = result;
+		Toast.makeText(mContext, "插入完成 " + result, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void UpdateCallback(boolean result, Memo memo, Note data) {
+		Toast.makeText(mContext, "Update Finished " + result,
+				Toast.LENGTH_SHORT).show();
 	}
 }

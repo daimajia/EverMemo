@@ -35,6 +35,7 @@ import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
+import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
@@ -48,6 +49,7 @@ public class StartActivity extends FragmentActivity implements
 	private LinearLayout mUndoPanel;
 	private Button mUndo, mSetting;
 	private int mUndoPanelHeight;
+	public static Evernote mEvernote;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class StartActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		mContext = this;
+		mEvernote = new Evernote(mContext);
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
@@ -141,4 +144,5 @@ public class StartActivity extends FragmentActivity implements
 			startActivity(new Intent(mContext, SettingActivity.class));
 		}
 	}
+
 }
