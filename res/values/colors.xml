@@ -12,5 +12,6 @@
     <color name="transparent_image_button">#00000000</color>
     <color name="delete_panel_background">#FF4900</color>
     <color name="delete_panel_text_color">#FFFFFF</color>
+    <color name="proudly_color">#7E7E7E</color>
 
 </resources>

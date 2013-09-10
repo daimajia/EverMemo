@@ -59,7 +59,10 @@
 
 
     <!-- Setting -->
+    <dimen name="proud_text_size">11sp</dimen>
+    <dimen name="proud_margin_bottom">15dp</dimen>
     <dimen name="setting_panel_height">55dp</dimen>
+    <dimen name="setting_image">20dp</dimen>
     <!-- Setting -->
 
 </resources>

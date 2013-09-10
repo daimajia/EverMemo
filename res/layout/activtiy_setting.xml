@@ -12,17 +12,20 @@
         android:paddingLeft="5dp" >
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/setting_image"
+            android:layout_height="@dimen/setting_image"
             android:layout_gravity="center"
-            android:src="@null" />
+            android:contentDescription="@null"
+            android:src="@null" >
+        </ImageView>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="设置" />
+            android:text="@string/setting" >
+        </TextView>
     </LinearLayout>
 
     <View
@@ -44,23 +47,25 @@
             android:orientation="horizontal" >
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/setting_image"
+                android:layout_height="@dimen/setting_image"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:text="绑定Evernote" />
+                android:text="@string/bind_evernote" />
 
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
         </LinearLayout>
 
@@ -75,9 +80,10 @@
             android:orientation="horizontal" >
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/setting_image"
+                android:layout_height="@dimen/setting_image"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
 
             <TextView
@@ -86,7 +92,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:text="每次启动打开便签" />
+                android:text="@string/start_from_memo" />
 
             <ToggleButton
                 android:layout_width="wrap_content"
@@ -109,23 +115,25 @@
             android:orientation="horizontal" >
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/setting_image"
+                android:layout_height="@dimen/setting_image"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:text="建议反馈" />
+                android:text="@string/feedback" />
 
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
         </LinearLayout>
 
@@ -141,9 +149,10 @@
             android:orientation="horizontal" >
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/setting_image"
+                android:layout_height="@dimen/setting_image"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
 
             <TextView
@@ -152,12 +161,13 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:text="给我们好评" />
+                android:text="@string/rate_us" />
 
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
                 android:src="@null" />
         </LinearLayout>
 
@@ -166,5 +176,14 @@
             android:layout_height="@dimen/divider_line_height"
             android:background="@color/divider_line_color" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/proud_margin_bottom"
+        android:gravity="bottom|center"
+        android:text="@string/proudly"
+        android:textColor="@color/proudly_color"
+        android:textSize="@dimen/proud_text_size" />
 
 </LinearLayout>

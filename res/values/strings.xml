@@ -12,5 +12,11 @@
     <string name="relaxe_save_leave">松手保存退出</string>
     <string name="one_delete">1 memo deleted</string>
     <string name="undo">Undo</string>
+    <string name="proudly">Proudly by Mudlab9\nCoded by Daimajia,Designed by Plidezus\nmade in Beijing&amp;Shanghai</string>
+    <string name="rate_us">给我们好评</string>
+    <string name="feedback">建议反馈</string>
+    <string name="start_from_memo">每次启动打开便签</string>
+    <string name="bind_evernote">绑定Evernote</string>
+    <string name="setting">设置</string>
 
 </resources>
