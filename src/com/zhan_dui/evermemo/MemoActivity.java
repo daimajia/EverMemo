@@ -9,7 +9,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,7 +30,6 @@ import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.DateHelper;
-import com.zhan_dui.utils.MD5;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class MemoActivity extends FragmentActivity implements OnClickListener,
