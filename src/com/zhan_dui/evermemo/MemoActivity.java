@@ -21,9 +21,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.zhan_dui.data.Memo;
@@ -40,7 +40,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private EditText mContentEditText;
 	private TextView mDateText;
 	private Memo memo;
-	private boolean mOriginCreateNew;
 	private boolean mCreateNew;
 	private Context mContext;
 	private Button mList;
@@ -54,8 +53,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private Timer mTimer;
 	private Evernote mEvernote;
-	private boolean mInserting;
-	private boolean mInsertResult;
 
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
@@ -69,15 +66,12 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null && bundle.getSerializable("memo") != null) {
 			memo = (Memo) bundle.getSerializable("memo");
-			mOriginCreateNew = false;
 			mCreateNew = false;
 			mLastSaveContent = memo.getContent();
 		} else {
 			memo = new Memo();
-			mOriginCreateNew = true;
 			mCreateNew = true;
 		}
-		mInserting = false;
 		setContentView(R.layout.activity_memo);
 		mDateText = (TextView) findViewById(R.id.time);
 		mContentEditText = (EditText) findViewById(R.id.content);
@@ -105,7 +99,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mContentEditText.setOnTouchListener(this);
 		mPullLayoutParams = (LayoutParams) mPullSaveLinearLayout
 				.getLayoutParams();
-		mEvernote = new Evernote(mContext,this);
+		mEvernote = new Evernote(mContext, this);
 	}
 
 	@Override
@@ -268,7 +262,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 		if (mCreateNew) {
 			mCreateNew = false;
-			mInserting = true;
 			Uri retUri = getContentResolver().insert(MemoProvider.MEMO_URI,
 					values);
 			memo.setId(Integer.valueOf(retUri.getLastPathSegment()));
@@ -308,21 +301,21 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public void CreateCallback(boolean result, Memo memo, Note data) {
-		mInserting = false;
 		if (result == true) {
-			this.memo.setHash(MD5.getHex(data.getContentHash()));
+			this.memo.setHash(data.getContentHash());
 			this.memo.setEnid(data.getGuid());
-			Log.e("插入结果", this.memo.getEnid());
+			Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Log.e("插入失败", "shibai");
+			Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
 		}
-		mInsertResult = result;
-		Toast.makeText(mContext, "插入完成 " + result, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void UpdateCallback(boolean result, Memo memo, Note data) {
-		Toast.makeText(mContext, "Update Finished " + result,
-				Toast.LENGTH_SHORT).show();
+		if (result) {
+			Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
+		}
 	}
 }

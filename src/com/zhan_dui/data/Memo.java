@@ -27,10 +27,10 @@ public class Memo implements Serializable {
 	private int mWallId;
 	private int mOrder;
 	private int mCursorPosition;
+	private byte[] mHash;
 
 	private String mGuid;
 	private String mEnid;
-	private String mHash;
 	private String mContent;
 	private String mAttributes;
 	private String mStatus;
@@ -41,7 +41,7 @@ public class Memo implements Serializable {
 	}
 
 	public Memo(Cursor cursor) {
-		mHash = cursor.getString(cursor.getColumnIndex("hash"));
+		mHash = cursor.getBlob(cursor.getColumnIndex("hash"));
 		mContent = cursor.getString(cursor.getColumnIndex("content"));
 		mAttributes = cursor.getString(cursor.getColumnIndex("attributes"));
 		mStatus = cursor.getString(cursor.getColumnIndex("status"));
@@ -150,7 +150,7 @@ public class Memo implements Serializable {
 		mEnid = enid;
 	}
 
-	public void setHash(String hash) {
+	public void setHash(byte[] hash) {
 		mHash = hash;
 	}
 
@@ -190,7 +190,7 @@ public class Memo implements Serializable {
 		return mGuid;
 	}
 
-	public String getHash() {
+	public byte[] getHash() {
 		return mHash;
 	}
 

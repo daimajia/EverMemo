@@ -9,11 +9,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
+import com.evernote.edam.type.User;
 import com.zhan_dui.sync.Evernote;
+import com.zhan_dui.sync.Evernote.EvernoteLoginCallback;
 
-public class SettingActivity extends Activity implements OnClickListener {
+public class SettingActivity extends Activity implements OnClickListener,
+		EvernoteLoginCallback {
 	private ViewGroup mBindEvernote;
 
 	private Evernote mEvernote;
@@ -29,7 +33,7 @@ public class SettingActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activtiy_setting);
 		mBindEvernote = (ViewGroup) findViewById(R.id.bind_evernote);
 		mBindEvernote.setOnClickListener(this);
-		mEvernote = new Evernote(mContext);
+		mEvernote = new Evernote(mContext, this);
 	}
 
 	@Override
@@ -67,5 +71,28 @@ public class SettingActivity extends Activity implements OnClickListener {
 
 	public interface LoginCallback {
 		public void onAuthFinish(int resultCode);
+	}
+
+	@Override
+	public void onLoginResult(Boolean result) {
+		if (result) {
+			Toast.makeText(mContext, "绑定成功", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(mContext, "绑定失败", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onUserinfo(Boolean result, User user) {
+
+	}
+
+	@Override
+	public void onLogout(Boolean reuslt) {
+		if (reuslt) {
+			Toast.makeText(mContext, "解除绑定成功", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(mContext, "解除绑定失败", Toast.LENGTH_SHORT).show();
+		}
 	}
 }
