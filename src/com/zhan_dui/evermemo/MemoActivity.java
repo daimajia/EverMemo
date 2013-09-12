@@ -208,6 +208,12 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+
+		if (mContentEditText.getScrollY() != 0) {
+			return false;
+		}
+		mContentEditText.setSelection(0);
+
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			dy = (int) event.getY();
@@ -225,8 +231,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 			mPullLayoutParams.topMargin = newTop;
 			mPullSaveLinearLayout.setLayoutParams(mPullLayoutParams);
-
-			return true;
 		case MotionEvent.ACTION_UP:
 			if (mPullLayoutParams.topMargin < 0) {
 				mPullSaveLinearLayout.startAnimation(new MarginAnimation(
@@ -239,7 +243,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 			break;
 		}
-		return false;
+		return true;
 	}
 
 	private void saveMemo(Boolean toLeave) {
