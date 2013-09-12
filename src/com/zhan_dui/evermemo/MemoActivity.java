@@ -30,6 +30,7 @@ import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.DateHelper;
+import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class MemoActivity extends FragmentActivity implements OnClickListener,
@@ -54,6 +55,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
+	public static final String LogTag = "MemoActivity Log";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -204,23 +206,31 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private int dy;
 	private int maxMarginTop = 60;
-	private final float DRAG_RATIO = 0.3f;
+	private final float DRAG_RATIO = 0.1f;
+	private boolean remeber = false;
+	private boolean preivous0 = false;
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 
-		if (mContentEditText.getScrollY() != 0) {
+		if (mContentEditText.getScrollY() != 0)
 			return false;
-		}
-		mContentEditText.setSelection(0);
 
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
+			Logger.e(LogTag, "Action Down");
 			dy = (int) event.getY();
-			break;
+			return false;
 		case MotionEvent.ACTION_MOVE:
-
+			if (mContentEditText.getScrollY() != 0) {
+				return false;
+			} else if (!remeber) {
+				dy = (int) event.getY();
+				remeber = true;
+			}
 			int y = (int) event.getY();
+			Logger.e(LogTag, "Action Move" + (y - dy) + "  " + (y - dy)
+					* DRAG_RATIO);
 			int newTop = (int) (mPullLayoutParams.topMargin + (y - dy)
 					* DRAG_RATIO);
 			newTop = (newTop > maxMarginTop) ? maxMarginTop : newTop;
@@ -231,7 +241,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 			mPullLayoutParams.topMargin = newTop;
 			mPullSaveLinearLayout.setLayoutParams(mPullLayoutParams);
+			break;
 		case MotionEvent.ACTION_UP:
+			Logger.e(LogTag, "Action Up");
 			if (mPullLayoutParams.topMargin < 0) {
 				mPullSaveLinearLayout.startAnimation(new MarginAnimation(
 						mPullSaveLinearLayout, 0, mPullMarginTop, 0, 0));
@@ -241,6 +253,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 						mPullSaveLinearLayout, 0, 0, 0, 0));
 				saveMemoAndLeave();
 			}
+			remeber = false;
 			break;
 		}
 		return true;
@@ -319,5 +332,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		} else {
 			Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	@Override
+	public void DeleteCallback(boolean result, Memo memo) {
+
 	}
 }
