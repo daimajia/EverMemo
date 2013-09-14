@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.InvalidAuthenticationException;
@@ -205,6 +206,8 @@ public class Evernote implements LoginCallback {
 
 		public void UpdateCallback(boolean result, Memo memo, Note data);
 
+		public void DeleteCallback(boolean result, Memo memo);
+
 	}
 
 	private void checkAndInsert(String notebookGuid, final Memo memo) {
@@ -399,4 +402,53 @@ public class Evernote implements LoginCallback {
 		}
 	}
 
+	private void deleteNote(final Memo memo) {
+		if (mEvernoteSession.isLoggedIn()) {
+			try {
+				Note note = memo.toDeleteNote();
+				mEvernoteSession
+						.getClientFactory()
+						.createNoteStoreClient()
+						.deleteNote(note.getGuid(),
+								new OnClientCallback<Integer>() {
+
+									@Override
+									public void onSuccess(Integer data) {
+										Logger.e(LogTag, "删除Memo成功");
+										if (mEvernoteSyncCallback != null) {
+											mEvernoteSyncCallback
+													.DeleteCallback(true, memo);
+										}
+									}
+
+									@Override
+									public void onException(Exception exception) {
+										Logger.e(LogTag, "删除Memo失败");
+										if (mEvernoteSyncCallback != null) {
+											mEvernoteSyncCallback
+													.DeleteCallback(false, memo);
+										}
+									}
+								});
+			} catch (TTransportException e) {
+				Logger.e(LogTag, "删除Memo失败");
+				if (mEvernoteSyncCallback != null) {
+					mEvernoteSyncCallback.DeleteCallback(false, memo);
+				}
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void deleteMemo(Memo memo) {
+		Logger.e(LogTag, "准备删除Memo");
+		if (memo != null && TextUtils.isEmpty(memo.getEnid()) == false) {
+			deleteNote(memo);
+		} else {
+			Logger.e(LogTag, "打算删除的Memo缺少Enid信息，放弃");
+			if (mEvernoteSyncCallback != null) {
+				mEvernoteSyncCallback.DeleteCallback(false, memo);
+			}
+		}
+	}
 }

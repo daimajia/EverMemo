@@ -21,12 +21,18 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.huewu.pla.lib.MultiColumnListView;
@@ -36,6 +42,7 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
+import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
@@ -111,16 +118,36 @@ public class StartActivity extends FragmentActivity implements
 	@SuppressLint("HandlerLeak")
 	private Handler mHidePanelHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
+			isDisplay = false;
 			mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0,
 					-mUndoPanelHeight));
 		};
 	};
 
+	private boolean isDisplay = false;;
+	private MarginAnimation m2ShowAnimation;
+	private DeleteAnimation mDeleteAnimation = new DeleteAnimation(null);
+	private Timer mAnimationTimer;
+
 	@Override
 	public void wakeRecoveryPanel(Memo memo) {
 		mCurrentMemo = memo;
-		mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0, 0));
-		new Timer().schedule(new TimerTask() {
+
+		if (isDisplay) {
+			Logger.e("正在显示");
+			mAnimationTimer.cancel();
+			m2ShowAnimation.cancel();
+			RelativeLayout.LayoutParams mLayoutParams = (android.widget.RelativeLayout.LayoutParams) mUndoPanel
+					.getLayoutParams();
+			mLayoutParams.setMargins(0, 0, 0, -mUndoPanelHeight);
+			mUndoPanel.setLayoutParams(mLayoutParams);
+		}
+		Logger.e("开启新动画");
+		m2ShowAnimation = new MarginAnimation(mUndoPanel, 0, 0, 0, 0,
+				mDeleteAnimation.setDeleteMemo(memo));
+		mUndoPanel.startAnimation(m2ShowAnimation);
+		mAnimationTimer = new Timer();
+		mAnimationTimer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
@@ -143,6 +170,40 @@ public class StartActivity extends FragmentActivity implements
 		} else if (v.getId() == R.id.setting_btn) {
 			startActivity(new Intent(mContext, SettingActivity.class));
 		}
+	}
+
+	private class DeleteAnimation implements AnimationListener {
+
+		private Memo memo;
+
+		public DeleteAnimation setDeleteMemo(Memo memo) {
+			this.memo = memo;
+			return this;
+		}
+
+		public DeleteAnimation(Memo memo) {
+			setDeleteMemo(memo);
+		}
+
+		@Override
+		public void onAnimationStart(Animation animation) {
+			Logger.e("动画开始");
+			isDisplay = true;
+		}
+
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			Logger.e("动画结束");
+			if (memo.getEnid() != null && TextUtils.isEmpty(memo.getEnid())) {
+				mEvernote.deleteMemo(memo);
+			}
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+
+		}
+
 	}
 
 }

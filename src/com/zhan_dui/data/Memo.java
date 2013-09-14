@@ -123,6 +123,12 @@ public class Memo implements Serializable {
 		return note;
 	}
 
+	public Note toDeleteNote() {
+		Note note = new Note();
+		note.setGuid(mEnid);
+		return note;
+	}
+
 	private String convertContentToEvernote() {
 		String EvernoteContent = EvernoteUtil.NOTE_PREFIX
 				+ getContent().replace("\n", "<br/>")

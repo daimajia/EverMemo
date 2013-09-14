@@ -32,6 +32,12 @@ public class MarginAnimation extends Animation {
 		setDuration(250);
 	}
 
+	public MarginAnimation(ViewGroup target, int finalLeft, int finalTop,
+			int finalRight, int finalBottom, AnimationListener animationListener) {
+		this(target, finalLeft, finalTop, finalRight, finalBottom);
+		setAnimationListener(animationListener);
+	}
+
 	@Override
 	protected void applyTransformation(float interpolatedTime, Transformation t) {
 		super.applyTransformation(interpolatedTime, t);
@@ -43,4 +49,5 @@ public class MarginAnimation extends Animation {
 		originLayoutParams.setMargins(newLeft, newTop, newRight, newBottom);
 		mTarget.setLayoutParams(originLayoutParams);
 	}
+
 }
