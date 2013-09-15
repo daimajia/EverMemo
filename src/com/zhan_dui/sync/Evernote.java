@@ -1,5 +1,6 @@
 package com.zhan_dui.sync;
 
+import java.io.Console;
 import java.util.List;
 
 import android.app.Activity;
@@ -8,12 +9,17 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.client.android.InvalidAuthenticationException;
 import com.evernote.client.android.OnClientCallback;
+import com.evernote.edam.notestore.NoteFilter;
+import com.evernote.edam.notestore.NoteMetadata;
+import com.evernote.edam.notestore.NotesMetadataList;
+import com.evernote.edam.notestore.NotesMetadataResultSpec;
 import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.User;
@@ -23,7 +29,6 @@ import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.SettingActivity.LoginCallback;
 import com.zhan_dui.utils.Logger;
-import com.zhan_dui.utils.MD5;
 
 public class Evernote implements LoginCallback {
 
@@ -257,6 +262,11 @@ public class Evernote implements LoginCallback {
 
 	private void handleMemo(Memo memo) {
 		Logger.e(LogTag, "开始处理Memo");
+		ContentValues values = new ContentValues();
+		values.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_UP);
+		mContentResolver
+				.update(ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+						memo.getId()), values, null, null);
 		if (memo.getEnid() != null && memo.getEnid().length() != 0) {
 			Logger.e(LogTag, "决定更新Memo");
 			updateNote(memo);
@@ -285,9 +295,13 @@ public class Evernote implements LoginCallback {
 							public void onSuccess(Note data) {
 								Logger.e(LogTag, "Memo Note创建成功");
 								ContentValues values = new ContentValues();
-								String hash = MD5.getHex(data.getContentHash());
 								values.put(MemoDB.EUID, data.getGuid());
-								values.put(MemoDB.HASH, hash);
+								values.put(MemoDB.HASH, data.getContentHash());
+								values.put(MemoDB.SYNCSTATUS, Memo.NEED_NOTHING);
+								values.put(MemoDB.UPDATEDTIME,
+										data.getUpdated());
+								values.put(MemoDB.CREATEDTIME,
+										data.getCreated());
 								Logger.e(LogTag, "Memo Note创建成功-更新数据库");
 								mContentResolver.update(ContentUris
 										.withAppendedId(MemoProvider.MEMO_URI,
@@ -337,6 +351,7 @@ public class Evernote implements LoginCallback {
 								Logger.e(LogTag, "Memo Note更新成功");
 								ContentValues values = new ContentValues();
 								values.put(MemoDB.HASH, data.getContentHash());
+								values.put(MemoDB.SYNCSTATUS, Memo.NEED_NOTHING);
 								mContentResolver.update(ContentUris
 										.withAppendedId(MemoProvider.MEMO_URI,
 												memo.getId()), values, null,
@@ -415,6 +430,14 @@ public class Evernote implements LoginCallback {
 									@Override
 									public void onSuccess(Integer data) {
 										Logger.e(LogTag, "删除Memo成功");
+										ContentValues values = new ContentValues();
+										values.put(MemoDB.SYNCSTATUS,
+												Memo.NEED_NOTHING);
+										mContentResolver.update(ContentUris
+												.withAppendedId(
+														MemoProvider.MEMO_URI,
+														memo.getId()), values,
+												null, null);
 										if (mEvernoteSyncCallback != null) {
 											mEvernoteSyncCallback
 													.DeleteCallback(true, memo);
@@ -443,6 +466,11 @@ public class Evernote implements LoginCallback {
 	public void deleteMemo(Memo memo) {
 		Logger.e(LogTag, "准备删除Memo");
 		if (memo != null && TextUtils.isEmpty(memo.getEnid()) == false) {
+			ContentValues values = new ContentValues();
+			values.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_DELETE);
+			mContentResolver.update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							memo.getId()), values, null, null);
 			deleteNote(memo);
 		} else {
 			Logger.e(LogTag, "打算删除的Memo缺少Enid信息，放弃");
@@ -451,4 +479,100 @@ public class Evernote implements LoginCallback {
 			}
 		}
 	}
+
+	public void syncUp() {
+		new SyncUpThread().start();
+	}
+
+	public void syncDown() {
+		Logger.e(LogTag, "开始SyncDown");
+		new SyncDownThread().start();
+	}
+
+	class SyncUpThread extends Thread {
+		@Override
+		public void run() {
+			super.run();
+			String selection = MemoDB.STATUS + "!='" + Memo.STATUS_DELETE
+					+ "' and " + MemoDB.SYNCSTATUS + " != '"
+					+ Memo.NEED_NOTHING + "'";
+			Cursor cursor = mContentResolver.query(ContentUris.withAppendedId(
+					MemoProvider.MEMO_URI, MemoProvider.MEMOS), null,
+					selection, null, null);
+			while (cursor.moveToNext()) {
+				Memo memo = new Memo(cursor);
+
+				if (memo.isNeedSyncDelete()) {
+					Logger.e(LogTag, memo.getId() + "需要向上删除");
+					deleteMemo(memo);
+				} else if (memo.isNeedUpload()) {
+					Logger.e(LogTag, memo.getId() + "需要向上删除");
+					syncMemo(memo);
+				}
+			}
+		}
+	}
+
+	class SyncDownThread extends Thread {
+		@Override
+		public void run() {
+			super.run();
+			getAllNotesInDirectory(mSharedPreferences.getString(
+					EVERNOTE_NOTEBOOK_GUID, null));
+		}
+	}
+
+	private void getAllNotesInDirectory(String notebookguid) {
+		if (notebookguid == null) {
+			Logger.e(LogTag, "SyncDown获取数据出错1");
+			return;
+		}
+		NoteFilter noteFilter = new NoteFilter();
+		noteFilter.setNotebookGuid(notebookguid);
+		noteFilter.setAscending(false);
+		NotesMetadataResultSpec notesMetadataResultSpec = new NotesMetadataResultSpec();
+		notesMetadataResultSpec.setIncludeTitle(true);
+		notesMetadataResultSpec.setIncludeContentLength(true);
+		notesMetadataResultSpec.setIncludeUpdated(true);
+		try {
+			mEvernoteSession
+					.getClientFactory()
+					.createNoteStoreClient()
+					.findNotesMetadata(noteFilter, 0, 20,
+							notesMetadataResultSpec,
+							new OnClientCallback<NotesMetadataList>() {
+
+								@Override
+								public void onSuccess(NotesMetadataList data) {
+									Logger.e(LogTag,
+											"获取数据成功,大小是：" + data.getNotesSize());
+									for (int i = 0; i < data.getNotes().size(); i++) {
+										NoteMetadata currentNoteMetadata = data
+												.getNotes().get(i);
+										Logger.e(
+												LogTag,
+												"获取到的数据:"
+														+ currentNoteMetadata
+																.getTitle()
+														+ " "
+														+ currentNoteMetadata
+																.getContentLength()
+														+ " "
+														+ currentNoteMetadata
+																.getUpdated());
+									}
+								}
+
+								@Override
+								public void onException(Exception exception) {
+									Logger.e(LogTag, "SyncDown获取数据出错2");
+								}
+
+							});
+		} catch (TTransportException e) {
+			Logger.e(LogTag, "SyncDown获取数据出错");
+			e.printStackTrace();
+		}
+	}
+
 }

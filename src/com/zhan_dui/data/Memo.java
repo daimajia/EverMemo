@@ -18,6 +18,21 @@ public class Memo implements Serializable {
 	public static final String STATUS_DELETE = "delete";
 	public static final String STATUS_COMMON = "common";
 
+	/**
+	 * need to do nothing
+	 */
+	public static final int NEED_NOTHING = 0;
+
+	/**
+	 * need to sync in Evernote
+	 */
+	public static final int NEED_SYNC_UP = 1;
+
+	/**
+	 * need to delete in Evernote
+	 */
+	public static final int NEED_SYNC_DELETE = 2;
+
 	private long mCreatedTime;
 	private long mUpdatedTime;
 	private long mLastSyncTime;
@@ -28,6 +43,7 @@ public class Memo implements Serializable {
 	private int mOrder;
 	private int mCursorPosition;
 	private byte[] mHash;
+	private int mSyncStatus = NEED_NOTHING;
 
 	private String mGuid;
 	private String mEnid;
@@ -57,6 +73,7 @@ public class Memo implements Serializable {
 		mOrder = cursor.getInt(cursor.getColumnIndex("orderid"));
 		mCursorPosition = cursor
 				.getInt(cursor.getColumnIndex("cursorposition"));
+		mSyncStatus = cursor.getInt(cursor.getColumnIndex("syncstatus"));
 	}
 
 	public ContentValues toContentValues() {
@@ -74,6 +91,7 @@ public class Memo implements Serializable {
 		values.put("content", mContent);
 		values.put("hash", mHash);
 		values.put("cursorposition", mCursorPosition);
+		values.put("syncstatus", mSyncStatus);
 		return values;
 	}
 
@@ -86,6 +104,7 @@ public class Memo implements Serializable {
 		memo.mEnid = values.getAsString("enid");
 		memo.mWallId = values.getAsInteger("wallid");
 		memo.mOrder = values.getAsInteger("orderid");
+		memo.mSyncStatus = values.getAsInteger("syncstatus");
 		memo.setContent(values.getAsString("content"));
 		memo.mAttributes = values.getAsString("attributes");
 		memo.mStatus = values.getAsString("status");
@@ -160,6 +179,10 @@ public class Memo implements Serializable {
 		mHash = hash;
 	}
 
+	private void setSyncStatus(int syncstatus) {
+		mSyncStatus = syncstatus;
+	}
+
 	public long getUpdatedTime() {
 		return mUpdatedTime;
 	}
@@ -188,6 +211,10 @@ public class Memo implements Serializable {
 		return mCursorPosition;
 	}
 
+	public int getSyncStatus() {
+		return mSyncStatus;
+	}
+
 	public String getEnid() {
 		return mEnid;
 	}
@@ -210,6 +237,30 @@ public class Memo implements Serializable {
 
 	public String getStatus() {
 		return mStatus;
+	}
+
+	public void setNeedSyncDelete() {
+		setSyncStatus(NEED_SYNC_DELETE);
+	}
+
+	public void setNeedSyncUp() {
+		setSyncStatus(NEED_SYNC_UP);
+	}
+
+	public boolean isNeedUpload() {
+		if (mSyncStatus == NEED_SYNC_UP) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isNeedSyncDelete() {
+		if (mSyncStatus == NEED_SYNC_DELETE) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

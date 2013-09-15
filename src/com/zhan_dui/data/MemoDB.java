@@ -11,6 +11,9 @@ public class MemoDB extends SQLiteOpenHelper {
 	public final static String STATUS = "status";
 	public final static String EUID = "enid";
 	public final static String HASH = "hash";
+	public final static String SYNCSTATUS = "syncstatus";
+	public final static String UPDATEDTIME = "updatedtime";
+	public final static String CREATEDTIME = "createdtime";
 
 	private final String CREATE_MEMO_TABLE = "create table Memo(`_id` integer primary key autoincrement,"
 			+ "`content` text,"
@@ -24,8 +27,8 @@ public class MemoDB extends SQLiteOpenHelper {
 			+ "`enid` text,"
 			+ "`wallid` text,"
 			+ "`attributes` text,"
-			+ "`cursorposition` int"
-			+ ");";
+			+ "`cursorposition` int,"
+			+ "`syncstatus` int" + ");";
 
 	public static final String Name = "EverMemo";
 	public static final int VERSION = 1;

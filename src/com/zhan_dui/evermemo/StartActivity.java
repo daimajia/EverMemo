@@ -21,12 +21,9 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -34,7 +31,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.evernote.edam.type.Note;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
@@ -42,11 +41,13 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
+import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
-		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener {
+		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener,
+		EvernoteSyncCallback {
 
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
@@ -64,7 +65,8 @@ public class StartActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		mContext = this;
-		mEvernote = new Evernote(mContext);
+		mEvernote = new Evernote(mContext, this);
+
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
@@ -114,37 +116,44 @@ public class StartActivity extends FragmentActivity implements
 		mMemosAdapter.swapCursor(null);
 	}
 
-	private Memo mCurrentMemo;
+	private DeleteAnimation m2DeleteAnimation = new DeleteAnimation(null);
+	private Memo mToDeleteMemo;
 	@SuppressLint("HandlerLeak")
 	private Handler mHidePanelHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			isDisplay = false;
+			if (msg.what == TO_DELETE) {
+				m2DeleteAnimation.setDeleteMemo(mToDeleteMemo);
+			} else if (msg.what == NOT_TO_DELETE) {
+				m2DeleteAnimation.setDeleteMemo(null);
+			}
 			mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0,
-					-mUndoPanelHeight));
+					-mUndoPanelHeight, m2DeleteAnimation));
+
 		};
 	};
 
 	private boolean isDisplay = false;;
 	private MarginAnimation m2ShowAnimation;
-	private DeleteAnimation mDeleteAnimation = new DeleteAnimation(null);
 	private Timer mAnimationTimer;
+
+	private final int TO_DELETE = 0;
+	private final int NOT_TO_DELETE = 1;
 
 	@Override
 	public void wakeRecoveryPanel(Memo memo) {
-		mCurrentMemo = memo;
 
 		if (isDisplay) {
-			Logger.e("正在显示");
 			mAnimationTimer.cancel();
 			m2ShowAnimation.cancel();
 			RelativeLayout.LayoutParams mLayoutParams = (android.widget.RelativeLayout.LayoutParams) mUndoPanel
 					.getLayoutParams();
 			mLayoutParams.setMargins(0, 0, 0, -mUndoPanelHeight);
 			mUndoPanel.setLayoutParams(mLayoutParams);
+			deleteMemo(memo);
 		}
-		Logger.e("开启新动画");
-		m2ShowAnimation = new MarginAnimation(mUndoPanel, 0, 0, 0, 0,
-				mDeleteAnimation.setDeleteMemo(memo));
+		mToDeleteMemo = memo;
+		m2ShowAnimation = new MarginAnimation(mUndoPanel, 0, 0, 0, 0);
+		isDisplay = true;
 		mUndoPanel.startAnimation(m2ShowAnimation);
 		mAnimationTimer = new Timer();
 		mAnimationTimer.schedule(new TimerTask() {
@@ -152,24 +161,33 @@ public class StartActivity extends FragmentActivity implements
 			@Override
 			public void run() {
 				Looper.prepare();
-				mHidePanelHandler.sendEmptyMessage(0);
+				mHidePanelHandler.sendEmptyMessage(TO_DELETE);
 				Looper.loop();
 			}
 		}, 7000);
+
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.undo_btn) {
-			ContentValues values = mCurrentMemo.toContentValues();
+			mAnimationTimer.cancel();
+			ContentValues values = mToDeleteMemo.toContentValues();
 			values.put(MemoDB.STATUS, Memo.STATUS_COMMON);
-			mHidePanelHandler.sendEmptyMessage(0);
+			mHidePanelHandler.sendEmptyMessage(NOT_TO_DELETE);
 			getContentResolver().update(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-							mCurrentMemo.getId()), values, null, null);
+							mToDeleteMemo.getId()), values, null, null);
 		} else if (v.getId() == R.id.setting_btn) {
-			startActivity(new Intent(mContext, SettingActivity.class));
+//			startActivity(new Intent(mContext, SettingActivity.class));
+//			mEvernote.syncUp();
+			mEvernote.syncDown();
 		}
+	}
+
+	private void deleteMemo(Memo memo) {
+		mEvernote.deleteMemo(memo);
+		Logger.e("开始同步删除memo");
 	}
 
 	private class DeleteAnimation implements AnimationListener {
@@ -187,23 +205,41 @@ public class StartActivity extends FragmentActivity implements
 
 		@Override
 		public void onAnimationStart(Animation animation) {
-			Logger.e("动画开始");
-			isDisplay = true;
+
 		}
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
-			Logger.e("动画结束");
-			if (memo.getEnid() != null && TextUtils.isEmpty(memo.getEnid())) {
-				mEvernote.deleteMemo(memo);
+			isDisplay = false;
+			if (memo != null) {
+				deleteMemo(memo);
 			}
 		}
 
 		@Override
 		public void onAnimationRepeat(Animation animation) {
-
+			
 		}
 
+	}
+
+	@Override
+	public void CreateCallback(boolean result, Memo memo, Note data) {
+		// useless
+	}
+
+	@Override
+	public void UpdateCallback(boolean result, Memo memo, Note data) {
+		// useless
+	}
+
+	@Override
+	public void DeleteCallback(boolean result, Memo memo) {
+		if (result) {
+			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 }

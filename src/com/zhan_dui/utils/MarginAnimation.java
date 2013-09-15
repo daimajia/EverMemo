@@ -38,6 +38,14 @@ public class MarginAnimation extends Animation {
 		setAnimationListener(animationListener);
 	}
 
+	public MarginAnimation(ViewGroup target, int finalLeft, int finalTop,
+			int finalRight, int finalBottom,
+			AnimationListener animationListener, int duration) {
+		this(target, finalLeft, finalTop, finalRight, finalBottom,
+				animationListener);
+		setDuration(duration);
+	}
+
 	@Override
 	protected void applyTransformation(float interpolatedTime, Transformation t) {
 		super.applyTransformation(interpolatedTime, t);

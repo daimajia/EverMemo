@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -209,14 +208,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private int maxMarginTop = 60;
 	private final float DRAG_RATIO = 0.1f;
 	private boolean remeber = false;
-	private boolean preivous0 = false;
 	private boolean mstarttomove = false;
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		// mContentEditText.setFocusableInTouchMode(false);
-		// mContentEditText.setFocusable(false);
-		// mContentEditText.setSelection(0);
 		if (mContentEditText.getScrollY() != 0)
 			return false;
 
@@ -273,7 +268,8 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	private void saveMemo(Boolean toLeave) {
-		if (mContentEditText.getText().toString().trim().length() == 0) {
+		if (mCreateNew
+				&& mContentEditText.getText().toString().trim().length() == 0) {
 			return;
 		}
 
@@ -293,14 +289,21 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			Uri retUri = getContentResolver().insert(MemoProvider.MEMO_URI,
 					values);
 			memo.setId(Integer.valueOf(retUri.getLastPathSegment()));
-			mEvernote.syncMemo(memo);
 		} else {
-			getContentResolver().update(
-					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-							memo.getId()), values, null, null);
+			if (mContentEditText.getText().toString().trim().length() == 0) {
+				getContentResolver().delete(
+						ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+								memo.getId()), null, null);
+				mCreateNew = true;
+			} else {
+				getContentResolver().update(
+						ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+								memo.getId()), values, null, null);
+			}
+		}
+		if (toLeave) {
 			mEvernote.syncMemo(memo);
 		}
-
 	}
 
 	@Override
@@ -332,6 +335,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (result == true) {
 			this.memo.setHash(data.getContentHash());
 			this.memo.setEnid(data.getGuid());
+			ContentValues values = this.memo.toContentValues();
+			mContext.getContentResolver().update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							this.memo.getId()), values, null, null);
 			Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
 		} else {
 			Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
@@ -349,6 +356,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
-		
+		if(result){
+			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+		}else{
+			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
+		}
 	}
 }
