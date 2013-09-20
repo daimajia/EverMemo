@@ -1,15 +1,13 @@
 package com.zhan_dui.data;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.evernote.client.android.EvernoteUtil;
 import com.evernote.edam.type.Note;
+import com.zhan_dui.utils.Logger;
 
 public class Memo implements Serializable {
 
@@ -18,6 +16,7 @@ public class Memo implements Serializable {
 	public static final String STATUS_DELETE = "delete";
 	public static final String STATUS_COMMON = "common";
 
+	private static final String LogTag = "Memo";
 	/**
 	 * need to do nothing
 	 */
@@ -32,6 +31,11 @@ public class Memo implements Serializable {
 	 * need to delete in Evernote
 	 */
 	public static final int NEED_SYNC_DELETE = 2;
+
+	/**
+	 * syning up
+	 */
+	public static final int SYNCING = 3;
 
 	private long mCreatedTime;
 	private long mUpdatedTime;
@@ -54,6 +58,7 @@ public class Memo implements Serializable {
 	public Memo() {
 		mCreatedTime = System.currentTimeMillis();
 		mUpdatedTime = System.currentTimeMillis();
+		setContent("");
 	}
 
 	public Memo(Cursor cursor) {
@@ -115,18 +120,38 @@ public class Memo implements Serializable {
 		return memo;
 	}
 
+	public static Memo buildInsertMemoFromNote(Note note) {
+		Memo memo = new Memo();
+		memo.setContent(note.getContent());
+		memo.setHash(note.getContentHash());
+		memo.setUpdatedTime(note.getUpdated());
+		memo.setCreatedTime(note.getCreated());
+		memo.setEnid(note.getGuid());
+		memo.setSyncStatus(NEED_NOTHING);
+		memo.mStatus = STATUS_COMMON;
+		memo.mCursorPosition = 0;
+		return memo;
+	}
+
+	public static Memo buildUpdateMemoFromNote(Note note, int _id) {
+		Memo memo = buildInsertMemoFromNote(note);
+		memo.setId(_id);
+		return memo;
+	}
+
 	public void setId(int _id) {
 		this._id = _id;
 	}
 
 	public String getTitle() {
-		BufferedReader reader = new BufferedReader(new StringReader(
-				getContent()));
-		try {
-			return reader.readLine();
-		} catch (IOException e) {
-			return "No Title";
-		}
+		return "abcdefg";
+		// String pure = getContent().replaceAll("<.+?>", "");
+		// BufferedReader reader = new BufferedReader(new StringReader(pure));
+		// try {
+		// return reader.readLine();
+		// } catch (IOException e) {
+		// return "No Title";
+		// }
 	}
 
 	public Note toNote(String notebookGuid) {
@@ -150,14 +175,14 @@ public class Memo implements Serializable {
 
 	private String convertContentToEvernote() {
 		String EvernoteContent = EvernoteUtil.NOTE_PREFIX
-				+ getContent().replace("\n", "<br/>")
+				+ getContent().replace("<br>", "<br></br>")
 				+ EvernoteUtil.NOTE_SUFFIX;
+		Logger.e(LogTag, "同步文字:" + EvernoteContent);
 		return EvernoteContent;
 	}
 
 	public void setContent(String content) {
 		mContent = content;
-		mUpdatedTime = System.currentTimeMillis();
 		mStatus = STATUS_COMMON;
 		mOrder = 0;
 		mAttributes = "";
@@ -181,6 +206,14 @@ public class Memo implements Serializable {
 
 	private void setSyncStatus(int syncstatus) {
 		mSyncStatus = syncstatus;
+	}
+
+	public void setUpdatedTime(long updatedtime) {
+		mUpdatedTime = updatedtime;
+	}
+
+	public void setCreatedTime(long createdtime) {
+		mCreatedTime = createdtime;
 	}
 
 	public long getUpdatedTime() {
@@ -261,6 +294,10 @@ public class Memo implements Serializable {
 		} else {
 			return false;
 		}
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 }

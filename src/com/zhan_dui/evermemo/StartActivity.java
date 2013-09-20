@@ -42,6 +42,7 @@ import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
+import com.zhan_dui.sync.SyncTask;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
@@ -149,7 +150,7 @@ public class StartActivity extends FragmentActivity implements
 					.getLayoutParams();
 			mLayoutParams.setMargins(0, 0, 0, -mUndoPanelHeight);
 			mUndoPanel.setLayoutParams(mLayoutParams);
-			deleteMemo(memo);
+			deleteMemo(mToDeleteMemo);
 		}
 		mToDeleteMemo = memo;
 		m2ShowAnimation = new MarginAnimation(mUndoPanel, 0, 0, 0, 0);
@@ -179,14 +180,12 @@ public class StartActivity extends FragmentActivity implements
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							mToDeleteMemo.getId()), values, null, null);
 		} else if (v.getId() == R.id.setting_btn) {
-//			startActivity(new Intent(mContext, SettingActivity.class));
-//			mEvernote.syncUp();
-			mEvernote.syncDown();
+			startActivity(new Intent(mContext, SettingActivity.class));
 		}
 	}
 
 	private void deleteMemo(Memo memo) {
-		mEvernote.deleteMemo(memo);
+		mEvernote.deleteMemo(memo, true);
 		Logger.e("开始同步删除memo");
 	}
 
@@ -218,9 +217,24 @@ public class StartActivity extends FragmentActivity implements
 
 		@Override
 		public void onAnimationRepeat(Animation animation) {
-			
+
 		}
 
+	}
+
+	private Timer mSyncTimer;
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// mSyncTimer.cancel();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// mSyncTimer = new Timer();
+		// mSyncTimer.schedule(new SyncTask(mContext), 5000, 400000l);
 	}
 
 	@Override

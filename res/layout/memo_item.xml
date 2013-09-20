@@ -32,7 +32,7 @@
         android:paddingLeft="@dimen/item_padding_left"
         android:paddingRight="@dimen/item_padding_right" >
 
-        <com.zhan_dui.custom.MinMaxTextView
+        <TextView
             android:id="@+id/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

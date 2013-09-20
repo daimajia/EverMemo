@@ -10,6 +10,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.zhan_dui.data.Memo;
+import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
@@ -86,8 +88,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mBottomBar.setOnClickListener(this);
 		mList.setOnClickListener(this);
 		mShare.setOnClickListener(this);
-		mContentEditText.setText(memo.getContent());
-		mContentEditText.setSelection(memo.getCursorPosition());
+		mContentEditText.setText(Html.fromHtml(memo.getContent()));
 		if (mCreateNew) {
 			mDateText.setText(R.string.new_memo);
 		} else {
@@ -280,10 +281,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 				return;
 			}
 		}
-		memo.setContent(mContentEditText.getText().toString());
+		memo.setContent(Html.toHtml(mContentEditText.getText()));
 		memo.setCursorPosition(mContentEditText.getSelectionStart());
 		ContentValues values = memo.toContentValues();
-
+		values.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_UP);
 		if (mCreateNew) {
 			mCreateNew = false;
 			Uri retUri = getContentResolver().insert(MemoProvider.MEMO_URI,
@@ -302,7 +303,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 		if (toLeave) {
-			mEvernote.syncMemo(memo);
+			mEvernote.sync(true);
 		}
 	}
 
@@ -335,10 +336,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (result == true) {
 			this.memo.setHash(data.getContentHash());
 			this.memo.setEnid(data.getGuid());
-			ContentValues values = this.memo.toContentValues();
-			mContext.getContentResolver().update(
-					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-							this.memo.getId()), values, null, null);
 			Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
 		} else {
 			Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
@@ -356,9 +353,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
-		if(result){
+		if (result) {
 			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
-		}else{
+		} else {
 			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
 		}
 	}

@@ -9,8 +9,9 @@ public class MemoDB extends SQLiteOpenHelper {
 
 	public final static String ID = "_id";
 	public final static String STATUS = "status";
-	public final static String EUID = "enid";
+	public final static String ENID = "enid";
 	public final static String HASH = "hash";
+	public final static String CONTENT = "content";
 	public final static String SYNCSTATUS = "syncstatus";
 	public final static String UPDATEDTIME = "updatedtime";
 	public final static String CREATEDTIME = "createdtime";

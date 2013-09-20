@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Html;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -119,7 +120,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			Memo memo = new Memo(cursor);
 			TextView content = (TextView) view.findViewById(R.id.content);
 			TextView date = (TextView) view.findViewById(R.id.date);
-			content.setText(memo.getContent());
+			content.setText(Html.fromHtml(memo.getContent()));
 			date.setText(DateHelper.getReadableDate(mContext,
 					mSimpleDateFormat, memo.getCreatedTime()));
 			View bottomView = view.findViewById(R.id.bottom);
