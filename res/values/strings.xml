@@ -17,6 +17,23 @@
     <string name="feedback">建议反馈</string>
     <string name="start_from_memo">每次启动打开便签</string>
     <string name="bind_evernote">绑定Evernote</string>
+    <string name="unbind_evernote">解除与%1$s的绑定</string>
+    <string name="unbind_evernote_username_null">解除绑定</string>
     <string name="setting">设置</string>
+    <string name="unbind_title">提示</string>
+    <string name="unbind_tips">解除绑定？</string>
+    <string name="unbind_sure">确定</string>
+    <string name="unbind_cancel">取消</string>
+    <string name="open_memo_on">是</string>
+    <string name="open_memo_off">否</string>
+    <string name="can_not_open_market">无法打开市场</string>
+    <string name="hint_suggesion">写下您对我们的建议</string>
+    <string name="feedback">反馈</string>
+    <string name="empty">_(:з」∠)_ 请将联系人和反馈内容填写完整</string>
+    <string name="connection_tip">请留下您的联系方式</string>
+    <string name="send">发送</string>
+    <string name="thanks">感谢您的回复</string>
+    <string name="share_title">分享给你</string>
+    <string name="share_via">选择要分享的App</string>
 
 </resources>

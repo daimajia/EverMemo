@@ -36,8 +36,6 @@
             android:id="@+id/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxHeight="@dimen/content_max_height"
-            android:minHeight="@dimen/content_min_height"
             android:paddingLeft="@dimen/content_padding_right"
             android:paddingRight="@dimen/content_padding_left"
             android:textColor="@color/content_text_color" />
@@ -48,7 +46,8 @@
             android:layout_height="20dp"
             android:gravity="center|right"
             android:text="@null"
-            android:textColor="@color/date_color" />
+            android:textColor="@color/date_color"
+            android:textSize="11sp" />
     </LinearLayout>
 
 </LinearLayout>

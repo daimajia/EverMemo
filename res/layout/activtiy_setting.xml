@@ -12,21 +12,20 @@
         android:paddingLeft="5dp" >
 
         <ImageView
+            android:id="@+id/back"
             android:layout_width="@dimen/setting_image"
             android:layout_height="@dimen/setting_image"
             android:layout_gravity="center"
             android:contentDescription="@null"
-            android:src="@drawable/ic_back" >
-        </ImageView>
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="15sp"
             android:layout_weight="1"
-            android:text="@string/setting" >
-        </TextView>
+            android:text="@string/setting"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <View
@@ -56,6 +55,7 @@
                 android:src="@drawable/ic_evernote" />
 
             <TextView
+                android:id="@+id/bind_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -64,6 +64,7 @@
                 android:text="@string/bind_evernote" />
 
             <ImageView
+                android:id="@+id/bind_arrow"
                 android:layout_width="@dimen/arrow_size"
                 android:layout_height="@dimen/arrow_size"
                 android:layout_gravity="center"
@@ -97,12 +98,13 @@
                 android:text="@string/start_from_memo" />
 
             <ToggleButton
+                android:id="@+id/open_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:textOff="否"
-                android:textOn="是" />
+                android:textOff="@string/open_memo_off"
+                android:textOn="@string/open_memo_on" />
         </LinearLayout>
 
         <View
@@ -111,6 +113,7 @@
             android:background="@color/divider_line_color" />
 
         <LinearLayout
+            android:id="@+id/feedback"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"
             android:clickable="true"
@@ -145,6 +148,7 @@
             android:background="@color/divider_line_color" />
 
         <LinearLayout
+            android:id="@+id/rate"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"
             android:clickable="true"

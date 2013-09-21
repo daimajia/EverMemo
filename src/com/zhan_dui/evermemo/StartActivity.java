@@ -8,6 +8,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
@@ -15,6 +16,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -31,7 +33,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.huewu.pla.lib.MultiColumnListView;
@@ -42,7 +43,6 @@ import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
-import com.zhan_dui.sync.SyncTask;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
@@ -56,7 +56,8 @@ public class StartActivity extends FragmentActivity implements
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
 	private LinearLayout mUndoPanel;
-	private Button mUndo, mSetting;
+	private SharedPreferences mSharedPreferences;
+	private Button mUndo;
 	private int mUndoPanelHeight;
 	public static Evernote mEvernote;
 
@@ -73,7 +74,6 @@ public class StartActivity extends FragmentActivity implements
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
 		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
 		mUndo = (Button) findViewById(R.id.undo_btn);
-		mSetting = (Button) findViewById(R.id.setting_btn);
 		mUndoPanelHeight = mUndoPanel.getLayoutParams().height;
 		Typeface roboto_bold = Typeface.createFromAsset(getAssets(),
 				"fonts/Roboto-Bold.ttf");
@@ -87,8 +87,15 @@ public class StartActivity extends FragmentActivity implements
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
 		mUndo.setOnClickListener(this);
-		mSetting.setOnClickListener(this);
+		findViewById(R.id.setting_btn).setOnClickListener(this);
 		manager.initLoader(1, null, this);
+		mSharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+		if (mSharedPreferences.getBoolean(
+				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
+			// overridePendingTransition(R.anim.push_up, R.anim.push_down);
+			startActivity(new Intent(this, MemoActivity.class));
+		}
 	}
 
 	@Override
@@ -222,8 +229,6 @@ public class StartActivity extends FragmentActivity implements
 
 	}
 
-	private Timer mSyncTimer;
-
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -249,11 +254,11 @@ public class StartActivity extends FragmentActivity implements
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
-		if (result) {
-			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
-		} else {
-			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
-		}
+		// if (result) {
+		// Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+		// } else {
+		// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
+		// }
 	}
 
 }

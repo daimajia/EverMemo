@@ -41,6 +41,8 @@
         <activity
             android:name="com.evernote.client.android.EvernoteOAuthActivity"
             android:configChanges="orientation|keyboardHidden" />
+        <activity android:name="com.zhan_dui.evermemo.FeedbackActivity" >
+        </activity>
     </application>
 
 </manifest>

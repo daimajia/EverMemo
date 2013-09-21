@@ -33,13 +33,15 @@
             android:text="@string/app_memo"
             android:textSize="@dimen/title_text_size" />
 
-        <Button
+        <ImageView
             android:id="@+id/setting_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/setting_image"
+            android:layout_height="@dimen/setting_image"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/gear" />
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:src="@drawable/ab_setting" />
     </RelativeLayout>
 
     <View

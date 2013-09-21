@@ -3,10 +3,10 @@ package com.zhan_dui.evermemo;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,7 +22,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.zhan_dui.data.Memo;
@@ -34,7 +33,6 @@ import com.zhan_dui.utils.DateHelper;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
-@SuppressLint("NewApi")
 public class MemoActivity extends FragmentActivity implements OnClickListener,
 		OnKeyListener, OnTouchListener, EvernoteSyncCallback {
 
@@ -96,11 +94,12 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 					mContext.getString(R.string.date_format),
 					memo.getCreatedTime()));
 		}
+
 		mContentEditText.setOnKeyListener(this);
 		mPullLayoutParams = (ViewGroup.MarginLayoutParams) mPullSaveLayout
 				.getLayoutParams();
 		mEvernote = new Evernote(mContext, this);
-		// mContentEditText.setOnTouchListener(this);
+		findViewById(R.id.share).setOnClickListener(this);
 	}
 
 	@Override
@@ -121,10 +120,24 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		case R.id.list:
 			clickList();
 			break;
-
+		case R.id.share:
+			share();
+			break;
 		default:
 			break;
 		}
+	}
+
+	private void share() {
+		Intent shareIntent = new Intent(Intent.ACTION_SEND);
+		shareIntent.setType("text/plain");
+		shareIntent.putExtra(android.content.Intent.EXTRA_TITLE,
+				getText(R.string.share_title));
+		shareIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+				mContentEditText.getText());
+
+		startActivity(Intent.createChooser(shareIntent,
+				getText(R.string.share_via)));
 	}
 
 	private boolean clickEnter() {
@@ -303,7 +316,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 		if (toLeave) {
-			mEvernote.sync(true);
+			mEvernote.sync(false);
 		}
 	}
 
@@ -336,27 +349,27 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (result == true) {
 			this.memo.setHash(data.getContentHash());
 			this.memo.setEnid(data.getGuid());
-			Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Override
 	public void UpdateCallback(boolean result, Memo memo, Note data) {
 		if (result) {
-			Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
 		if (result) {
-			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 }
