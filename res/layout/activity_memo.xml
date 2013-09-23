@@ -45,10 +45,13 @@
                 android:textColor="@color/memo_date_color"
                 android:textSize="@dimen/time_size" />
 
-            <Button
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:background="@drawable/ic_more" />
+            <ImageButton
+                android:id="@+id/delete"
+                android:layout_width="@dimen/tb_icon_size"
+                android:layout_height="@dimen/tb_icon_size"
+                android:background="@android:color/transparent"
+                android:contentDescription="@null"
+                android:src="@drawable/memo_trash" />
         </LinearLayout>
     </LinearLayout>
 
@@ -57,8 +60,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="#00000000"
         android:gravity="top|left"
         android:inputType="textMultiLine"
+        android:paddingBottom="@dimen/edit_padding_bottom"
+        android:paddingLeft="@dimen/edit_padding_left"
+        android:paddingRight="@dimen/edit_padding_right"
+        android:paddingTop="@dimen/edit_padding_top"
         android:text="@null"
         android:textColor="@color/content_text_color" />
 

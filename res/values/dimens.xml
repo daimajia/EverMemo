@@ -66,8 +66,16 @@
     <dimen name="proud_text_size">11sp</dimen>
     <dimen name="proud_margin_bottom">15dp</dimen>
     <dimen name="setting_panel_height">55dp</dimen>
-    <dimen name="setting_image">23dp</dimen>
+    <dimen name="setting_image">25dp</dimen>
     <dimen name="arrow_size">20dp</dimen>
     <!-- Setting -->
+
+
+    <!-- Custome EditText -->
+    <dimen name="edit_padding_left">15dp</dimen>
+    <dimen name="edit_padding_right">15dp</dimen>
+    <dimen name="edit_padding_top">5dp</dimen>
+    <dimen name="edit_padding_bottom">5dp</dimen>
+    <!-- Custome EditText -->
 
 </resources>

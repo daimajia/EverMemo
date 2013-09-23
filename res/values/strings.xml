@@ -43,5 +43,9 @@
     <string name="delete_sure">确认</string>
     <string name="delete_cancel">取消</string>
     <string name="delete_title">提示</string>
+    <string name="give_up_edit">放弃编辑？</string>
+    <string name="give_up_sure">确认</string>
+    <string name="give_up_cancel">取消</string>
+    <string name="give_up_title">提示</string>
 
 </resources>

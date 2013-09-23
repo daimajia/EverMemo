@@ -225,7 +225,7 @@ public class StartActivity extends FragmentActivity implements
 
 		@Override
 		public void onAnimationRepeat(Animation animation) {
-
+			
 		}
 
 	}
@@ -233,33 +233,23 @@ public class StartActivity extends FragmentActivity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
-		// mSyncTimer.cancel();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// mSyncTimer = new Timer();
-		// mSyncTimer.schedule(new SyncTask(mContext), 5000, 400000l);
 	}
 
 	@Override
 	public void CreateCallback(boolean result, Memo memo, Note data) {
-		// useless
 	}
 
 	@Override
 	public void UpdateCallback(boolean result, Memo memo, Note data) {
-		// useless
 	}
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
-		// if (result) {
-		// Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
-		// } else {
-		// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
-		// }
 	}
 
 }

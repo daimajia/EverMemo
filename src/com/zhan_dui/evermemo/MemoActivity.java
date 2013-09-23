@@ -3,9 +3,11 @@ package com.zhan_dui.evermemo;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.evernote.edam.type.Note;
@@ -39,11 +42,13 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private EditText mContentEditText;
 	private TextView mDateText;
 	private Memo memo;
+	private boolean isNew;
 	private boolean mCreateNew;
 	private Context mContext;
 	private Button mList;
 	private Button mShare;
 	private Button mSave;
+	private ImageButton mDelete;
 	private View mBottomBar;
 	private ViewGroup mPullSaveLayout;
 	private TextView mPullSaveTextView;
@@ -53,6 +58,8 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private Timer mTimer;
 	private Evernote mEvernote;
+
+	private String mOriginalText;
 
 	private boolean mTextChanged = false;
 
@@ -70,10 +77,12 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (bundle != null && bundle.getSerializable("memo") != null) {
 			memo = (Memo) bundle.getSerializable("memo");
 			mCreateNew = false;
+			isNew = false;
 			mLastSaveContent = memo.getContent();
 		} else {
 			memo = new Memo();
 			mCreateNew = true;
+			isNew = true;
 		}
 		setContentView(R.layout.activity_memo);
 		mDateText = (TextView) findViewById(R.id.time);
@@ -83,6 +92,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mBottomBar = findViewById(R.id.bottom_bar);
 		mSave = (Button) findViewById(R.id.save);
 		mPullSaveLayout = (ViewGroup) findViewById(R.id.pull_save);
+		mDelete = (ImageButton) findViewById(R.id.delete);
 		mPullSaveTextView = (TextView) mPullSaveLayout
 				.findViewById(R.id.pull_save_text);
 		mPullMarginTop = ((ViewGroup.MarginLayoutParams) mPullSaveLayout
@@ -91,6 +101,8 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mList.setOnClickListener(this);
 		mShare.setOnClickListener(this);
 		mContentEditText.setText(Html.fromHtml(memo.getContent()));
+		mOriginalText = memo.getContent();
+
 		if (mCreateNew) {
 			mDateText.setText(R.string.new_memo);
 		} else {
@@ -104,6 +116,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mEvernote = new Evernote(mContext, this);
 		findViewById(R.id.share).setOnClickListener(this);
 		mSave.setOnClickListener(this);
+		mDelete.setOnClickListener(this);
 	}
 
 	@Override
@@ -129,6 +142,21 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			break;
 		case R.id.save:
 			saveMemoAndLeave();
+			break;
+		case R.id.delete:
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			builder.setMessage(R.string.give_up_edit)
+					.setTitle(R.string.give_up_title)
+					.setPositiveButton(R.string.give_up_sure,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									giveUpAndLeave();
+								}
+							}).setNegativeButton(R.string.give_up_cancel, null)
+					.create().show();
 			break;
 		default:
 			break;
@@ -352,6 +380,22 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private void saveMemoAndLeave() {
 		saveMemo(true);
+		finish();
+		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
+	}
+
+	private void giveUpAndLeave() {
+		if (isNew && memo.getId() != 0) {
+			getContentResolver().delete(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							memo.getId()), null, null);
+		} else if (!isNew) {
+			ContentValues values = new ContentValues();
+			values.put(MemoDB.CONTENT, mOriginalText);
+			getContentResolver().update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							memo.getId()), values, null, null);
+		}
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
