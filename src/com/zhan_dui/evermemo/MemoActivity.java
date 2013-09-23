@@ -54,7 +54,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private Timer mTimer;
 	private Evernote mEvernote;
 
-	private boolean mTextChanged;
+	private boolean mTextChanged = false;
 
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
@@ -217,7 +217,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-		if (keyCode != KeyEvent.KEYCODE_BACK) {
+		if (event.getAction() != KeyEvent.KEYCODE_BACK) {
 			mTextChanged = true;
 		}
 
