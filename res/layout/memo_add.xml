@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/hover_border"
+        android:background="@drawable/hover_border_normal"
         android:paddingLeft="@dimen/item_padding_left"
         android:paddingRight="@dimen/item_padding_right" >
 

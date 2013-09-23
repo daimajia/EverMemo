@@ -3,9 +3,7 @@
 
     <corners
         android:bottomLeftRadius="@dimen/item_rounded"
-        android:bottomRightRadius="@dimen/item_rounded"
-        android:topLeftRadius="@dimen/item_rounded"
-        android:topRightRadius="@dimen/item_rounded" />
+        android:topLeftRadius="@dimen/item_rounded" />
 
     <stroke
         android:width="2px"

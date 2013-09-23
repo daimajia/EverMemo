@@ -8,10 +8,17 @@
         android:topRightRadius="@dimen/item_rounded" />
 
     <stroke
-        android:width="2px"
+        android:width="1dp"
         android:color="#e2e2e2" />
 
     <solid android:color="@color/item_background_color" />
+
+    <gradient
+        android:endColor="#66E8E8E8"
+        android:gradientRadius="150"
+        android:startColor="#ffffffff"
+        
+        android:type="radial" />
 
     <padding
         android:bottom="10dp"

@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/hover_margin_left"
-        android:background="@drawable/hover_border"
+        android:background="@drawable/hover_background"
         android:minHeight="@dimen/item_min_height"
         android:orientation="vertical"
         android:paddingLeft="@dimen/item_padding_left"

@@ -22,7 +22,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.zhan_dui.data.Memo;
@@ -362,27 +361,27 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (result == true) {
 			this.memo.setHash(data.getContentHash());
 			this.memo.setEnid(data.getGuid());
-			Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Override
 	public void UpdateCallback(boolean result, Memo memo, Note data) {
 		if (result) {
-			Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
 		if (result) {
-			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
 		} else {
-			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 }

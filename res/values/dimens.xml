@@ -27,8 +27,8 @@
     <dimen name="content_padding_left">7dp</dimen>
     <dimen name="content_padding_right">5dp</dimen>
     <dimen name="bottom_width">45dp</dimen>
-    <dimen name="bottom_margin_left">-40dp</dimen>
-    <dimen name="hover_margin_left">-8dp</dimen>
+    <dimen name="bottom_margin_left">-45dp</dimen>
+    <dimen name="hover_margin_left">-1dp</dimen>
     <!-- Memo item -->
 
 
