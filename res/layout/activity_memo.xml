@@ -42,6 +42,7 @@
                 android:layout_weight="1"
                 android:gravity="left|center"
                 android:text="@null"
+                android:textColor="@color/memo_date_color"
                 android:textSize="@dimen/time_size" />
 
             <Button
@@ -60,22 +61,6 @@
         android:inputType="textMultiLine"
         android:text="@null"
         android:textColor="@color/content_text_color" />
-    <!--
-    <ScrollView
-        android:id="@+id/puller"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            
-        </LinearLayout>
-    </ScrollView>
-    -->
 
     <RelativeLayout
         android:id="@+id/bottom_bar"

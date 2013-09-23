@@ -55,6 +55,8 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private Timer mTimer;
 	private Evernote mEvernote;
 
+	private boolean mTextChanged;
+
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
 	public static final String LogTag = "MemoActivity Log";
@@ -93,8 +95,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (mCreateNew) {
 			mDateText.setText(R.string.new_memo);
 		} else {
-			mDateText.setText(DateHelper.getReadableDate(mContext,
-					mContext.getString(R.string.date_format),
+			mDateText.setText(DateHelper.getMemoDate(mContext,
 					memo.getCreatedTime()));
 		}
 
@@ -216,6 +217,11 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+		if (keyCode != KeyEvent.KEYCODE_BACK) {
+			mTextChanged = true;
+		}
+
 		if (event.getAction() == KeyEvent.ACTION_DOWN
 				&& keyCode == KeyEvent.KEYCODE_ENTER) {
 			return clickEnter();
@@ -322,7 +328,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 								memo.getId()), values, null, null);
 			}
 		}
-		if (toLeave) {
+		if (toLeave && mTextChanged) {
 			mEvernote.sync(false);
 		}
 	}

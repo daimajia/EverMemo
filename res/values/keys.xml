@@ -5,7 +5,6 @@
     <string name="memo_position">memo_position</string>
     <string name="memo_id">memo_id</string>
     <string name="memo_first">memo_first</string>
-    <string name="date_format">M.d</string>
     <string name="plus">+</string>
 
 </resources>

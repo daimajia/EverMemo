@@ -1,10 +1,6 @@
 package com.zhan_dui.adapters;
 
-import java.text.SimpleDateFormat;
-
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,14 +29,12 @@ import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.utils.DateHelper;
 import com.zhan_dui.utils.MarginAnimation;
 
-@SuppressLint("SimpleDateFormat")
 public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		OnTouchListener {
 
 	private LayoutInflater mLayoutInflater;
 	private int mOutItemId;
 	private int mBottomMargin;
-	private SimpleDateFormat mSimpleDateFormat;
 	private GestureDetectorCompat mGestureDetectorCompat;
 
 	@SuppressWarnings("unused")
@@ -69,8 +63,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 				R.dimen.bottom_margin_left);
 		mLayoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mSimpleDateFormat = new SimpleDateFormat(
-				context.getString(R.string.date_format));
 		mGestureDetectorCompat = new GestureDetectorCompat(mContext,
 				itemGuestureDetector);
 		mRobotoThin = Typeface.createFromAsset(context.getAssets(),
@@ -127,8 +119,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			TextView content = (TextView) view.findViewById(R.id.content);
 			TextView date = (TextView) view.findViewById(R.id.date);
 			content.setText(Html.fromHtml(memo.getContent()));
-			date.setText(DateHelper.getReadableDate(mContext,
-					mSimpleDateFormat, memo.getCreatedTime()));
+			date.setText(DateHelper.getGridDate(mContext, memo.getCreatedTime()));
 			View bottomView = view.findViewById(R.id.bottom);
 			View hoverView = view.findViewById(R.id.hover);
 			bottomView.setTag(R.string.memo_data, memo);
@@ -175,12 +166,14 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		} else {
 			switch (v.getId()) {
 			case R.id.bottom:
-				Memo memo = (Memo) v.getTag(R.string.memo_data);
-				setOpenerItem(0);
-				mContext.getContentResolver().delete(
-						ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-								memo.getId()), null, null);
-				mDeleteRecoverPanelLisener.wakeRecoveryPanel(memo);
+				if (mOutItemId != 0) {
+					Memo memo = (Memo) v.getTag(R.string.memo_data);
+					mDeleteRecoverPanelLisener.wakeRecoveryPanel(memo);
+					setOpenerItem(0);
+					mContext.getContentResolver().delete(
+							ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+									memo.getId()), null, null);
+				}
 				break;
 			case R.id.hover:
 				Intent intent = new Intent(mContext, MemoActivity.class);

@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/hover_margin_left"
         android:background="@drawable/hover_border"
-        android:minHeight="90dp"
+        android:minHeight="@dimen/item_min_height"
         android:orientation="vertical"
         android:paddingLeft="@dimen/item_padding_left"
         android:paddingRight="@dimen/item_padding_right" >
@@ -43,11 +43,11 @@
         <TextView
             android:id="@+id/date"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="@dimen/grid_date_height"
             android:gravity="center|right"
             android:text="@null"
-            android:textColor="@color/date_color"
-            android:textSize="11sp" />
+            android:textColor="@color/grid_date_color"
+            android:textSize="12sp" />
     </LinearLayout>
 
 </LinearLayout>
