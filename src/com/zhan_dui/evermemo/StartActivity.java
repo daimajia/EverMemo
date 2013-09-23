@@ -23,7 +23,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -36,6 +35,7 @@ import android.widget.TextView;
 
 import com.evernote.edam.type.Note;
 import com.huewu.pla.lib.MultiColumnListView;
+import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
 import com.zhan_dui.data.Memo;
@@ -96,12 +96,8 @@ public class StartActivity extends FragmentActivity implements
 				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
-	}
+		MobclickAgent.onError(this);
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.start, menu);
-		return true;
 	}
 
 	@Override
@@ -225,19 +221,21 @@ public class StartActivity extends FragmentActivity implements
 
 		@Override
 		public void onAnimationRepeat(Animation animation) {
-			
+
 		}
 
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 
 	@Override

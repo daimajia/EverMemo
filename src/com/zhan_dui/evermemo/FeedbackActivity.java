@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.umeng.analytics.MobclickAgent;
 
 public class FeedbackActivity extends Activity implements OnClickListener {
 	private EditText mFeedback;
@@ -31,6 +32,18 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 		findViewById(R.id.back).setOnClickListener(this);
 		mFeedback = (EditText) findViewById(R.id.suggestion);
 		mConnection = (EditText) findViewById(R.id.connection);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 
 	@Override

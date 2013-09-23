@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.evernote.edam.type.Note;
+import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
@@ -364,11 +365,13 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	protected void onPause() {
 		super.onPause();
 		mTimer.cancel();
+		MobclickAgent.onPause(this);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		MobclickAgent.onResume(this);
 		mTimer = new Timer();
 		mTimer.schedule(new TimerTask() {
 			@Override
@@ -428,4 +431,5 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
 		}
 	}
+
 }

@@ -23,6 +23,7 @@ import android.widget.ToggleButton;
 
 import com.evernote.client.android.EvernoteSession;
 import com.evernote.edam.type.User;
+import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteLoginCallback;
 
@@ -185,7 +186,24 @@ public class SettingActivity extends Activity implements OnClickListener,
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if (isChecked) {
+			MobclickAgent.onEvent(mContext, "open_quick_launch");
+		} else {
+			MobclickAgent.onEvent(mContext, "close_quick_launch");
+		}
 		mSharedPreferences.edit()
 				.putBoolean(OPEN_MEMO_WHEN_START_UP, isChecked).commit();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }
