@@ -1,7 +1,6 @@
 package com.zhan_dui.data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -145,8 +144,9 @@ public class Memo implements Serializable {
 	}
 
 	public String getTitle() {
-		return "EverMemo " + new Date().getDate() + new Date().getHours()
-				+ new Date().getMinutes();
+//		return "EverMemo " + new Date().getDate() + new Date().getHours()
+//				+ new Date().getMinutes();
+		return "EverMemo";
 		// String pure = getContent().replaceAll("<.+?>", "");
 		// BufferedReader reader = new BufferedReader(new StringReader(pure));
 		// try {

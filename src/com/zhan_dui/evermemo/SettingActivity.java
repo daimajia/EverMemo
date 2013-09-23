@@ -58,6 +58,8 @@ public class SettingActivity extends Activity implements OnClickListener,
 			bindSuccess();
 		}
 		mToggleButton.setOnCheckedChangeListener(this);
+		mToggleButton.setChecked(mSharedPreferences.getBoolean(
+				OPEN_MEMO_WHEN_START_UP, false));
 		findViewById(R.id.feedback).setOnClickListener(this);
 		findViewById(R.id.rate).setOnClickListener(this);
 	}
@@ -154,9 +156,11 @@ public class SettingActivity extends Activity implements OnClickListener,
 	public void onLoginResult(Boolean result) {
 		if (result) {
 			bindSuccess();
-			Toast.makeText(mContext, "绑定成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, R.string.bind_success, Toast.LENGTH_SHORT)
+					.show();
 		} else {
-			Toast.makeText(mContext, "绑定失败", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, R.string.bind_failed, Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
 
@@ -169,11 +173,13 @@ public class SettingActivity extends Activity implements OnClickListener,
 	@Override
 	public void onLogout(Boolean reuslt) {
 		if (reuslt) {
-			Toast.makeText(mContext, "解除绑定成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, R.string.unbind_success,
+					Toast.LENGTH_SHORT).show();
 			findViewById(R.id.bind_arrow).setVisibility(View.VISIBLE);
 			mBindText.setText(R.string.bind_evernote);
 		} else {
-			Toast.makeText(mContext, "解除绑定失败", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, R.string.unbind_failed, Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
 

@@ -759,13 +759,6 @@ public class Evernote implements LoginCallback {
 												Logger.e(
 														LogTag,
 														"获取到的数据:"
-
-																+ currentNoteMetadata
-																		.getTitle()
-																+ " "
-																+ currentNoteMetadata
-																		.getContentLength()
-																+ " "
 																+ currentNoteMetadata
 																		.getUpdated()
 																+ ""
@@ -832,7 +825,7 @@ public class Evernote implements LoginCallback {
 	}
 
 	private void startDownloadNeedDownload(ArrayList<String> needToDownload) {
-		for (String guid : needToDownload) {
+		for (final String guid : needToDownload) {
 			try {
 				mEvernoteSession
 						.getClientFactory()
@@ -847,17 +840,29 @@ public class Evernote implements LoginCallback {
 											@Override
 											public void run() {
 												super.run();
-												Memo memo = Memo
-														.buildInsertMemoFromNote(data);
-												ContentValues values = memo
-														.toContentValues();
-												Uri ret = mContentResolver
-														.insert(MemoProvider.MEMO_URI,
-																values);
-												Logger.e(
-														LogTag,
-														"添加了_id为:"
-																+ ret.getLastPathSegment());
+
+												Cursor cursor = mContentResolver
+														.query(MemoProvider.MEMO_URI,
+																new String[] { MemoDB.ID },
+																MemoDB.ENID
+																		+ "=?",
+																new String[] { guid },
+																null);
+
+												if (cursor.getCount() != 0) {
+													Memo memo = Memo
+															.buildInsertMemoFromNote(data);
+													ContentValues values = memo
+															.toContentValues();
+													Uri ret = mContentResolver
+															.insert(MemoProvider.MEMO_URI,
+																	values);
+													Logger.e(
+															LogTag,
+															"添加了_id为:"
+																	+ ret.getLastPathSegment());
+												}
+												cursor.close();
 											}
 										}.start();
 

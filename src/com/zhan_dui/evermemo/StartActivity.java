@@ -26,6 +26,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -33,9 +34,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.huewu.pla.lib.MultiColumnListView;
+import com.huewu.pla.lib.internal.PLA_AdapterView;
+import com.huewu.pla.lib.internal.PLA_AdapterView.OnItemLongClickListener;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
 import com.zhan_dui.data.Memo;
@@ -86,6 +90,7 @@ public class StartActivity extends FragmentActivity implements
 		mMemosAdapter = new MemosAdapter(mContext, null,
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
+
 		mUndo.setOnClickListener(this);
 		findViewById(R.id.setting_btn).setOnClickListener(this);
 		manager.initLoader(1, null, this);
@@ -93,7 +98,6 @@ public class StartActivity extends FragmentActivity implements
 				.getDefaultSharedPreferences(mContext);
 		if (mSharedPreferences.getBoolean(
 				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
-			// overridePendingTransition(R.anim.push_up, R.anim.push_down);
 			startActivity(new Intent(this, MemoActivity.class));
 		}
 	}
@@ -107,7 +111,8 @@ public class StartActivity extends FragmentActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		CursorLoader cursorLoader = new CursorLoader(mContext,
-				MemoProvider.MEMO_URI, null, null, null, null);
+				MemoProvider.MEMO_URI, null, null, null, MemoDB.CREATEDTIME
+						+ " desc");
 		return cursorLoader;
 	}
 
@@ -192,7 +197,7 @@ public class StartActivity extends FragmentActivity implements
 	}
 
 	private void deleteMemo(Memo memo) {
-		mEvernote.deleteMemo(memo, true);
+		mEvernote.deleteMemo(memo, false);
 		Logger.e("开始同步删除memo");
 	}
 

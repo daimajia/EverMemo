@@ -22,6 +22,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.zhan_dui.data.Memo;
@@ -43,6 +44,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private Context mContext;
 	private Button mList;
 	private Button mShare;
+	private Button mSave;
 	private View mBottomBar;
 	private ViewGroup mPullSaveLayout;
 	private TextView mPullSaveTextView;
@@ -78,6 +80,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mList = (Button) findViewById(R.id.list);
 		mShare = (Button) findViewById(R.id.share);
 		mBottomBar = findViewById(R.id.bottom_bar);
+		mSave = (Button) findViewById(R.id.save);
 		mPullSaveLayout = (ViewGroup) findViewById(R.id.pull_save);
 		mPullSaveTextView = (TextView) mPullSaveLayout
 				.findViewById(R.id.pull_save_text);
@@ -100,6 +103,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 				.getLayoutParams();
 		mEvernote = new Evernote(mContext, this);
 		findViewById(R.id.share).setOnClickListener(this);
+		mSave.setOnClickListener(this);
 	}
 
 	@Override
@@ -122,6 +126,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			break;
 		case R.id.share:
 			share();
+			break;
+		case R.id.save:
+			saveMemoAndLeave();
 			break;
 		default:
 			break;
@@ -349,27 +356,27 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (result == true) {
 			this.memo.setHash(data.getContentHash());
 			this.memo.setEnid(data.getGuid());
-			// Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
 		} else {
-			// Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Override
 	public void UpdateCallback(boolean result, Memo memo, Note data) {
 		if (result) {
-			// Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 		} else {
-			// Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
 		if (result) {
-			// Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
 		} else {
-			// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
+			Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
 		}
 	}
 }

@@ -3,8 +3,11 @@ package com.zhan_dui.adapters;
 import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -26,6 +29,7 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
+import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.utils.DateHelper;
 import com.zhan_dui.utils.MarginAnimation;
 
@@ -49,6 +53,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private int mCurrentTouchPosition;
 	private Typeface mRobotoThin;
 	private final DeleteRecoverPanelLisener mDeleteRecoverPanelLisener;
+	private final ItemGuestureDetector itemGuestureDetector = new ItemGuestureDetector();
 
 	public void setOpenerItem(int id) {
 		if (id < 0 && id > getCount()) {
@@ -67,10 +72,11 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		mSimpleDateFormat = new SimpleDateFormat(
 				context.getString(R.string.date_format));
 		mGestureDetectorCompat = new GestureDetectorCompat(mContext,
-				new ItemGuestureDetector());
+				itemGuestureDetector);
 		mRobotoThin = Typeface.createFromAsset(context.getAssets(),
 				"fonts/Roboto-Thin.ttf");
 		mDeleteRecoverPanelLisener = l;
+
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -152,7 +158,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			bottom.setOnClickListener(this);
 			hover.setOnClickListener(this);
 			hover.setOnTouchListener(this);
-
 			return commonView;
 		}
 	}
@@ -190,16 +195,63 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	}
 
 	private long mLastChangeStatus = System.currentTimeMillis();
+	private Memo mCurrentLongPressMemo;
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		mCurrentTouchHover = v;
 		mCurrentTouchBottom = (View) v.getTag();
 		mCurrentTouchPosition = (Integer) v.getTag(R.string.memo_position);
+		mCurrentLongPressMemo = (Memo) v.getTag(R.string.memo_data);
+		if (event.getAction() == MotionEvent.ACTION_UP) {
+			mLastChangeStatus = System.currentTimeMillis();
+		}
 		return mGestureDetectorCompat.onTouchEvent(event);
 	}
 
 	class ItemGuestureDetector extends SimpleOnGestureListener {
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			builder.setMessage(R.string.delete_confirm)
+					.setTitle(R.string.delete_title)
+					.setPositiveButton(R.string.delete_sure,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									new Thread() {
+										@Override
+										public void run() {
+											super.run();
+											mContext.getContentResolver()
+													.delete(ContentUris
+															.withAppendedId(
+																	MemoProvider.MEMO_URI,
+																	mCurrentLongPressMemo
+																			.getId()),
+															null, null);
+											Evernote mEvernote = new Evernote(
+													mContext);
+											mEvernote.deleteMemo(
+													mCurrentLongPressMemo,
+													false);
+										}
+									}.start();
+								}
+							}).setNegativeButton(R.string.delete_cancel, null)
+					.create().show();
+			mLastChangeStatus = System.currentTimeMillis();
+		}
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent e) {
+			mLastChangeStatus = 0;
+			return super.onSingleTapUp(e);
+		}
+
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2,
 				float distanceX, float distanceY) {

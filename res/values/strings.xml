@@ -35,5 +35,13 @@
     <string name="thanks">感谢您的回复</string>
     <string name="share_title">分享给你</string>
     <string name="share_via">选择要分享的App</string>
+    <string name="unbind_success">解除绑定成功</string>
+    <string name="unbind_failed">解除绑定失败</string>
+    <string name="bind_success">绑定成功</string>
+    <string name="bind_failed">绑定失败</string>
+    <string name="delete_confirm">确认删除？</string>
+    <string name="delete_sure">确认</string>
+    <string name="delete_cancel">取消</string>
+    <string name="delete_title">提示</string>
 
 </resources>
