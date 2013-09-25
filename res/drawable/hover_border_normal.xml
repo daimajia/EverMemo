@@ -7,10 +7,6 @@
         android:color="#e2e2e2" />
 
     <solid android:color="@color/item_background_color" />
-
-    <padding
-        android:bottom="10dp"
-        android:top="10dp" >
-    </padding>
+	
 
 </shape>

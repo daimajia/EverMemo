@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.KeyEvent;
@@ -43,7 +44,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private EditText mContentEditText;
 	private TextView mDateText;
 	private Memo memo;
-	private boolean isNew;
 	private boolean mCreateNew;
 	private Context mContext;
 	private Button mList;
@@ -60,13 +60,12 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	private Timer mTimer;
 	private Evernote mEvernote;
 
-	private String mOriginalText;
-
 	private boolean mTextChanged = false;
 
 	private final String mBullet = " • ";
 	private final String mNewLine = "\n";
 	public static final String LogTag = "MemoActivity Log";
+	public static String sEditCount = "EditCount";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +77,10 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		if (bundle != null && bundle.getSerializable("memo") != null) {
 			memo = (Memo) bundle.getSerializable("memo");
 			mCreateNew = false;
-			isNew = false;
 			mLastSaveContent = memo.getContent();
 		} else {
 			memo = new Memo();
 			mCreateNew = true;
-			isNew = true;
 		}
 		setContentView(R.layout.activity_memo);
 		mDateText = (TextView) findViewById(R.id.time);
@@ -102,7 +99,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mList.setOnClickListener(this);
 		mShare.setOnClickListener(this);
 		mContentEditText.setText(Html.fromHtml(memo.getContent()));
-		mOriginalText = memo.getContent();
 
 		if (mCreateNew) {
 			mDateText.setText(R.string.new_memo);
@@ -154,7 +150,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
-									giveUpAndLeave();
+									deleteAndLeave();
 								}
 							}).setNegativeButton(R.string.give_up_cancel, null)
 					.create().show();
@@ -383,21 +379,25 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 	private void saveMemoAndLeave() {
 		saveMemo(true);
+		int count = PreferenceManager.getDefaultSharedPreferences(mContext)
+				.getInt(sEditCount, 0);
+		if (count < 5) {
+			count++;
+			PreferenceManager.getDefaultSharedPreferences(mContext).edit()
+					.putInt(sEditCount, count).commit();
+		}
+		if (count == 5) {
+
+		}
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
 
-	private void giveUpAndLeave() {
-		if (isNew && memo.getId() != 0) {
+	private void deleteAndLeave() {
+		if (memo.getId() != 0) {
 			getContentResolver().delete(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), null, null);
-		} else if (!isNew) {
-			ContentValues values = new ContentValues();
-			values.put(MemoDB.CONTENT, mOriginalText);
-			getContentResolver().update(
-					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-							memo.getId()), values, null, null);
 		}
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);

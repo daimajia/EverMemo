@@ -27,18 +27,19 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/hover_margin_left"
         android:background="@drawable/hover_background"
-        android:minHeight="@dimen/item_min_height"
         android:orientation="vertical"
         android:paddingLeft="@dimen/item_padding_left"
         android:paddingRight="@dimen/item_padding_right" >
 
-        <TextView
+        <com.zhan_dui.custom.MinusTextView
             android:id="@+id/content"
+            android:lineSpacingExtra="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/content_padding_right"
             android:paddingRight="@dimen/content_padding_left"
-            android:textColor="@color/content_text_color" />
+            android:textColor="@color/content_text_color"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/date"

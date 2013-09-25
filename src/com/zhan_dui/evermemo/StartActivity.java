@@ -4,15 +4,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,6 +36,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.evernote.edam.type.Note;
 import com.huewu.pla.lib.MultiColumnListView;
@@ -60,6 +65,7 @@ public class StartActivity extends FragmentActivity implements
 	private Button mUndo;
 	private int mUndoPanelHeight;
 	public static Evernote mEvernote;
+	public static String sShownRate = "ShownRate";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -230,6 +236,52 @@ public class StartActivity extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 		MobclickAgent.onResume(this);
+		if (mSharedPreferences.getInt(MemoActivity.sEditCount, 0) == 5
+				&& mSharedPreferences.getBoolean(sShownRate, false) == false) {
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			builder.setMessage(R.string.rate_for_evernote)
+					.setPositiveButton(R.string.rate_rate,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Uri uri = Uri.parse("market://details?id="
+											+ mContext.getPackageName());
+									Intent goToMarket = new Intent(
+											Intent.ACTION_VIEW, uri);
+									try {
+										startActivity(goToMarket);
+									} catch (ActivityNotFoundException e) {
+										Toast.makeText(mContext,
+												R.string.can_not_open_market,
+												Toast.LENGTH_SHORT).show();
+									}
+								}
+							})
+					.setNegativeButton(R.string.rate_feedback,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent Email = new Intent(
+											Intent.ACTION_SEND);
+									Email.setType("text/email");
+									Email.putExtra(
+											Intent.EXTRA_EMAIL,
+											new String[] { getString(R.string.team_email) });
+									Email.putExtra(Intent.EXTRA_SUBJECT,
+											getString(R.string.feedback));
+									Email.putExtra(Intent.EXTRA_TEXT,
+											getString(R.string.email_title));
+									startActivity(Intent.createChooser(Email,
+											getString(R.string.email_chooser)));
+								}
+							}).create().show();
+			mSharedPreferences.edit().putBoolean(sShownRate, true).commit();
+		}
 	}
 
 	@Override

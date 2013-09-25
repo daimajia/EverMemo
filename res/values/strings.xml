@@ -12,7 +12,7 @@
     <string name="relaxe_save_leave">松手保存退出</string>
     <string name="one_delete">1 memo deleted</string>
     <string name="undo">Undo</string>
-    <string name="proudly">Proudly by Mudlab9\nCoded by Daimajia,Designed by Plidezus\nmade in Beijing&amp;Shanghai</string>
+    <string name="proudly">Proudly made by Mudlab9\nCoded by Daimajia,Designed by Plidezus\nmade in Beijing&amp;Shanghai</string>
     <string name="rate_us">给我们好评</string>
     <string name="feedback">建议反馈</string>
     <string name="start_from_memo">每次启动打开便签</string>
@@ -43,9 +43,16 @@
     <string name="delete_sure">确认</string>
     <string name="delete_cancel">取消</string>
     <string name="delete_title">提示</string>
-    <string name="give_up_edit">放弃编辑？</string>
+    <string name="give_up_edit">删除Memo？</string>
     <string name="give_up_sure">确认</string>
     <string name="give_up_cancel">取消</string>
     <string name="give_up_title">提示</string>
+    <string name="email_feedback">反馈</string>
+    <string name="email_title">你好:</string>
+    <string name="email_chooser">选择发送方式</string>
+    <string name="rate_for_evernote">为EverMemo评个五星吧！</string>
+    <string name="rate_rate">去评价</string>
+    <string name="rate_feedback">反馈</string>
+    <string name="team_email">team@mudlab9.com</string>
 
 </resources>
