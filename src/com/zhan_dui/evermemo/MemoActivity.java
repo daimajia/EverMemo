@@ -398,6 +398,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			getContentResolver().delete(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), null, null);
+			mEvernote.deleteMemo(memo, false);
 		}
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
