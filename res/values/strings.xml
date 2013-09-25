@@ -54,5 +54,7 @@
     <string name="rate_rate">去评价</string>
     <string name="rate_feedback">反馈</string>
     <string name="team_email">team@mudlab9.com</string>
+    <string name="bind_evernote_tip">绑定EverNote吗？</string>
+    <string name="bind_evernote">绑定</string>
 
 </resources>

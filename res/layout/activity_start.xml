@@ -97,4 +97,36 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/evernote_panel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/evernote_panel_height"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/evernote_panel_margin_top"
+        android:background="@color/evernoe_panel_background"
+        android:paddingLeft="@dimen/evernote_panel_padding_left"
+        android:paddingRight="@dimen/evernote_panel_padding_right" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:gravity="center|left"
+            android:text="@string/bind_evernote_tip"
+            android:textColor="@color/delete_panel_text_color"
+            android:textSize="@dimen/evernote_tip_text_size" />
+
+        <Button
+            android:id="@+id/bind_evernote"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="@string/bind_evernote"
+            android:textColor="@color/delete_panel_text_color"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </RelativeLayout>

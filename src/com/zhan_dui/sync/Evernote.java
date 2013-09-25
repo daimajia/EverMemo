@@ -30,6 +30,7 @@ import com.evernote.edam.type.Note;
 import com.evernote.edam.type.Notebook;
 import com.evernote.edam.type.User;
 import com.evernote.thrift.transport.TTransportException;
+import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
@@ -41,8 +42,8 @@ public class Evernote implements LoginCallback {
 
 	public String LogTag = "EverNote";
 	public Context mContext;
-	private static final String CONSUMER_KEY = "daimajia-4925";
-	private static final String CONSUMER_SECRET = "28efc69651a408e9";
+	private static final String CONSUMER_KEY = "milkliker";
+	private static final String CONSUMER_SECRET = "f479109c186d284b";
 	private static final String NOTEBOOK_NAME = "EverMemo";
 	public static final String EVERNOTE_TOKEN = "Evernote_Token";
 	public static final String EVERNOTE_TOKEN_TIME = "Evernote_Token_Time";
@@ -97,6 +98,7 @@ public class Evernote implements LoginCallback {
 
 	public void auth() {
 		mEvernoteSession.authenticate(mContext);
+		MobclickAgent.onEvent(mContext, "Bind_EverNote");
 	}
 
 	public void Logout() {
@@ -107,6 +109,7 @@ public class Evernote implements LoginCallback {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLogout(true);
 			}
+			MobclickAgent.onEvent(mContext, "UnBind_EverNote");
 		} catch (InvalidAuthenticationException e) {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLogout(false);

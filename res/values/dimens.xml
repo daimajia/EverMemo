@@ -56,10 +56,19 @@
 
     <!-- Delete Panel -->
     <dimen name="delete_panel_height">45dp</dimen>
-    <dimen name="delete_padnel_margin_bottom">-45dp</dimen>
+    <dimen name="delete_padnel_margin_bottom">-47dp</dimen>
     <dimen name="delete_panel_padding_left">15dp</dimen>
     <dimen name="delete_panel_padding_right">15dp</dimen>
     <!-- Delete Panel -->
+
+
+    <!-- EverNote Panel -->
+    <dimen name="evernote_panel_height">45dp</dimen>
+    <dimen name="evernote_panel_margin_top">-47dp</dimen>
+    <dimen name="evernote_panel_padding_left">15dp</dimen>
+    <dimen name="evernote_panel_padding_right">15dp</dimen>
+    <dimen name="evernote_tip_text_size">16sp</dimen>
+    <!-- EverNote Panel -->
 
 
     <!-- Setting -->

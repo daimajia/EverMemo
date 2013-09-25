@@ -38,7 +38,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.evernote.client.android.EvernoteSession;
 import com.evernote.edam.type.Note;
+import com.evernote.edam.type.User;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.adapters.MemosAdapter;
@@ -47,25 +49,27 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
+import com.zhan_dui.sync.Evernote.EvernoteLoginCallback;
 import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
 		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener,
-		EvernoteSyncCallback {
+		EvernoteSyncCallback, EvernoteLoginCallback {
 
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
 	private MultiColumnListView mMemosGrid;
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
-	private LinearLayout mUndoPanel;
+	private LinearLayout mUndoPanel, mBindEvernotePanel;
 	private SharedPreferences mSharedPreferences;
-	private Button mUndo;
-	private int mUndoPanelHeight;
+	private Button mUndo, mBindEvernote;
+	private int mUndoPanelHeight, mBindEvernotePandelHeight;
 	public static Evernote mEvernote;
 	public static String sShownRate = "ShownRate";
+	public static String sStartCount = "StartCount";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +77,17 @@ public class StartActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		mContext = this;
-		mEvernote = new Evernote(mContext, this);
+		mEvernote = new Evernote(mContext, this, this);
 
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
 		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
+		mBindEvernotePanel = (LinearLayout) findViewById(R.id.evernote_panel);
 		mUndo = (Button) findViewById(R.id.undo_btn);
+		mBindEvernote = (Button) findViewById(R.id.bind_evernote);
 		mUndoPanelHeight = mUndoPanel.getLayoutParams().height;
+		mBindEvernotePandelHeight = mBindEvernotePanel.getLayoutParams().height;
 		Typeface roboto_bold = Typeface.createFromAsset(getAssets(),
 				"fonts/Roboto-Bold.ttf");
 		Typeface roboto_thin = Typeface.createFromAsset(getAssets(),
@@ -98,12 +105,40 @@ public class StartActivity extends FragmentActivity implements
 		manager.initLoader(1, null, this);
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
+
+		if (mSharedPreferences.getInt(sStartCount, 1) == 1) {
+			mBindEvernotePanel.startAnimation(new MarginAnimation(
+					mBindEvernotePanel, 0, 0, 0, 0, 600));
+			new Timer().schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+
+					StartActivity.this.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							mBindEvernotePanel
+									.startAnimation(new MarginAnimation(
+											mBindEvernotePanel, 0, 0, 0,
+											-mBindEvernotePandelHeight));
+						}
+					});
+				}
+			}, 7000);
+			mSharedPreferences
+					.edit()
+					.putInt(sStartCount,
+							mSharedPreferences.getInt(sStartCount, 1) + 1)
+					.commit();
+			mBindEvernote.setOnClickListener(this);
+		}
+
 		if (mSharedPreferences.getBoolean(
 				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
 		MobclickAgent.onError(this);
-
 	}
 
 	@Override
@@ -191,6 +226,18 @@ public class StartActivity extends FragmentActivity implements
 							mToDeleteMemo.getId()), values, null, null);
 		} else if (v.getId() == R.id.setting_btn) {
 			startActivity(new Intent(mContext, SettingActivity.class));
+		} else if (v.getId() == R.id.bind_evernote) {
+			mEvernote.auth();
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+		case EvernoteSession.REQUEST_CODE_OAUTH:
+			mEvernote.onAuthFinish(resultCode);
+			break;
 		}
 	}
 
@@ -300,6 +347,20 @@ public class StartActivity extends FragmentActivity implements
 
 	@Override
 	public void DeleteCallback(boolean result, Memo memo) {
+	}
+
+	@Override
+	public void onLoginResult(Boolean result) {
+	}
+
+	@Override
+	public void onUserinfo(Boolean result, User user) {
+
+	}
+
+	@Override
+	public void onLogout(Boolean reuslt) {
+
 	}
 
 }

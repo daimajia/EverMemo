@@ -421,6 +421,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			// Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 		} else {
 			// Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
+			
 		}
 	}
 
