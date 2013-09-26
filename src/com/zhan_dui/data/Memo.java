@@ -177,7 +177,7 @@ public class Memo implements Serializable {
 
 	private String convertContentToEvernote() {
 		String EvernoteContent = EvernoteUtil.NOTE_PREFIX
-				+ getContent().replace("<br>", "<br></br>")
+				+ getContent().replace("<br>", "<br/>")
 				+ EvernoteUtil.NOTE_SUFFIX;
 		Logger.e(LogTag, "同步文字:" + EvernoteContent);
 		return EvernoteContent;
