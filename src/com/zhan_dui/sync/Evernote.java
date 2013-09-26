@@ -52,7 +52,7 @@ public class Evernote implements LoginCallback {
 	public static final String EVERNOTE_NOTEBOOK_GUID = "Evenote_Note_Guid";
 	public static final String LAST_SYNC_DOWN = "LAST_SYNC_DOWN";
 	public static final long SYNC_DOWN_SPAN = 300l;
-	private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.SANDBOX;
+	private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.PRODUCTION;
 	private EvernoteSession mEvernoteSession;
 	private SharedPreferences mSharedPreferences;
 
@@ -852,7 +852,7 @@ public class Evernote implements LoginCallback {
 																new String[] { guid },
 																null);
 
-												if (cursor.getCount() != 0) {
+												if (cursor.getCount() == 0) {
 													Memo memo = Memo
 															.buildInsertMemoFromNote(data);
 													ContentValues values = memo
