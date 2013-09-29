@@ -22,6 +22,7 @@ import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -73,18 +74,21 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		overridePendingTransition(R.anim.push_up, R.anim.push_down);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_memo);
+		mContentEditText = (EditText) findViewById(R.id.content);
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null && bundle.getSerializable("memo") != null) {
 			memo = (Memo) bundle.getSerializable("memo");
 			mCreateNew = false;
 			mLastSaveContent = memo.getContent();
+
 		} else {
 			memo = new Memo();
 			mCreateNew = true;
 		}
-		setContentView(R.layout.activity_memo);
+
 		mDateText = (TextView) findViewById(R.id.time);
-		mContentEditText = (EditText) findViewById(R.id.content);
+
 		mList = (Button) findViewById(R.id.list);
 		mShare = (Button) findViewById(R.id.share);
 		mBottomBar = findViewById(R.id.bottom_bar);
@@ -102,6 +106,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 
 		if (mCreateNew) {
 			mDateText.setText(R.string.new_memo);
+			mContentEditText.requestFocus();
+			getWindow().setSoftInputMode(
+					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		} else {
 			mDateText.setText(DateHelper.getMemoDate(mContext,
 					memo.getCreatedTime()));
@@ -421,7 +428,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			// Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
 		} else {
 			// Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
-			
+
 		}
 	}
 

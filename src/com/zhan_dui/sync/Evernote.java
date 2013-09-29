@@ -464,7 +464,7 @@ public class Evernote implements LoginCallback {
 		}
 	};
 
-	private void createNote(Memo memo, String notebookGuid) {
+	public void createNote(Memo memo, String notebookGuid) {
 		if (mEvernoteSession.isLoggedIn()) {
 			Logger.e(LogTag, "授权可用");
 			checkAndInsert(notebookGuid, memo);

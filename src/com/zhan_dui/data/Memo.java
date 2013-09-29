@@ -144,16 +144,7 @@ public class Memo implements Serializable {
 	}
 
 	public String getTitle() {
-//		return "EverMemo " + new Date().getDate() + new Date().getHours()
-//				+ new Date().getMinutes();
 		return "EverMemo";
-		// String pure = getContent().replaceAll("<.+?>", "");
-		// BufferedReader reader = new BufferedReader(new StringReader(pure));
-		// try {
-		// return reader.readLine();
-		// } catch (IOException e) {
-		// return "No Title";
-		// }
 	}
 
 	public Note toNote(String notebookGuid) {
@@ -185,6 +176,7 @@ public class Memo implements Serializable {
 
 	public void setContent(String content) {
 		mContent = content;
+		Logger.e("下载下来的文本：" + content);
 		mStatus = STATUS_COMMON;
 		mOrder = 0;
 		mAttributes = "";

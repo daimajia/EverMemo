@@ -105,6 +105,7 @@ public class StartActivity extends FragmentActivity implements
 		manager.initLoader(1, null, this);
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
+		
 
 		if (mSharedPreferences.getInt(sStartCount, 1) == 1) {
 			mBindEvernotePanel.startAnimation(new MarginAnimation(

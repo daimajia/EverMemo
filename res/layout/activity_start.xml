@@ -55,10 +55,11 @@
         xmlns:pla="http://schemas.android.com/apk/res-auto"
         android:id="@+id/memos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/divider_line"
         android:paddingLeft="@dimen/grid_padding_left"
         android:paddingRight="@dimen/grid_padding_right"
+        android:scrollbars="vertical"
         pla:plaColumnNumber="2"
         pla:plaLandscapeColumnNumber="3" >
     </com.huewu.pla.lib.MultiColumnListView>
