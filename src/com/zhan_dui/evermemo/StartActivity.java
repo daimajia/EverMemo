@@ -105,7 +105,6 @@ public class StartActivity extends FragmentActivity implements
 		manager.initLoader(1, null, this);
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
-		
 
 		if (mSharedPreferences.getInt(sStartCount, 1) == 1) {
 			mBindEvernotePanel.startAnimation(new MarginAnimation(
@@ -139,7 +138,6 @@ public class StartActivity extends FragmentActivity implements
 				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
-		MobclickAgent.onError(this);
 	}
 
 	@Override
@@ -197,6 +195,7 @@ public class StartActivity extends FragmentActivity implements
 			mLayoutParams.setMargins(0, 0, 0, -mUndoPanelHeight);
 			mUndoPanel.setLayoutParams(mLayoutParams);
 			deleteMemo(mToDeleteMemo);
+			MobclickAgent.onEvent(mContext, "delete_memo_from_swipe");
 		}
 		mToDeleteMemo = memo;
 		m2ShowAnimation = new MarginAnimation(mUndoPanel, 0, 0, 0, 0);
@@ -244,6 +243,7 @@ public class StartActivity extends FragmentActivity implements
 
 	private void deleteMemo(Memo memo) {
 		mEvernote.deleteMemo(memo, false);
+		MobclickAgent.onEvent(mContext, "delete_memo");
 		Logger.e("开始同步删除memo");
 	}
 
@@ -270,6 +270,7 @@ public class StartActivity extends FragmentActivity implements
 			isDisplay = false;
 			if (memo != null) {
 				deleteMemo(memo);
+				MobclickAgent.onEvent(mContext, "delete_memo_from_swipe");
 			}
 		}
 

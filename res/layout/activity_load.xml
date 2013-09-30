@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/load_background" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/wandoujia"
+        android:layout_centerInParent="true"
+        android:gravity="center" >
+
+        <ImageView
+            android:layout_width="@dimen/icon_width"
+            android:layout_height="@dimen/icon_height"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/icon_margin_bottom"
+            android:background="@drawable/splash_icon"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/wandoujia"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/wandoujia_container_height"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="@dimen/wandoujia_width"
+            android:layout_height="@dimen/wandoujia_height"
+            android:layout_marginBottom="@dimen/wandoujia_margin_bottom"
+            android:background="@drawable/splash_wandoujia"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+</RelativeLayout>

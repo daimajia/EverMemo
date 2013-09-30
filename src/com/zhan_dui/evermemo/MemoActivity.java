@@ -109,9 +109,11 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			mContentEditText.requestFocus();
 			getWindow().setSoftInputMode(
 					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			MobclickAgent.onEvent(mContext, "new_memo");
 		} else {
 			mDateText.setText(DateHelper.getMemoDate(mContext,
 					memo.getCreatedTime()));
+			MobclickAgent.onEvent(mContext, "edit_memo");
 		}
 
 		mContentEditText.setOnKeyListener(this);
@@ -158,6 +160,8 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 								public void onClick(DialogInterface dialog,
 										int which) {
 									deleteAndLeave();
+									MobclickAgent.onEvent(mContext,
+											"delete_memo");
 								}
 							}).setNegativeButton(R.string.give_up_cancel, null)
 					.create().show();

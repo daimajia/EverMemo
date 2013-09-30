@@ -8,6 +8,17 @@
     <dimen name="title_text_size">23sp</dimen>
     <dimen name="divider_line_height">1px</dimen>
 
+    <!-- Load Activity -->
+    <dimen name="icon_width">192.5dp</dimen>
+    <dimen name="icon_height">55dp</dimen>
+    <dimen name="icon_margin_bottom">30dp</dimen>
+    <dimen name="wandoujia_container_height">80dp</dimen>
+    <dimen name="wandoujia_width">137.4dp</dimen>
+    <dimen name="wandoujia_height">30dp</dimen>
+    <dimen name="wandoujia_margin_bottom">10dp</dimen>
+    <!-- Load Activity -->
+
+
     <!-- Memo GridView -->
     <dimen name="grid_padding_left">1dp</dimen>
     <dimen name="grid_padding_right">1dp</dimen>
