@@ -28,19 +28,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.evernote.edam.type.Note;
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
-import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.DateHelper;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class MemoActivity extends FragmentActivity implements OnClickListener,
-		OnKeyListener, OnTouchListener, EvernoteSyncCallback {
+		OnKeyListener, OnTouchListener {
 
 	private EditText mContentEditText;
 	private TextView mDateText;
@@ -119,7 +117,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		mContentEditText.setOnKeyListener(this);
 		mPullLayoutParams = (ViewGroup.MarginLayoutParams) mPullSaveLayout
 				.getLayoutParams();
-		mEvernote = new Evernote(mContext, this);
+		mEvernote = new Evernote(mContext);
 		findViewById(R.id.share).setOnClickListener(this);
 		mSave.setOnClickListener(this);
 		mDelete.setOnClickListener(this);
@@ -364,7 +362,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 		if (toLeave && mTextChanged) {
-			mEvernote.sync(false);
+			mEvernote.sync();
 		}
 	}
 
@@ -397,9 +395,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			PreferenceManager.getDefaultSharedPreferences(mContext).edit()
 					.putInt(sEditCount, count).commit();
 		}
-		if (count == 5) {
-
-		}
+		mEvernote.sync();
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
@@ -409,40 +405,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			getContentResolver().delete(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), null, null);
-			mEvernote.deleteMemo(memo, false);
+			mEvernote.sync();
 		}
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
-
-	@Override
-	public void CreateCallback(boolean result, Memo memo, Note data) {
-		if (result == true) {
-			this.memo.setHash(data.getContentHash());
-			this.memo.setEnid(data.getGuid());
-			// Toast.makeText(mContext, "添加成功", Toast.LENGTH_SHORT).show();
-		} else {
-			// Toast.makeText(mContext, "添加失败", Toast.LENGTH_SHORT).show();
-		}
-	}
-
-	@Override
-	public void UpdateCallback(boolean result, Memo memo, Note data) {
-		if (result) {
-			// Toast.makeText(mContext, "修改成功", Toast.LENGTH_SHORT).show();
-		} else {
-			// Toast.makeText(mContext, "修改失败", Toast.LENGTH_SHORT).show();
-
-		}
-	}
-
-	@Override
-	public void DeleteCallback(boolean result, Memo memo) {
-		if (result) {
-			// Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
-		} else {
-			// Toast.makeText(mContext, "删除失败", Toast.LENGTH_SHORT).show();
-		}
-	}
-
 }

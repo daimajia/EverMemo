@@ -12,6 +12,7 @@ import android.text.TextUtils;
 
 public class MemoProvider extends ContentProvider {
 
+	public static final int ALL_MEMOS_WITH_DELETED = 0;
 	public static final int MEMOS = 1;
 	public static final int MEMO_ID = 2;
 
@@ -20,12 +21,16 @@ public class MemoProvider extends ContentProvider {
 	private static final String MEMO_BASE_PATH = MemoDB.MEMO_TABLE_NAME;
 	public static final Uri MEMO_URI = Uri.parse("content://" + AUTHORITY + "/"
 			+ MEMO_BASE_PATH);
+	private static final String ALL_MEMOS = "ALL_MEMOS";
+	public static final Uri ALL_MEMO_URI = Uri.parse("content://" + AUTHORITY
+			+ "/" + ALL_MEMOS);
 	private static final UriMatcher sURIMatcher = new UriMatcher(
 			UriMatcher.NO_MATCH);
 
 	static {
 		sURIMatcher.addURI(AUTHORITY, MEMO_BASE_PATH, MEMOS);
 		sURIMatcher.addURI(AUTHORITY, MEMO_BASE_PATH + "/#", MEMO_ID);
+		sURIMatcher.addURI(AUTHORITY, ALL_MEMOS, ALL_MEMOS_WITH_DELETED);
 	}
 
 	@Override
@@ -41,6 +46,8 @@ public class MemoProvider extends ContentProvider {
 		queryBuilder.setTables(MemoDB.MEMO_TABLE_NAME);
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
+		case ALL_MEMOS_WITH_DELETED:
+			break;
 		case MEMOS:
 			queryBuilder.appendWhere(MemoDB.STATUS + "!='" + Memo.STATUS_DELETE
 					+ "'");
@@ -66,6 +73,7 @@ public class MemoProvider extends ContentProvider {
 		int rowAffected = 0;
 		ContentValues values = new ContentValues();
 		values.put(MemoDB.STATUS, Memo.STATUS_DELETE);
+		values.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_DELETE);
 		switch (uriType) {
 		case MEMOS:
 			rowAffected = database.delete(MemoDB.MEMO_TABLE_NAME, selection,

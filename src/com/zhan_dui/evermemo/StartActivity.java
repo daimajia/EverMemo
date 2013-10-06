@@ -39,8 +39,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
-import com.evernote.edam.type.Note;
-import com.evernote.edam.type.User;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.adapters.MemosAdapter;
@@ -49,14 +47,11 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
-import com.zhan_dui.sync.Evernote.EvernoteLoginCallback;
-import com.zhan_dui.sync.Evernote.EvernoteSyncCallback;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends FragmentActivity implements
-		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener,
-		EvernoteSyncCallback, EvernoteLoginCallback {
+		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener {
 
 	private TextView mEverTextView;
 	private TextView mMemoTextView;
@@ -77,7 +72,7 @@ public class StartActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		mContext = this;
-		mEvernote = new Evernote(mContext, this, this);
+		mEvernote = new Evernote(mContext);
 
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
@@ -242,7 +237,7 @@ public class StartActivity extends FragmentActivity implements
 	}
 
 	private void deleteMemo(Memo memo) {
-		mEvernote.deleteMemo(memo, false);
+		mEvernote.sync();
 		MobclickAgent.onEvent(mContext, "delete_memo");
 		Logger.e("开始同步删除memo");
 	}
@@ -337,32 +332,6 @@ public class StartActivity extends FragmentActivity implements
 	protected void onPause() {
 		super.onPause();
 		MobclickAgent.onPause(this);
-	}
-
-	@Override
-	public void CreateCallback(boolean result, Memo memo, Note data) {
-	}
-
-	@Override
-	public void UpdateCallback(boolean result, Memo memo, Note data) {
-	}
-
-	@Override
-	public void DeleteCallback(boolean result, Memo memo) {
-	}
-
-	@Override
-	public void onLoginResult(Boolean result) {
-	}
-
-	@Override
-	public void onUserinfo(Boolean result, User user) {
-
-	}
-
-	@Override
-	public void onLogout(Boolean reuslt) {
-
 	}
 
 }

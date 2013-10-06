@@ -30,12 +30,17 @@ public class Memo implements Serializable {
 	/**
 	 * need to delete in Evernote
 	 */
-	public static final int NEED_SYNC_DELETE = 2;
+	public static final int NEED_SYNC_DELETE = 3;
 
 	/**
 	 * syning up
 	 */
-	public static final int SYNCING = 3;
+	public static final int SYNCING_UP = 4;
+
+	/**
+	 * syning down
+	 */
+	public static final int SYNCING_DOWN = 5;
 
 	private long mCreatedTime;
 	private long mUpdatedTime;
@@ -82,8 +87,31 @@ public class Memo implements Serializable {
 	}
 
 	public ContentValues toContentValues() {
-		ContentValues values = new ContentValues();
+		ContentValues values = toInsertContentValues();
 		values.put("_id", _id);
+		return values;
+	}
+
+	public ContentValues toInsertContentValues() {
+		ContentValues values = new ContentValues();
+		values.put("guid", mGuid);
+		values.put("enid", mEnid);
+		values.put("wallid", mWallId);
+		values.put("orderid", mOrder);
+		values.put("lastsynctime", mLastSyncTime);
+		values.put("createdtime", mCreatedTime);
+		values.put("updatedtime", mUpdatedTime);
+		values.put("status", mStatus);
+		values.put("attributes", mAttributes);
+		values.put("content", mContent);
+		values.put("hash", mHash);
+		values.put("cursorposition", mCursorPosition);
+		values.put("syncstatus", mSyncStatus);
+		return values;
+	}
+
+	public ContentValues toUpdateContentValues() {
+		ContentValues values = new ContentValues();
 		values.put("guid", mGuid);
 		values.put("enid", mEnid);
 		values.put("wallid", mWallId);
@@ -160,6 +188,12 @@ public class Memo implements Serializable {
 		return note;
 	}
 
+	public Note toUpdateNote() {
+		Note note = toNote();
+		note.setGuid(mEnid);
+		return note;
+	}
+
 	public Note toDeleteNote() {
 		Note note = new Note();
 		note.setGuid(mEnid);
@@ -174,12 +208,13 @@ public class Memo implements Serializable {
 		return EvernoteContent;
 	}
 
-	public void setContent(String content) {
+	public Memo setContent(String content) {
 		mContent = content;
 		Logger.e("下载下来的文本：" + content);
 		mStatus = STATUS_COMMON;
 		mOrder = 0;
 		mAttributes = "";
+		return this;
 	}
 
 	public void setCursorPosition(int cursorPosition) {
@@ -274,7 +309,7 @@ public class Memo implements Serializable {
 		setSyncStatus(NEED_SYNC_UP);
 	}
 
-	public boolean isNeedUpload() {
+	public boolean isNeedSyncUp() {
 		if (mSyncStatus == NEED_SYNC_UP) {
 			return true;
 		} else {
@@ -290,8 +325,12 @@ public class Memo implements Serializable {
 		}
 	}
 
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public boolean isDeleted() {
+		if (mStatus.equals(STATUS_DELETE)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

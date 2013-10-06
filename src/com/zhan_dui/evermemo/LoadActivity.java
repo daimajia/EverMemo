@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.umeng.analytics.MobclickAgent;
+import com.zhan_dui.sync.Evernote;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,6 +20,8 @@ public class LoadActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_load);
+		Evernote mEvernote = new Evernote(this);
+		mEvernote.sync();
 		mTimer = new Timer();
 		mTimer.schedule(new TimerTask() {
 
