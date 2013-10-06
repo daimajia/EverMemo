@@ -399,6 +399,8 @@ public class Evernote {
 							noteFilter, false);
 			Map<String, Integer> maps = noteCollectionCounts
 					.getNotebookCounts();
+			if (maps == null || maps.size() == 0)
+				return;
 			int maxcount = maps.get(guid);
 			NotesMetadataList list = mEvernoteSession
 					.getClientFactory()
@@ -429,15 +431,10 @@ public class Evernote {
 			}
 
 		} catch (TTransportException e) {
-			e.printStackTrace();
 		} catch (EDAMUserException e) {
-			e.printStackTrace();
 		} catch (EDAMSystemException e) {
-			e.printStackTrace();
 		} catch (EDAMNotFoundException e) {
-			e.printStackTrace();
 		} catch (TException e) {
-			e.printStackTrace();
 		}
 	}
 
