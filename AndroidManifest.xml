@@ -38,19 +38,17 @@
         <activity
             android:name="com.zhan_dui.evermemo.StartActivity"
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.zhan_dui.evermemo.MemoActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
         <activity android:name="com.zhan_dui.evermemo.SettingActivity" >
-        </activity>
-        <activity android:name="com.zhan_dui.evermemo.LoadActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.evernote.client.android.EvernoteOAuthActivity"

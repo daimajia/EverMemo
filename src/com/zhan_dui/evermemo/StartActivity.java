@@ -73,7 +73,7 @@ public class StartActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_start);
 		mContext = this;
 		mEvernote = new Evernote(mContext);
-
+		MobclickAgent.onError(this);
 		mEverTextView = (TextView) findViewById(R.id.ever);
 		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
@@ -133,6 +133,7 @@ public class StartActivity extends FragmentActivity implements
 				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
+		mEvernote.sync();
 	}
 
 	@Override
