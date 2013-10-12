@@ -154,8 +154,9 @@ public class Evernote {
 	public void Logout() {
 		try {
 			mEvernoteSession.logOut(mContext);
-			mSharedPreferences.edit().remove(EVERNOTE_USER_EMAIL);
-			mSharedPreferences.edit().remove(EVERNOTE_USER_NAME);
+			mSharedPreferences.edit().remove(EVERNOTE_USER_NAME)
+					.remove(EVERNOTE_NOTEBOOK_GUID).remove(EVERNOTE_USER_EMAIL)
+					.commit();
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLogout(true);
 			}
@@ -227,8 +228,6 @@ public class Evernote {
 	public Note createNote(Memo memo) throws Exception {
 		try {
 			Note note = memo.toNote();
-			Logger.e(LogTag, mSharedPreferences.getString(
-					EVERNOTE_NOTEBOOK_GUID, "aaaaaaaa"));
 			note.setNotebookGuid(mSharedPreferences.getString(
 					EVERNOTE_NOTEBOOK_GUID, null));
 			Note responseNote = mEvernoteSession.getClientFactory()
