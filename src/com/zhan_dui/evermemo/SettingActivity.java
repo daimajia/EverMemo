@@ -64,6 +64,7 @@ public class SettingActivity extends Activity implements OnClickListener,
 		findViewById(R.id.feedback).setOnClickListener(this);
 		findViewById(R.id.rate).setOnClickListener(this);
 		findViewById(R.id.setting_start).setOnClickListener(this);
+		findViewById(R.id.back_text).setOnClickListener(this);
 	}
 
 	private void bindSuccess() {
@@ -119,6 +120,7 @@ public class SettingActivity extends Activity implements OnClickListener,
 			}
 			break;
 		case R.id.back:
+		case R.id.back_text:
 			finish();
 			break;
 		case R.id.feedback:
