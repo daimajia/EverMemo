@@ -63,6 +63,7 @@ public class SettingActivity extends Activity implements OnClickListener,
 				OPEN_MEMO_WHEN_START_UP, false));
 		findViewById(R.id.feedback).setOnClickListener(this);
 		findViewById(R.id.rate).setOnClickListener(this);
+		findViewById(R.id.setting_start).setOnClickListener(this);
 	}
 
 	private void bindSuccess() {
@@ -141,6 +142,8 @@ public class SettingActivity extends Activity implements OnClickListener,
 						Toast.LENGTH_SHORT).show();
 			}
 			break;
+		case R.id.setting_start:
+			mToggleButton.performClick();
 		default:
 			break;
 		}

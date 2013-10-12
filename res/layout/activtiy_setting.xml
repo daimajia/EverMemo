@@ -45,6 +45,7 @@
             android:id="@+id/bind_evernote"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"
+            android:background="@drawable/setting_item"
             android:orientation="horizontal" >
 
             <ImageView
@@ -78,8 +79,10 @@
             android:background="@color/divider_line_color" />
 
         <LinearLayout
+            android:id="@+id/setting_start"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"
+            android:background="@drawable/setting_item"
             android:orientation="horizontal" >
 
             <ImageView
@@ -116,6 +119,7 @@
             android:id="@+id/feedback"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"
+            android:background="@drawable/setting_item"
             android:clickable="true"
             android:orientation="horizontal" >
 
@@ -151,6 +155,7 @@
             android:id="@+id/rate"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"
+            android:background="@drawable/setting_item"
             android:clickable="true"
             android:orientation="horizontal" >
 

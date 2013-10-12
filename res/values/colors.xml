@@ -17,5 +17,6 @@
     <color name="evernoe_panel_background">#09B9FF</color>
     <color name="proudly_color">#7E7E7E</color>
     <color name="load_background">#E7E7E7</color>
+    <color name="setting_press">#dadada</color>
 
 </resources>

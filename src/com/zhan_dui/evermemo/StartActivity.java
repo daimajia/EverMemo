@@ -120,7 +120,7 @@ public class StartActivity extends FragmentActivity implements
 						}
 					});
 				}
-			}, 7000);
+			}, 5000);
 			mSharedPreferences
 					.edit()
 					.putInt(sStartCount,
