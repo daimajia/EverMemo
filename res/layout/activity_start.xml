@@ -4,21 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
+    android:paddingTop="3dp"
     tools:context=".StartActivity" >
-
-    <View
-        android:id="@+id/divider_line"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_line_height"
-        android:background="@color/divider_line_color" >
-    </View>
-
+    
     <com.huewu.pla.lib.MultiColumnListView
         xmlns:pla="http://schemas.android.com/apk/res-auto"
         android:id="@+id/memos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divider_line"
         android:paddingLeft="@dimen/grid_padding_left"
         android:paddingRight="@dimen/grid_padding_right"
         android:scrollbars="vertical"
