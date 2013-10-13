@@ -1,9 +1,22 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:evermemo="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:id="@+id/more"
+        android:icon="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
+        android:title="@string/menu_more"
+        evermemo:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/sync"
+                android:title="@string/menu_sync"/>
+            <item
+                android:id="@+id/settiing"
+                android:title="@string/menu_setting"/>
+            <item
+                android:id="@+id/feedback"
+                android:title="@string/menu_feedback"/>
+        </menu>
+    </item>
 
 </menu>

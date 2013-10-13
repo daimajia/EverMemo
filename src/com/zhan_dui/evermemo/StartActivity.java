@@ -15,27 +15,27 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
@@ -50,11 +50,9 @@ import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
-public class StartActivity extends FragmentActivity implements
+public class StartActivity extends ActionBarActivity implements
 		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener {
 
-	private TextView mEverTextView;
-	private TextView mMemoTextView;
 	private MultiColumnListView mMemosGrid;
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
@@ -68,14 +66,14 @@ public class StartActivity extends FragmentActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
 		super.onCreate(savedInstanceState);
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		setContentView(R.layout.activity_start);
+
 		mContext = this;
 		mEvernote = new Evernote(mContext);
 		MobclickAgent.onError(this);
-		mEverTextView = (TextView) findViewById(R.id.ever);
-		mMemoTextView = (TextView) findViewById(R.id.memo);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
 		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
 		mBindEvernotePanel = (LinearLayout) findViewById(R.id.evernote_panel);
@@ -83,20 +81,13 @@ public class StartActivity extends FragmentActivity implements
 		mBindEvernote = (Button) findViewById(R.id.bind_evernote);
 		mUndoPanelHeight = mUndoPanel.getLayoutParams().height;
 		mBindEvernotePandelHeight = mBindEvernotePanel.getLayoutParams().height;
-		Typeface roboto_bold = Typeface.createFromAsset(getAssets(),
-				"fonts/Roboto-Bold.ttf");
-		Typeface roboto_thin = Typeface.createFromAsset(getAssets(),
-				"fonts/Roboto-Thin.ttf");
 
-		mEverTextView.setTypeface(roboto_bold);
-		mMemoTextView.setTypeface(roboto_thin);
 		LoaderManager manager = getSupportLoaderManager();
 		mMemosAdapter = new MemosAdapter(mContext, null,
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
 
 		mUndo.setOnClickListener(this);
-		findViewById(R.id.setting_btn).setOnClickListener(this);
 		manager.initLoader(1, null, this);
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
@@ -220,8 +211,6 @@ public class StartActivity extends FragmentActivity implements
 			getContentResolver().update(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							mToDeleteMemo.getId()), values, null, null);
-		} else if (v.getId() == R.id.setting_btn) {
-			startActivity(new Intent(mContext, SettingActivity.class));
 		} else if (v.getId() == R.id.bind_evernote) {
 			mEvernote.auth();
 		}
@@ -335,4 +324,36 @@ public class StartActivity extends FragmentActivity implements
 		MobclickAgent.onPause(this);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.settiing:
+			Intent intent = new Intent(mContext, SettingActivity.class);
+			startActivity(intent);
+			break;
+		case R.id.sync:
+			break;
+		case R.id.feedback:
+
+			break;
+		default:
+			break;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			findViewById(R.id.more).performClick();
+			return true;
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.start, menu);
+		return true;
+	}
 }

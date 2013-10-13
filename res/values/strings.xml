@@ -56,5 +56,10 @@
     <string name="team_email">team@mudlab9.com</string>
     <string name="bind_evernote_tip">绑定EverNote吗？</string>
     <string name="bind_evernote">绑定</string>
-
+	<!-- Memu -->
+	<string name="menu_more">更多</string>
+	<string name="menu_sync">同步</string>
+	<string name="menu_setting">设置</string>
+	<string name="menu_feedback">反馈</string>
+	<!-- Memu -->
 </resources>

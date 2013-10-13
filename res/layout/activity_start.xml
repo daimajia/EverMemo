@@ -6,48 +6,10 @@
     android:background="@color/background_color"
     tools:context=".StartActivity" >
 
-    <RelativeLayout
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_bar_height"
-        android:layout_alignParentTop="true"
-        android:background="@color/background_color"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin" >
-
-        <TextView
-            android:id="@+id/ever"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="@string/app_ever"
-            android:textSize="@dimen/title_text_size" />
-
-        <TextView
-            android:id="@+id/memo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/ever"
-            android:text="@string/app_memo"
-            android:textSize="@dimen/title_text_size" />
-
-        <Button
-            android:id="@+id/setting_btn"
-            android:layout_width="@dimen/setting_image"
-            android:layout_height="@dimen/setting_image"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ab_setting"
-            android:contentDescription="@null" />
-    </RelativeLayout>
-
     <View
         android:id="@+id/divider_line"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_line_height"
-        android:layout_below="@+id/title"
         android:background="@color/divider_line_color" >
     </View>
 
