@@ -48,6 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_line_height"
         android:layout_below="@+id/title"
+        android:layout_marginBottom="2dp"
         android:background="@color/divider_line_color" >
     </View>
 
