@@ -334,7 +334,14 @@ public class StartActivity extends ActionBarActivity implements
 		case R.id.sync:
 			break;
 		case R.id.feedback:
-
+			Intent Email = new Intent(Intent.ACTION_SEND);
+			Email.setType("text/email");
+			Email.putExtra(Intent.EXTRA_EMAIL,
+					new String[] { getString(R.string.team_email) });
+			Email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback));
+			Email.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_title));
+			startActivity(Intent.createChooser(Email,
+					getString(R.string.email_chooser)));
 			break;
 		default:
 			break;

@@ -61,7 +61,6 @@ public class SettingActivity extends Activity implements OnClickListener,
 		mToggleButton.setOnCheckedChangeListener(this);
 		mToggleButton.setChecked(mSharedPreferences.getBoolean(
 				OPEN_MEMO_WHEN_START_UP, false));
-		findViewById(R.id.feedback).setOnClickListener(this);
 		findViewById(R.id.rate).setOnClickListener(this);
 		findViewById(R.id.setting_start).setOnClickListener(this);
 		findViewById(R.id.back_text).setOnClickListener(this);
@@ -122,16 +121,6 @@ public class SettingActivity extends Activity implements OnClickListener,
 		case R.id.back:
 		case R.id.back_text:
 			finish();
-			break;
-		case R.id.feedback:
-			Intent Email = new Intent(Intent.ACTION_SEND);
-			Email.setType("text/email");
-			Email.putExtra(Intent.EXTRA_EMAIL,
-					new String[] { getString(R.string.team_email) });
-			Email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback));
-			Email.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_title));
-			startActivity(Intent.createChooser(Email,
-					getString(R.string.email_chooser)));
 			break;
 		case R.id.rate:
 			Uri uri = Uri.parse("market://details?id="

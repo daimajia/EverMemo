@@ -117,42 +117,6 @@
             android:background="@color/divider_line_color" />
 
         <LinearLayout
-            android:id="@+id/feedback"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setting_panel_height"
-            android:background="@drawable/setting_item"
-            android:clickable="true"
-            android:orientation="horizontal" >
-
-            <ImageView
-                android:layout_width="@dimen/setting_image"
-                android:layout_height="@dimen/setting_image"
-                android:layout_gravity="center"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_feedback" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1"
-                android:text="@string/feedback" />
-
-            <ImageView
-                android:layout_width="@dimen/arrow_size"
-                android:layout_height="@dimen/arrow_size"
-                android:layout_gravity="center"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_rightarrow" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_line_height"
-            android:background="@color/divider_line_color" />
-
-        <LinearLayout
             android:id="@+id/rate"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setting_panel_height"

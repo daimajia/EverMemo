@@ -21,8 +21,9 @@
         android:type="radial" />
 
     <padding
-        android:bottom="10dp"
-        android:top="10dp" >
+        android:bottom="2dp"
+        android:top="1dp"
+        android:right="1dp" >
     </padding>
 
 </shape>

@@ -30,6 +30,10 @@
     <dimen name="item_outer_padding">2dp</dimen>
     <dimen name="item_padding_left">4dp</dimen>
     <dimen name="item_padding_right">5dp</dimen>
+    <dimen name="item_upload_width">22dp</dimen>
+    <dimen name="item_upload_height">22dp</dimen>
+    <dimen name="item_text_padding_top">5dp</dimen>
+    <dimen name="item_time_padding_right">10dp</dimen>
     <dimen name="item_padding_top">10dp</dimen>
     <dimen name="item_rounded">3dp</dimen>
     <dimen name="item_min_height">80dp</dimen>

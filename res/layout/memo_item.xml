@@ -21,23 +21,31 @@
             android:src="@drawable/trash" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/hover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/hover_margin_left"
         android:background="@drawable/hover_background"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/item_padding_left"
-        android:paddingRight="@dimen/item_padding_right" >
+        android:paddingLeft="@dimen/item_padding_left" >
+
+        <ImageView
+            android:layout_width="@dimen/item_upload_width"
+            android:layout_height="@dimen/item_upload_height"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@null"
+            android:src="@drawable/icon_upload" />
 
         <com.zhan_dui.custom.MinusTextView
             android:id="@+id/content"
-            android:lineSpacingExtra="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:lineSpacingExtra="5dp"
             android:paddingLeft="@dimen/content_padding_right"
             android:paddingRight="@dimen/content_padding_left"
+            android:paddingTop="@dimen/item_text_padding_top"
             android:textColor="@color/content_text_color"
             android:textSize="16sp" />
 
@@ -45,10 +53,12 @@
             android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="@dimen/grid_date_height"
+            android:layout_alignParentBottom="true"
             android:gravity="center|right"
+            android:paddingRight="@dimen/item_time_padding_right"
             android:text="@null"
             android:textColor="@color/grid_date_color"
             android:textSize="12sp" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
