@@ -23,6 +23,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -121,6 +122,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		findViewById(R.id.share).setOnClickListener(this);
 		mSave.setOnClickListener(this);
 		mDelete.setOnClickListener(this);
+		findViewById(R.id.edit_container).setOnClickListener(this);
 	}
 
 	@Override
@@ -138,6 +140,13 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.edit_container:
+			InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputMethodManager.toggleSoftInputFromWindow(
+					findViewById(R.id.edit_container)
+							.getApplicationWindowToken(),
+					InputMethodManager.SHOW_FORCED, 0);
+			break;
 		case R.id.list:
 			clickList();
 			break;
