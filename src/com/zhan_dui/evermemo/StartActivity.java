@@ -332,6 +332,7 @@ public class StartActivity extends ActionBarActivity implements
 			startActivity(intent);
 			break;
 		case R.id.sync:
+			mEvernote.sync();
 			break;
 		case R.id.feedback:
 			Intent Email = new Intent(Intent.ACTION_SEND);
