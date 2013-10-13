@@ -21,7 +21,6 @@
         android:layout_below="@+id/divider_line"
         android:paddingLeft="@dimen/grid_padding_left"
         android:paddingRight="@dimen/grid_padding_right"
-        android:paddingTop="@dimen/grid_padding_top"
         android:scrollbars="vertical"
         pla:plaColumnNumber="2"
         pla:plaLandscapeColumnNumber="3" >
