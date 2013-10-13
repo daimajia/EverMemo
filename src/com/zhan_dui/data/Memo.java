@@ -317,6 +317,14 @@ public class Memo implements Serializable {
 		}
 	}
 
+	public boolean isSyncingUp() {
+		if (mSyncStatus == SYNCING_UP) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public boolean isNeedSyncDelete() {
 		if (mSyncStatus == NEED_SYNC_DELETE) {
 			return true;

@@ -31,6 +31,8 @@
         android:paddingLeft="@dimen/item_padding_left" >
 
         <ImageView
+            android:id="@+id/uploading"
+            android:visibility="invisible"
             android:layout_width="@dimen/item_upload_width"
             android:layout_height="@dimen/item_upload_height"
             android:layout_alignParentRight="true"

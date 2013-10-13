@@ -1,12 +1,15 @@
 package com.zhan_dui.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
@@ -68,6 +71,32 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		mRobotoThin = Typeface.createFromAsset(context.getAssets(),
 				"fonts/Roboto-Thin.ttf");
 		mDeleteRecoverPanelLisener = l;
+		mContext.getContentResolver().registerContentObserver(
+				MemoProvider.MEMO_URI, false,
+				new UpdateObserver(mUpdateHandler));
+
+	}
+
+	@SuppressLint("HandlerLeak")
+	private Handler mUpdateHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			notifyDataSetChanged();
+		};
+	};
+
+	class UpdateObserver extends ContentObserver {
+		private Handler mHandler;
+
+		public UpdateObserver(Handler handler) {
+			super(handler);
+			mHandler = handler;
+		}
+
+		@Override
+		public void onChange(boolean selfChange) {
+			super.onChange(selfChange);
+			mHandler.sendEmptyMessage(0);
+		}
 
 	}
 
@@ -122,10 +151,16 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			date.setText(DateHelper.getGridDate(mContext, memo.getCreatedTime()));
 			View bottomView = view.findViewById(R.id.bottom);
 			View hoverView = view.findViewById(R.id.hover);
+			View uploadView = view.findViewById(R.id.uploading);
 			bottomView.setTag(R.string.memo_data, memo);
 			bottomView.setTag(R.string.memo_id, _id);
 			hoverView.setTag(R.string.memo_data, memo);
 			hoverView.setTag(R.string.memo_id, _id);
+			if (memo.isSyncingUp()) {
+				uploadView.setVisibility(View.VISIBLE);
+			} else {
+				uploadView.setVisibility(View.INVISIBLE);
+			}
 		}
 	}
 

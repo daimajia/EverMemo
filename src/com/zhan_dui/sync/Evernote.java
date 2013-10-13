@@ -226,6 +226,12 @@ public class Evernote {
 	}
 
 	public Note createNote(Memo memo) throws Exception {
+		boolean result = false;
+		ContentValues syncingValues = new ContentValues();
+		syncingValues.put(MemoDB.SYNCSTATUS, Memo.SYNCING_UP);
+		mContentResolver
+				.update(ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+						memo.getId()), syncingValues, null, null);
 		try {
 			Note note = memo.toNote();
 			note.setNotebookGuid(mSharedPreferences.getString(
@@ -242,6 +248,7 @@ public class Evernote {
 			mContentResolver.update(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), values, null, null);
+			result = true;
 			return responseNote;
 		} catch (EDAMUserException e) {
 			throw new Exception("Note格式不合理");
@@ -249,6 +256,15 @@ public class Evernote {
 			throw new Exception("笔记本不存在");
 		} catch (Exception e) {
 			throw e;
+		} finally {
+			if (result) {
+				syncingValues.put(MemoDB.SYNCSTATUS, Memo.NEED_NOTHING);
+			} else {
+				syncingValues.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_UP);
+			}
+			mContentResolver.update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							memo.getId()), syncingValues, null, null);
 		}
 	}
 
@@ -279,7 +295,14 @@ public class Evernote {
 	}
 
 	public Note updateNote(Memo memo) throws Exception {
+		boolean result = false;
+		ContentValues syncingValues = new ContentValues();
+		syncingValues.put(MemoDB.SYNCSTATUS, Memo.SYNCING_UP);
+		mContentResolver
+				.update(ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+						memo.getId()), syncingValues, null, null);
 		try {
+
 			Note responseNote = mEvernoteSession
 					.getClientFactory()
 					.createNoteStore()
@@ -293,6 +316,7 @@ public class Evernote {
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), values, null, null);
 			Logger.e(LogTag, "Note更新成功");
+			result = true;
 			return responseNote;
 		} catch (EDAMUserException e) {
 			Logger.e(LogTag, "数据格式有误");
@@ -303,6 +327,15 @@ public class Evernote {
 		} catch (Exception e) {
 			Logger.e(LogTag, "传输出现错误:" + e.getCause());
 			throw new Exception("传输出现错误:" + e.getCause());
+		} finally {
+			if (result) {
+				syncingValues.put(MemoDB.SYNCSTATUS, Memo.NEED_NOTHING);
+			} else {
+				syncingValues.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_UP);
+			}
+			mContentResolver.update(
+					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+							memo.getId()), syncingValues, null, null);
 		}
 	}
 
