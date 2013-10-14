@@ -26,8 +26,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,6 +45,7 @@ import com.huewu.pla.lib.MultiColumnListView;
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
+import com.zhan_dui.adapters.MemosAdapter.ItemLongPressedLisener;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
@@ -51,7 +54,8 @@ import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends ActionBarActivity implements
-		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener {
+		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener,
+		ItemLongPressedLisener {
 
 	private MultiColumnListView mMemosGrid;
 	private Context mContext;
@@ -66,11 +70,9 @@ public class StartActivity extends ActionBarActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		setContentView(R.layout.activity_start);
-
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		mContext = this;
 		mEvernote = new Evernote(mContext);
 		MobclickAgent.onError(this);
@@ -84,7 +86,7 @@ public class StartActivity extends ActionBarActivity implements
 
 		LoaderManager manager = getSupportLoaderManager();
 		mMemosAdapter = new MemosAdapter(mContext, null,
-				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this);
+				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
 
 		mUndo.setOnClickListener(this);
@@ -363,5 +365,45 @@ public class StartActivity extends ActionBarActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.start, menu);
 		return true;
+	}
+
+	private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+		@Override
+		public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
+			return false;
+		}
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context_menu, menu);
+			return true;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode arg0) {
+			mActionMode = null;
+			mMemosAdapter.setCheckMode(false);
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
+			return false;
+		}
+
+	};
+
+	private ActionMode mActionMode;
+
+	@Override
+	public void onMemoItemLongClick(final View view, final int position,
+			final Memo memo) {
+		if (mActionMode != null) {
+			return;
+		}
+		mActionMode = startSupportActionMode(mActionModeCallback);
+		mMemosAdapter.setCheckMode(true);
+		mMemosAdapter.toggleCheckedId(memo.getId(), memo);
 	}
 }

@@ -32,13 +32,13 @@
 
         <ImageView
             android:id="@+id/uploading"
-            android:visibility="invisible"
             android:layout_width="@dimen/item_upload_width"
             android:layout_height="@dimen/item_upload_height"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@null"
-            android:src="@drawable/icon_upload" />
+            android:src="@drawable/icon_upload"
+            android:visibility="invisible" />
 
         <com.zhan_dui.custom.MinusTextView
             android:id="@+id/content"
@@ -61,6 +61,13 @@
             android:text="@null"
             android:textColor="@color/grid_date_color"
             android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" />
     </RelativeLayout>
 
 </LinearLayout>

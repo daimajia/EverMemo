@@ -340,5 +340,4 @@ public class Memo implements Serializable {
 			return false;
 		}
 	}
-
 }

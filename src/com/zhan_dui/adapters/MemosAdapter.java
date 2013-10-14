@@ -1,10 +1,10 @@
 package com.zhan_dui.adapters;
 
+import java.util.HashMap;
+
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -28,12 +31,11 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
-import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.utils.DateHelper;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class MemosAdapter extends CursorAdapter implements OnClickListener,
-		OnTouchListener {
+		OnTouchListener, OnCheckedChangeListener {
 
 	private LayoutInflater mLayoutInflater;
 	private int mOutItemId;
@@ -48,9 +50,12 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private View mCurrentTouchHover;
 	private View mCurrentTouchBottom;
 	private int mCurrentTouchPosition;
+	private boolean mCheckMode;
+	private HashMap<Integer, Memo> mCheckedItems;
 	private Typeface mRobotoThin;
 	private final DeleteRecoverPanelLisener mDeleteRecoverPanelLisener;
 	private final ItemGuestureDetector itemGuestureDetector = new ItemGuestureDetector();
+	private ItemLongPressedLisener mItemLongPressedLisener;
 
 	public void setOpenerItem(int id) {
 		if (id < 0 && id > getCount()) {
@@ -74,7 +79,13 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		mContext.getContentResolver().registerContentObserver(
 				MemoProvider.MEMO_URI, false,
 				new UpdateObserver(mUpdateHandler));
+	}
 
+	public MemosAdapter(Context context, Cursor c, int flags,
+			DeleteRecoverPanelLisener l,
+			ItemLongPressedLisener itemLongPressedLisener) {
+		this(context, c, flags, l);
+		mItemLongPressedLisener = itemLongPressedLisener;
 	}
 
 	@SuppressLint("HandlerLeak")
@@ -152,14 +163,27 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			View bottomView = view.findViewById(R.id.bottom);
 			View hoverView = view.findViewById(R.id.hover);
 			View uploadView = view.findViewById(R.id.uploading);
+			CheckBox checkBox = (CheckBox) view.findViewById(R.id.check);
+			checkBox.setTag(memo);
 			bottomView.setTag(R.string.memo_data, memo);
 			bottomView.setTag(R.string.memo_id, _id);
 			hoverView.setTag(R.string.memo_data, memo);
 			hoverView.setTag(R.string.memo_id, _id);
+			checkBox.setOnCheckedChangeListener(this);
 			if (memo.isSyncingUp()) {
 				uploadView.setVisibility(View.VISIBLE);
 			} else {
 				uploadView.setVisibility(View.INVISIBLE);
+			}
+			if (mCheckMode) {
+				checkBox.setVisibility(View.VISIBLE);
+				if (isChecked(memo.getId())) {
+					checkBox.setChecked(true);
+				} else {
+					checkBox.setChecked(false);
+				}
+			} else {
+				checkBox.setVisibility(View.INVISIBLE);
 			}
 		}
 	}
@@ -211,9 +235,14 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 				}
 				break;
 			case R.id.hover:
-				Intent intent = new Intent(mContext, MemoActivity.class);
-				intent.putExtra("memo", (Memo) v.getTag(R.string.memo_data));
-				mContext.startActivity(intent);
+				Memo memo = (Memo) v.getTag(R.string.memo_data);
+				if (mCheckMode) {
+					toggleCheckedId(memo.getId(), memo);
+				} else {
+					Intent intent = new Intent(mContext, MemoActivity.class);
+					intent.putExtra("memo", memo);
+					mContext.startActivity(intent);
+				}
 				break;
 			default:
 				break;
@@ -237,38 +266,18 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		return mGestureDetectorCompat.onTouchEvent(event);
 	}
 
+	public interface ItemLongPressedLisener {
+		public void onMemoItemLongClick(View view, int posotion, Memo memo);
+	}
+
 	class ItemGuestureDetector extends SimpleOnGestureListener {
 
 		@Override
 		public void onLongPress(MotionEvent e) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-			builder.setMessage(R.string.delete_confirm)
-					.setTitle(R.string.delete_title)
-					.setPositiveButton(R.string.delete_sure,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									new Thread() {
-										@Override
-										public void run() {
-											super.run();
-											mContext.getContentResolver()
-													.delete(ContentUris
-															.withAppendedId(
-																	MemoProvider.MEMO_URI,
-																	mCurrentLongPressMemo
-																			.getId()),
-															null, null);
-											Evernote mEvernote = new Evernote(
-													mContext);
-											mEvernote.sync();
-										}
-									}.start();
-								}
-							}).setNegativeButton(R.string.delete_cancel, null)
-					.create().show();
+			if (mItemLongPressedLisener != null) {
+				mItemLongPressedLisener.onMemoItemLongClick(mCurrentTouchHover,
+						mCurrentTouchPosition, mCurrentLongPressMemo);
+			}
 			mLastChangeStatus = System.currentTimeMillis();
 		}
 
@@ -326,4 +335,42 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		public void wakeRecoveryPanel(Memo memo);
 	}
 
+	public void setCheckMode(boolean check) {
+		mCheckMode = check;
+		if (mCheckMode == false) {
+			mCheckedItems = null;
+		}
+		notifyDataSetChanged();
+	}
+
+	@SuppressLint("UseSparseArrays")
+	public void toggleCheckedId(int _id, Memo memo) {
+		if (mCheckedItems == null) {
+			mCheckedItems = new HashMap<Integer, Memo>();
+		}
+		if (mCheckedItems.containsKey(_id) == false) {
+			mCheckedItems.put(_id, memo);
+		} else {
+			mCheckedItems.remove(_id);
+		}
+		notifyDataSetChanged();
+	}
+
+	public boolean isChecked(int _id) {
+		if (mCheckedItems == null || mCheckedItems.containsKey(_id) == false) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		Memo memo = (Memo) buttonView.getTag();
+		if (isChecked) {
+			mCheckedItems.put(memo.getId(), memo);
+		} else {
+			mCheckedItems.remove(memo.getId());
+		}
+	}
 }

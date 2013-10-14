@@ -19,7 +19,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/ab_logo"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/EverMemo_LightMode" >
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5227d49556240bb56e0b9713" >
@@ -37,8 +37,7 @@
 
         <activity
             android:name="com.zhan_dui.evermemo.StartActivity"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

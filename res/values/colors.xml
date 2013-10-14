@@ -18,5 +18,5 @@
     <color name="proudly_color">#7E7E7E</color>
     <color name="load_background">#E7E7E7</color>
     <color name="setting_press">#dadada</color>
-
+	<color name="red">#ff0000</color>
 </resources>
