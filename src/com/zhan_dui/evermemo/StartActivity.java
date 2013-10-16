@@ -133,7 +133,7 @@ public class StartActivity extends FragmentActivity implements
 				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
-		mEvernote.sync();
+		mEvernote.sync(true, true);
 	}
 
 	@Override
@@ -238,7 +238,7 @@ public class StartActivity extends FragmentActivity implements
 	}
 
 	private void deleteMemo(Memo memo) {
-		mEvernote.sync();
+		mEvernote.sync(true, false);
 		MobclickAgent.onEvent(mContext, "delete_memo");
 		Logger.e("开始同步删除memo");
 	}
@@ -276,6 +276,8 @@ public class StartActivity extends FragmentActivity implements
 		}
 
 	}
+
+	private Timer mSyncTimer;
 
 	@Override
 	protected void onResume() {
@@ -327,11 +329,24 @@ public class StartActivity extends FragmentActivity implements
 							}).create().show();
 			mSharedPreferences.edit().putBoolean(sShownRate, true).commit();
 		}
+		mSyncTimer = new Timer();
+		Logger.e("启动自动更新任务");
+		mSyncTimer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				mEvernote.sync(true, true);
+			}
+		}, 30000, 50000);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (mSyncTimer != null) {
+			Logger.e("结束定时同步任务");
+			mSyncTimer.cancel();
+		}
 		MobclickAgent.onPause(this);
 	}
 

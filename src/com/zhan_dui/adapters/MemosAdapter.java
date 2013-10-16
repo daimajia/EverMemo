@@ -228,7 +228,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 															null, null);
 											Evernote mEvernote = new Evernote(
 													mContext);
-											mEvernote.sync();
+											mEvernote.sync(true, false);
 										}
 									}.start();
 								}

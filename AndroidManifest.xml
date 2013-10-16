@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhan_dui.evermemo"
     android:versionCode="2"
-    android:versionName="1.0.4" >
+    android:versionName="1.0.5" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -26,7 +26,7 @@
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="qq" />
+            android:value="Wan_Dou_Jia" />
 
         <provider
             android:name="com.zhan_dui.data.MemoProvider"
@@ -38,11 +38,6 @@
         <activity
             android:name="com.zhan_dui.evermemo.StartActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.zhan_dui.evermemo.MemoActivity"
@@ -54,6 +49,13 @@
             android:name="com.evernote.client.android.EvernoteOAuthActivity"
             android:configChanges="orientation|keyboardHidden" />
         <activity android:name="com.zhan_dui.evermemo.FeedbackActivity" >
+        </activity>
+        <activity android:name="com.zhan_dui.evermemo.LoadActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

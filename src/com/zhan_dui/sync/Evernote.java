@@ -48,7 +48,8 @@ public class Evernote {
 	public static final String EVERNOTE_USER_EMAIL = "Evernote_User_Email";
 	public static final String EVERNOTE_NOTEBOOK_GUID = "Evenote_Note_Guid";
 	public static final String LAST_SYNC_DOWN = "LAST_SYNC_DOWN";
-	public static boolean Syncing = false;
+	public static boolean SyncingUp = false;
+	public static boolean SyncingDown = false;
 
 	private static final EvernoteSession.EvernoteService EVERNOTE_SERVICE = EvernoteSession.EvernoteService.PRODUCTION;
 	private EvernoteSession mEvernoteSession;
@@ -97,7 +98,7 @@ public class Evernote {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLoginResult(true);
 			}
-			sync();
+			sync(true, true);
 		} else {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLoginResult(false);
@@ -225,7 +226,7 @@ public class Evernote {
 		return result;
 	}
 
-	public Note createNote(Memo memo) throws Exception {
+	private Note createNote(Memo memo) throws Exception {
 		try {
 			Note note = memo.toNote();
 			note.setNotebookGuid(mSharedPreferences.getString(
@@ -252,7 +253,7 @@ public class Evernote {
 		}
 	}
 
-	public boolean deleteNote(Note note) {
+	private boolean deleteNote(Note note) {
 		if (note.getGuid() == null) {
 			Logger.e(LogTag, "GUID是空，无需删除");
 			return true;
@@ -278,7 +279,7 @@ public class Evernote {
 		}
 	}
 
-	public Note updateNote(Memo memo) throws Exception {
+	private Note updateNote(Memo memo) throws Exception {
 		try {
 			Note responseNote = mEvernoteSession
 					.getClientFactory()
@@ -306,7 +307,7 @@ public class Evernote {
 		}
 	}
 
-	public void makeSureNotebookExsits(String NotebookName) {
+	private void makeSureNotebookExsits(String NotebookName) throws Exception {
 		try {
 			if (mSharedPreferences.contains(EVERNOTE_NOTEBOOK_GUID)) {
 				if (!isNotebookExsist(mSharedPreferences.getString(
@@ -333,12 +334,11 @@ public class Evernote {
 
 		} catch (Exception e) {
 			Logger.e(LogTag, "检查笔记本是否存和创建笔记本的时候出现异常");
-			Syncing = false;
-			return;
+			throw e;
 		}
 	}
 
-	public void downloadNote(String guid) {
+	private void downloadNote(String guid) {
 		Logger.e(LogTag, "准备添加:" + guid);
 		try {
 			Note note = mEvernoteSession
@@ -357,7 +357,7 @@ public class Evernote {
 		}
 	}
 
-	public void updateLocalNote(String guid, int _id) {
+	private void updateLocalNote(String guid, int _id) {
 		Logger.e(LogTag, "准备更新:" + guid);
 		try {
 			Note note = mEvernoteSession
@@ -384,7 +384,11 @@ public class Evernote {
 
 	}
 
-	public void download() {
+	private void syncDown() {
+		if (SyncingDown) {
+			return;
+		}
+		SyncingDown = true;
 		NoteFilter noteFilter = new NoteFilter();
 		String guid = mSharedPreferences.getString(EVERNOTE_NOTEBOOK_GUID, "");
 		noteFilter.setNotebookGuid(guid);
@@ -434,63 +438,75 @@ public class Evernote {
 		} catch (EDAMSystemException e) {
 		} catch (EDAMNotFoundException e) {
 		} catch (TException e) {
+		} finally {
+			SyncingDown = false;
 		}
 	}
 
-	public void sync() {
-		new Thread() {
-			@Override
-			public void run() {
-				if (Syncing) {
-					Logger.e(LogTag, "正在同步");
-					return;
+	private void syncUp() {
+		if (SyncingUp) {
+			Logger.e(LogTag, "正在同步");
+			return;
+		}
+		Logger.e(LogTag, "开始同步");
+		SyncingUp = true;
+		Cursor cursor = mContentResolver.query(MemoProvider.ALL_MEMO_URI, null,
+				null, null, null);
+		while (cursor.moveToNext()) {
+			Memo memo = new Memo(cursor);
+			if (memo.isNeedSyncDelete()) {
+				if (deleteNote(memo.toDeleteNote())) {
+					ContentValues values = new ContentValues();
+					values.put(MemoDB.SYNCSTATUS, Memo.NEED_NOTHING);
+					mContentResolver.update(ContentUris.withAppendedId(
+							MemoProvider.MEMO_URI, memo.getId()), values, null,
+							null);
 				}
-				Logger.e(LogTag, "开始同步");
-				Syncing = true;
-				if (mEvernoteSession.isLoggedIn() == false) {
-					Logger.e(LogTag, "未登录");
-					Syncing = false;
-					return;
-				}
-				makeSureNotebookExsits(NOTEBOOK_NAME);
-				Cursor cursor = mContentResolver.query(
-						MemoProvider.ALL_MEMO_URI, null, null, null, null);
-				while (cursor.moveToNext()) {
-					Memo memo = new Memo(cursor);
-					if (memo.isNeedSyncDelete()) {
-						if (deleteNote(memo.toDeleteNote())) {
-							ContentValues values = new ContentValues();
-							values.put(MemoDB.SYNCSTATUS, Memo.NEED_NOTHING);
-							mContentResolver.update(ContentUris.withAppendedId(
-									MemoProvider.MEMO_URI, memo.getId()),
-									values, null, null);
+			} else {
+				if (memo.isNeedSyncUp()) {
+					if (memo.getEnid() != null && memo.getEnid().length() != 0) {
+						try {
+							updateNote(memo);
+						} catch (Exception e) {
+							Logger.e(LogTag, "尝试更新的时候出现错误:" + e.getCause());
+							continue;
 						}
 					} else {
-						if (memo.isNeedSyncUp()) {
-							if (memo.getEnid() != null
-									&& memo.getEnid().length() != 0) {
-								try {
-									updateNote(memo);
-								} catch (Exception e) {
-									Logger.e(LogTag,
-											"尝试更新的时候出现错误:" + e.getCause());
-									continue;
-								}
-							} else {
-								try {
-									createNote(memo);
-								} catch (Exception e) {
-									Logger.e(LogTag,
-											"尝试创建新的Note的时候出现错误:" + e.getCause());
-									continue;
-								}
-							}
+						try {
+							createNote(memo);
+						} catch (Exception e) {
+							Logger.e(LogTag,
+									"尝试创建新的Note的时候出现错误:" + e.getCause());
+							continue;
 						}
 					}
 				}
-				download();
-				Syncing = false;
-				cursor.close();
+			}
+		}
+		SyncingUp = false;
+		cursor.close();
+	}
+
+	public synchronized void sync(final boolean syncUp, final boolean syncDown) {
+		new Thread() {
+			@Override
+			public void run() {
+				if (syncUp == false && syncDown == false) {
+					return;
+				}
+				if (mEvernoteSession.isLoggedIn() == false) {
+					Logger.e(LogTag, "未登录");
+					return;
+				}
+				try {
+					makeSureNotebookExsits(NOTEBOOK_NAME);
+					if (syncUp)
+						syncUp();
+					if (syncDown)
+						syncDown();
+				} catch (Exception e) {
+					return;
+				}
 			}
 		}.start();
 
