@@ -26,7 +26,7 @@
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="Wan_Dou_Jia" />
+            android:value="qq" />
 
         <provider
             android:name="com.zhan_dui.data.MemoProvider"
