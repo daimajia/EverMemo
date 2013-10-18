@@ -3,7 +3,6 @@ package com.zhan_dui.adapters;
 import java.util.HashMap;
 
 import android.annotation.SuppressLint;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -18,21 +17,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
 import com.zhan_dui.utils.DateHelper;
-import com.zhan_dui.utils.MarginAnimation;
 
-public class MemosAdapter extends CursorAdapter implements OnClickListener,
-		OnTouchListener {
+public class MemosAdapter extends CursorAdapter implements OnClickListener {
 
 	private LayoutInflater mLayoutInflater;
 	private int mOutItemId;
@@ -43,9 +39,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private View mTempAnimationView;
 	@SuppressWarnings("unused")
 	private View mPreviousTouchHover;
-	private View mPreviousTouchBottom;
 	private View mCurrentTouchHover;
-	private View mCurrentTouchBottom;
 	private int mCurrentTouchPosition;
 	private boolean mCheckMode;
 	private HashMap<Integer, Memo> mCheckedItems;
@@ -132,15 +126,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		}
 
 		if (position != 0) {
-			LinearLayout.LayoutParams layoutParams = (LayoutParams) v
-					.findViewById(R.id.bottom).getLayoutParams();
-			if (position == mOutItemId) {
-				layoutParams.setMargins(0, 0, 0, 0);
-			} else {
-				if (layoutParams.leftMargin == 0)
-					layoutParams.setMargins(-mBottomMargin, 0, 0, 0);
-			}
-			v.findViewById(R.id.bottom).setLayoutParams(layoutParams);
 			v.findViewById(R.id.hover).setTag(R.string.memo_position, position);
 		}
 		bindView(v, mContext, mCursor);
@@ -148,7 +133,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		return v;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int _id = cursor.getInt(cursor.getColumnIndex("_id"));
@@ -158,13 +142,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			TextView date = (TextView) view.findViewById(R.id.date);
 			content.setText(Html.fromHtml(memo.getContent()));
 			date.setText(DateHelper.getGridDate(mContext, memo.getCreatedTime()));
-			View bottomView = view.findViewById(R.id.bottom);
 			View hoverView = view.findViewById(R.id.hover);
 			View uploadView = view.findViewById(R.id.uploading);
-			bottomView.setTag(R.string.memo_data, memo);
-			bottomView.setTag(R.string.memo_id, _id);
-			hoverView.setTag(R.string.memo_data, memo);
-			hoverView.setTag(R.string.memo_id, _id);
 			if (memo.isSyncingUp()) {
 				uploadView.setVisibility(View.VISIBLE);
 			} else {
@@ -199,12 +178,16 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			View commonView = mLayoutInflater.inflate(R.layout.memo_item,
 					parent, false);
 			commonView.setTag(R.string.memo_first, false);
-			View bottom = commonView.findViewById(R.id.bottom);
 			View hover = commonView.findViewById(R.id.hover);
-			hover.setTag(bottom);
-			bottom.setOnClickListener(this);
 			hover.setOnClickListener(this);
-			hover.setOnTouchListener(this);
+			hover.setOnLongClickListener(new OnLongClickListener() {
+				
+				@Override
+				public boolean onLongClick(View v) {
+					Toast.makeText(mContext, "long", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			});
 			return commonView;
 		}
 	}
@@ -221,16 +204,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			mContext.startActivity(new Intent(mContext, MemoActivity.class));
 		} else {
 			switch (v.getId()) {
-			case R.id.bottom:
-				if (mOutItemId != 0) {
-					Memo memo = (Memo) v.getTag(R.string.memo_data);
-					mDeleteRecoverPanelLisener.wakeRecoveryPanel(memo);
-					setOpenerItem(0);
-					mContext.getContentResolver().delete(
-							ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-									memo.getId()), null, null);
-				}
-				break;
 			case R.id.hover:
 				Memo memo = (Memo) v.getTag(R.string.memo_data);
 				if (mCheckMode) {
@@ -251,17 +224,16 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private long mLastChangeStatus = System.currentTimeMillis();
 	private Memo mCurrentLongPressMemo;
 
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		mCurrentTouchHover = v;
-		mCurrentTouchBottom = (View) v.getTag();
-		mCurrentTouchPosition = (Integer) v.getTag(R.string.memo_position);
-		mCurrentLongPressMemo = (Memo) v.getTag(R.string.memo_data);
-		if (event.getAction() == MotionEvent.ACTION_UP) {
-			mLastChangeStatus = System.currentTimeMillis();
-		}
-		return mGestureDetectorCompat.onTouchEvent(event);
-	}
+	// @Override
+	// public boolean onTouch(View v, MotionEvent event) {
+	// mCurrentTouchHover = v;
+	// mCurrentTouchPosition = (Integer) v.getTag(R.string.memo_position);
+	// mCurrentLongPressMemo = (Memo) v.getTag(R.string.memo_data);
+	// if (event.getAction() == MotionEvent.ACTION_UP) {
+	// mLastChangeStatus = System.currentTimeMillis();
+	// }
+	// return mGestureDetectorCompat.onTouchEvent(event);
+	// }
 
 	public interface ItemLongPressedLisener {
 		public void onMemoItemLongClick(View view, int posotion, Memo memo);
@@ -284,48 +256,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			return super.onSingleTapUp(e);
 		}
 
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {
-
-			if (distanceY > 20)
-				return true;
-
-			float moveDistance = e1.getX() - e2.getX();
-
-			if (moveDistance > 0 && moveDistance < 20) {
-				return true;
-			}
-
-			if (moveDistance > -25 && moveDistance < 0) {
-				return true;
-			}
-			if (moveDistance > 0) {
-				// 右向左滑
-				mCurrentTouchBottom.startAnimation(new MarginAnimation(
-						(LinearLayout) mCurrentTouchBottom, -mBottomMargin, 0,
-						0, 0));
-				setOpenerItem(0);
-			} else if (moveDistance < -0) {
-				// 左向右滑
-				setOpenerItem(mCurrentTouchPosition);
-				mCurrentTouchBottom.startAnimation(new MarginAnimation(
-						(LinearLayout) mCurrentTouchBottom, 0, 0, 0, 0));
-			}
-
-			if (mPreviousTouchBottom != null
-					&& mPreviousTouchBottom != mCurrentTouchBottom) {
-				LayoutParams layoutParams = (LayoutParams) mPreviousTouchBottom
-						.getLayoutParams();
-				layoutParams.leftMargin = -mBottomMargin;
-				mPreviousTouchBottom.setLayoutParams(layoutParams);
-			}
-			mPreviousTouchBottom = mCurrentTouchBottom;
-			mTempAnimationView = mCurrentTouchBottom;
-			mPreviousTouchHover = mCurrentTouchHover;
-			mLastChangeStatus = System.currentTimeMillis();
-			return true;
-		}
 	}
 
 	public interface DeleteRecoverPanelLisener {
@@ -360,4 +290,5 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			return true;
 		}
 	}
+
 }
