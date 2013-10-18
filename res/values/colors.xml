@@ -19,4 +19,5 @@
     <color name="load_background">#E7E7E7</color>
     <color name="setting_press">#dadada</color>
 	<color name="red">#ff0000</color>
+	<color name="item_selected_color">#fffb82</color>
 </resources>

@@ -20,9 +20,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -35,7 +32,7 @@ import com.zhan_dui.utils.DateHelper;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class MemosAdapter extends CursorAdapter implements OnClickListener,
-		OnTouchListener, OnCheckedChangeListener {
+		OnTouchListener {
 
 	private LayoutInflater mLayoutInflater;
 	private int mOutItemId;
@@ -151,6 +148,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		return v;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int _id = cursor.getInt(cursor.getColumnIndex("_id"));
@@ -163,27 +161,26 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			View bottomView = view.findViewById(R.id.bottom);
 			View hoverView = view.findViewById(R.id.hover);
 			View uploadView = view.findViewById(R.id.uploading);
-			CheckBox checkBox = (CheckBox) view.findViewById(R.id.check);
-			checkBox.setTag(memo);
 			bottomView.setTag(R.string.memo_data, memo);
 			bottomView.setTag(R.string.memo_id, _id);
 			hoverView.setTag(R.string.memo_data, memo);
 			hoverView.setTag(R.string.memo_id, _id);
-			checkBox.setOnCheckedChangeListener(this);
 			if (memo.isSyncingUp()) {
 				uploadView.setVisibility(View.VISIBLE);
 			} else {
 				uploadView.setVisibility(View.INVISIBLE);
 			}
 			if (mCheckMode) {
-				checkBox.setVisibility(View.VISIBLE);
 				if (isChecked(memo.getId())) {
-					checkBox.setChecked(true);
+					hoverView.setBackgroundColor(mContext.getResources()
+							.getColor(R.color.item_selected_color));
 				} else {
-					checkBox.setChecked(false);
+					hoverView.setBackgroundDrawable(mContext.getResources()
+							.getDrawable(R.drawable.hover_background));
 				}
 			} else {
-				checkBox.setVisibility(View.INVISIBLE);
+				hoverView.setBackgroundDrawable(mContext.getResources()
+						.getDrawable(R.drawable.hover_background));
 			}
 		}
 	}
@@ -361,16 +358,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			return false;
 		} else {
 			return true;
-		}
-	}
-
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		Memo memo = (Memo) buttonView.getTag();
-		if (isChecked) {
-			mCheckedItems.put(memo.getId(), memo);
-		} else {
-			mCheckedItems.remove(memo.getId());
 		}
 	}
 }

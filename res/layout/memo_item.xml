@@ -26,7 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/hover_margin_left"
-        android:background="@drawable/hover_background"
         android:orientation="vertical"
         android:paddingLeft="@dimen/item_padding_left" >
 
@@ -61,13 +60,6 @@
             android:text="@null"
             android:textColor="@color/grid_date_color"
             android:textSize="12sp" />
-
-        <CheckBox
-            android:id="@+id/check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true" />
     </RelativeLayout>
 
 </LinearLayout>
