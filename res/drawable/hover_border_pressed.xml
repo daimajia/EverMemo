@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <corners
-        android:bottomLeftRadius="@dimen/item_rounded"
-        android:bottomRightRadius="@dimen/item_rounded"
-        android:topLeftRadius="@dimen/item_rounded"
-        android:topRightRadius="@dimen/item_rounded" />
-
     <stroke
         android:width="1dp"
         android:color="#e2e2e2" />
@@ -17,13 +11,6 @@
         android:endColor="#66E8E8E8"
         android:gradientRadius="150"
         android:startColor="#ffffffff"
-        
         android:type="radial" />
-
-    <padding
-        android:bottom="2dp"
-        android:top="1dp"
-        android:right="1dp" >
-    </padding>
 
 </shape>

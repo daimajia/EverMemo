@@ -11,15 +11,12 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
@@ -27,16 +24,11 @@ import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
 import com.zhan_dui.utils.DateHelper;
 
-public class MemosAdapter extends CursorAdapter implements OnClickListener {
+public class MemosAdapter extends CursorAdapter implements OnClickListener,
+		OnLongClickListener {
 
 	private LayoutInflater mLayoutInflater;
 
-	@SuppressWarnings("unused")
-	private View mTempAnimationView;
-	@SuppressWarnings("unused")
-	private View mPreviousTouchHover;
-	private View mCurrentTouchHover;
-	private int mCurrentTouchPosition;
 	private boolean mCheckMode;
 	private HashMap<Integer, Memo> mCheckedItems;
 	private Typeface mRobotoThin;
@@ -115,7 +107,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 		return v;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int _id = cursor.getInt(cursor.getColumnIndex("_id"));
@@ -127,6 +118,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 			date.setText(DateHelper.getGridDate(mContext, memo.getCreatedTime()));
 			View hoverView = view.findViewById(R.id.hover);
 			View uploadView = view.findViewById(R.id.uploading);
+			hoverView.setTag(R.string.memo_data, memo);
+			hoverView.setTag(R.string.memo_id, _id);
 			if (memo.isSyncingUp()) {
 				uploadView.setVisibility(View.VISIBLE);
 			} else {
@@ -134,15 +127,14 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 			}
 			if (mCheckMode) {
 				if (isChecked(memo.getId())) {
-					hoverView.setBackgroundColor(mContext.getResources()
-							.getColor(R.color.item_selected_color));
+					hoverView
+							.setBackgroundResource(R.drawable.hover_multi_background_normal);
 				} else {
-					hoverView.setBackgroundDrawable(mContext.getResources()
-							.getDrawable(R.drawable.hover_background));
+					hoverView
+							.setBackgroundResource(R.drawable.hover_border_normal);
 				}
 			} else {
-				hoverView.setBackgroundDrawable(mContext.getResources()
-						.getDrawable(R.drawable.hover_background));
+				hoverView.setBackgroundResource(R.drawable.hover_background);
 			}
 		}
 	}
@@ -161,27 +153,15 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 			View commonView = mLayoutInflater.inflate(R.layout.memo_item,
 					parent, false);
 			commonView.setTag(R.string.memo_first, false);
-			View hover = commonView.findViewById(R.id.hover);
+			final View hover = commonView.findViewById(R.id.hover);
 			hover.setOnClickListener(this);
-			hover.setOnLongClickListener(new OnLongClickListener() {
-
-				@Override
-				public boolean onLongClick(View v) {
-					Toast.makeText(mContext, "long", Toast.LENGTH_SHORT).show();
-					return true;
-				}
-			});
+			hover.setOnLongClickListener(this);
 			return commonView;
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
-		long span = System.currentTimeMillis() - mLastChangeStatus;
-		if (span < 500) {
-			return;
-		}
-
 		if (v.getTag(R.string.memo_first) != null
 				&& (Boolean) v.getTag(R.string.memo_first) == true) {
 			mContext.startActivity(new Intent(mContext, MemoActivity.class));
@@ -190,7 +170,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 			case R.id.hover:
 				Memo memo = (Memo) v.getTag(R.string.memo_data);
 				if (mCheckMode) {
-					toggleCheckedId(memo.getId(), memo);
+					toggleCheckedId(memo.getId(), memo, v);
 				} else {
 					Intent intent = new Intent(mContext, MemoActivity.class);
 					intent.putExtra("memo", memo);
@@ -204,30 +184,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 
 	}
 
-	private long mLastChangeStatus = System.currentTimeMillis();
-	private Memo mCurrentLongPressMemo;
-
 	public interface ItemLongPressedLisener {
-		public void onMemoItemLongClick(View view, int posotion, Memo memo);
-	}
-
-	class ItemGuestureDetector extends SimpleOnGestureListener {
-
-		@Override
-		public void onLongPress(MotionEvent e) {
-			if (mItemLongPressedLisener != null) {
-				mItemLongPressedLisener.onMemoItemLongClick(mCurrentTouchHover,
-						mCurrentTouchPosition, mCurrentLongPressMemo);
-			}
-			mLastChangeStatus = System.currentTimeMillis();
-		}
-
-		@Override
-		public boolean onSingleTapUp(MotionEvent e) {
-			mLastChangeStatus = 0;
-			return super.onSingleTapUp(e);
-		}
-
+		public void startActionMode();
 	}
 
 	public interface DeleteRecoverPanelLisener {
@@ -243,7 +201,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 	}
 
 	@SuppressLint("UseSparseArrays")
-	public void toggleCheckedId(int _id, Memo memo) {
+	public void toggleCheckedId(int _id, Memo memo, View v) {
 		if (mCheckedItems == null) {
 			mCheckedItems = new HashMap<Integer, Memo>();
 		}
@@ -261,6 +219,17 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 		} else {
 			return true;
 		}
+	}
+
+	@Override
+	public boolean onLongClick(View v) {
+		if (mCheckMode == false) {
+			mItemLongPressedLisener.startActionMode();
+			setCheckMode(true);
+		}
+		Memo memo = (Memo) v.getTag(R.string.memo_data);
+		toggleCheckedId(memo.getId(), memo, v);
+		return true;
 	}
 
 }

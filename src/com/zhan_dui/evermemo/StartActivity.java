@@ -42,9 +42,6 @@ import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
 import com.huewu.pla.lib.MultiColumnListView;
-import com.huewu.pla.lib.internal.PLA_AdapterView;
-import com.huewu.pla.lib.internal.PLA_AdapterView.OnItemClickListener;
-import com.huewu.pla.lib.internal.PLA_AdapterView.OnItemLongClickListener;
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
@@ -130,24 +127,6 @@ public class StartActivity extends ActionBarActivity implements
 			startActivity(new Intent(this, MemoActivity.class));
 		}
 
-		mMemosGrid.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(PLA_AdapterView<?> parent, View view,
-					int position, long id) {
-				Toast.makeText(mContext, "get222", Toast.LENGTH_SHORT).show();
-			}
-
-		});
-		mMemosGrid.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(PLA_AdapterView<?> parent,
-					View view, int position, long id) {
-				Toast.makeText(mContext, "get", Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		});
 		mEvernote.sync();
 	}
 
@@ -419,13 +398,10 @@ public class StartActivity extends ActionBarActivity implements
 	private ActionMode mActionMode;
 
 	@Override
-	public void onMemoItemLongClick(final View view, final int position,
-			final Memo memo) {
+	public void startActionMode() {
 		if (mActionMode != null) {
 			return;
 		}
 		mActionMode = startSupportActionMode(mActionModeCallback);
-		mMemosAdapter.setCheckMode(true);
-		mMemosAdapter.toggleCheckedId(memo.getId(), memo);
 	}
 }
