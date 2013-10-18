@@ -6,7 +6,7 @@
         android:title="@string/selected_count"
         evermemo:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/more"
+        android:id="@+id/delete"
         android:icon="@drawable/ic_ab_delete_dark"
         android:title="@string/menu_more"
         evermemo:showAsAction="ifRoom">

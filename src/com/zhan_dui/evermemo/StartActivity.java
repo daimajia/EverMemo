@@ -3,7 +3,6 @@ package com.zhan_dui.evermemo;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.R.menu;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -42,6 +41,7 @@ import com.zhan_dui.adapters.MemosAdapter.onItemSelectLisener;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
+import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends ActionBarActivity implements
@@ -114,7 +114,7 @@ public class StartActivity extends ActionBarActivity implements
 			startActivity(new Intent(this, MemoActivity.class));
 		}
 
-		mEvernote.sync();
+		mEvernote.sync(true, true);
 	}
 
 	@Override
@@ -154,6 +154,8 @@ public class StartActivity extends ActionBarActivity implements
 			break;
 		}
 	}
+
+	private Timer mSyncTimer;
 
 	@Override
 	protected void onResume() {
@@ -205,11 +207,24 @@ public class StartActivity extends ActionBarActivity implements
 							}).create().show();
 			mSharedPreferences.edit().putBoolean(sShownRate, true).commit();
 		}
+		mSyncTimer = new Timer();
+		Logger.e("启动自动更新任务");
+		mSyncTimer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				mEvernote.sync(true, true);
+			}
+		}, 30000, 50000);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (mSyncTimer != null) {
+			Logger.e("结束定时同步任务");
+			mSyncTimer.cancel();
+		}
 		MobclickAgent.onPause(this);
 	}
 
@@ -221,7 +236,7 @@ public class StartActivity extends ActionBarActivity implements
 			startActivity(intent);
 			break;
 		case R.id.sync:
-			mEvernote.sync();
+			mEvernote.sync(true, true);
 			break;
 		case R.id.feedback:
 			Intent Email = new Intent(Intent.ACTION_SEND);
@@ -260,9 +275,9 @@ public class StartActivity extends ActionBarActivity implements
 		@Override
 		public boolean onActionItemClicked(ActionMode arg0, MenuItem menuItem) {
 			switch (menuItem.getItemId()) {
-			case R.id.selected_counts:
+			case R.id.delete:
+				mMemosAdapter.deleteSelectedMemos();
 				break;
-
 			default:
 				break;
 			}

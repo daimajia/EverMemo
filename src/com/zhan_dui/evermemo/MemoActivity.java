@@ -371,7 +371,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			}
 		}
 		if (toLeave && mTextChanged) {
-			mEvernote.sync();
+			mEvernote.sync(true, false);
 		}
 	}
 
@@ -404,7 +404,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			PreferenceManager.getDefaultSharedPreferences(mContext).edit()
 					.putInt(sEditCount, count).commit();
 		}
-		mEvernote.sync();
+		mEvernote.sync(true, false);
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
@@ -414,7 +414,7 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			getContentResolver().delete(
 					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
 							memo.getId()), null, null);
-			mEvernote.sync();
+			mEvernote.sync(true, false);
 		}
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);

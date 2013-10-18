@@ -1,8 +1,11 @@
 package com.zhan_dui.adapters;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -22,6 +25,7 @@ import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.evermemo.MemoActivity;
 import com.zhan_dui.evermemo.R;
+import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.utils.DateHelper;
 
 public class MemosAdapter extends CursorAdapter implements OnClickListener,
@@ -241,4 +245,20 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		}
 	}
 
+	public void deleteSelectedMemos() {
+		if (mCheckedItems == null || mCheckedItems.size() == 0) {
+			return;
+		} else {
+			Set<Integer> keys = mCheckedItems.keySet();
+			Iterator<Integer> iterator = keys.iterator();
+			while (iterator.hasNext()) {
+				mContext.getContentResolver().delete(
+						ContentUris.withAppendedId(MemoProvider.MEMO_URI,
+								iterator.next()), null, null);
+			}
+			mCheckedItems.clear();
+			mOnItemSelectLisener.onCancelSelect();
+			new Evernote(mContext).sync(true, false);
+		}
+	}
 }
