@@ -9,7 +9,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -31,9 +30,6 @@ import com.zhan_dui.utils.DateHelper;
 public class MemosAdapter extends CursorAdapter implements OnClickListener {
 
 	private LayoutInflater mLayoutInflater;
-	private int mOutItemId;
-	private int mBottomMargin;
-	private GestureDetectorCompat mGestureDetectorCompat;
 
 	@SuppressWarnings("unused")
 	private View mTempAnimationView;
@@ -44,29 +40,15 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 	private boolean mCheckMode;
 	private HashMap<Integer, Memo> mCheckedItems;
 	private Typeface mRobotoThin;
-	private final DeleteRecoverPanelLisener mDeleteRecoverPanelLisener;
-	private final ItemGuestureDetector itemGuestureDetector = new ItemGuestureDetector();
 	private ItemLongPressedLisener mItemLongPressedLisener;
-
-	public void setOpenerItem(int id) {
-		if (id < 0 && id > getCount()) {
-			mOutItemId = 0;
-		}
-		mOutItemId = id;
-	}
 
 	public MemosAdapter(Context context, Cursor c, int flags,
 			DeleteRecoverPanelLisener l) {
 		super(context, c, flags);
-		mBottomMargin = -mContext.getResources().getDimensionPixelSize(
-				R.dimen.bottom_margin_left);
 		mLayoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mGestureDetectorCompat = new GestureDetectorCompat(mContext,
-				itemGuestureDetector);
 		mRobotoThin = Typeface.createFromAsset(context.getAssets(),
 				"fonts/Roboto-Thin.ttf");
-		mDeleteRecoverPanelLisener = l;
 		mContext.getContentResolver().registerContentObserver(
 				MemoProvider.MEMO_URI, false,
 				new UpdateObserver(mUpdateHandler));
@@ -133,6 +115,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 		return v;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		int _id = cursor.getInt(cursor.getColumnIndex("_id"));
@@ -181,7 +164,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 			View hover = commonView.findViewById(R.id.hover);
 			hover.setOnClickListener(this);
 			hover.setOnLongClickListener(new OnLongClickListener() {
-				
+
 				@Override
 				public boolean onLongClick(View v) {
 					Toast.makeText(mContext, "long", Toast.LENGTH_SHORT).show();
@@ -223,17 +206,6 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener {
 
 	private long mLastChangeStatus = System.currentTimeMillis();
 	private Memo mCurrentLongPressMemo;
-
-	// @Override
-	// public boolean onTouch(View v, MotionEvent event) {
-	// mCurrentTouchHover = v;
-	// mCurrentTouchPosition = (Integer) v.getTag(R.string.memo_position);
-	// mCurrentLongPressMemo = (Memo) v.getTag(R.string.memo_data);
-	// if (event.getAction() == MotionEvent.ACTION_UP) {
-	// mLastChangeStatus = System.currentTimeMillis();
-	// }
-	// return mGestureDetectorCompat.onTouchEvent(event);
-	// }
 
 	public interface ItemLongPressedLisener {
 		public void onMemoItemLongClick(View view, int posotion, Memo memo);
