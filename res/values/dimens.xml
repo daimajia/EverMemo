@@ -44,7 +44,7 @@
     <dimen name="content_padding_right">5dp</dimen>
     <dimen name="bottom_width">45dp</dimen>
     <dimen name="bottom_margin_left">-45dp</dimen>
-    <dimen name="hover_margin_left">-1dp</dimen>
+    <dimen name="hover_margin_left">4dp</dimen>
     <!-- Memo item -->
 
 

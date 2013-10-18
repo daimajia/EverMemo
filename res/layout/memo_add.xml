@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
+    android:layout_height="match_parent"
     android:padding="@dimen/item_outer_padding" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/hover_border_normal"
-        android:paddingLeft="@dimen/item_padding_left"
-        android:paddingRight="@dimen/item_padding_right" >
+        android:background="@drawable/hover_border_normal" >
 
         <com.zhan_dui.custom.MinMaxTextView
             android:id="@+id/plus"
@@ -27,4 +23,4 @@
             android:textSize="80sp" />
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

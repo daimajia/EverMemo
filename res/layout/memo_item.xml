@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:layout_height="match_parent"
     android:padding="@dimen/item_outer_padding" >
 
     <RelativeLayout
         android:id="@+id/hover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/hover_margin_left"
-        android:background="@drawable/hover_background"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/item_padding_left" >
+        android:background="@drawable/hover_background" >
 
         <ImageView
             android:id="@+id/uploading"
@@ -44,6 +40,7 @@
             android:paddingRight="@dimen/item_time_padding_right"
             android:text="@null"
             android:textColor="@color/grid_date_color"
+            android:layout_marginTop="5dp"
             android:textSize="12sp" />
     </RelativeLayout>
 
