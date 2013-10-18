@@ -33,9 +33,11 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 	private HashMap<Integer, Memo> mCheckedItems;
 	private Typeface mRobotoThin;
 	private ItemLongPressedLisener mItemLongPressedLisener;
+	private onItemSelectLisener mOnItemSelectLisener;
 
 	public MemosAdapter(Context context, Cursor c, int flags,
-			DeleteRecoverPanelLisener l) {
+			ItemLongPressedLisener itemLongPressedLisener,
+			onItemSelectLisener selectLisener) {
 		super(context, c, flags);
 		mLayoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -44,13 +46,8 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		mContext.getContentResolver().registerContentObserver(
 				MemoProvider.MEMO_URI, false,
 				new UpdateObserver(mUpdateHandler));
-	}
-
-	public MemosAdapter(Context context, Cursor c, int flags,
-			DeleteRecoverPanelLisener l,
-			ItemLongPressedLisener itemLongPressedLisener) {
-		this(context, c, flags, l);
 		mItemLongPressedLisener = itemLongPressedLisener;
+		mOnItemSelectLisener = selectLisener;
 	}
 
 	@SuppressLint("HandlerLeak")
@@ -188,8 +185,10 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		public void startActionMode();
 	}
 
-	public interface DeleteRecoverPanelLisener {
-		public void wakeRecoveryPanel(Memo memo);
+	public interface onItemSelectLisener {
+		public void onSelect();
+
+		public void onCancelSelect();
 	}
 
 	public void setCheckMode(boolean check) {
@@ -207,8 +206,10 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		}
 		if (mCheckedItems.containsKey(_id) == false) {
 			mCheckedItems.put(_id, memo);
+			mOnItemSelectLisener.onSelect();
 		} else {
 			mCheckedItems.remove(_id);
+			mOnItemSelectLisener.onCancelSelect();
 		}
 		notifyDataSetChanged();
 	}
@@ -230,6 +231,14 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 		Memo memo = (Memo) v.getTag(R.string.memo_data);
 		toggleCheckedId(memo.getId(), memo, v);
 		return true;
+	}
+
+	public int getSelectedCount() {
+		if (mCheckedItems == null) {
+			return 0;
+		} else {
+			return mCheckedItems.size();
+		}
 	}
 
 }

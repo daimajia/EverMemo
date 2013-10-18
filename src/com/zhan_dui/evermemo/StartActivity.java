@@ -3,11 +3,9 @@ package com.zhan_dui.evermemo;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.annotation.SuppressLint;
+import android.R.menu;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +15,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -33,37 +29,32 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.evernote.client.android.EvernoteSession;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.adapters.MemosAdapter;
-import com.zhan_dui.adapters.MemosAdapter.DeleteRecoverPanelLisener;
 import com.zhan_dui.adapters.MemosAdapter.ItemLongPressedLisener;
-import com.zhan_dui.data.Memo;
+import com.zhan_dui.adapters.MemosAdapter.onItemSelectLisener;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
-import com.zhan_dui.utils.Logger;
 import com.zhan_dui.utils.MarginAnimation;
 
 public class StartActivity extends ActionBarActivity implements
-		LoaderCallbacks<Cursor>, DeleteRecoverPanelLisener, OnClickListener,
-		ItemLongPressedLisener {
+		LoaderCallbacks<Cursor>, OnClickListener, ItemLongPressedLisener,
+		onItemSelectLisener {
 
 	private MultiColumnListView mMemosGrid;
 	private Context mContext;
 	private MemosAdapter mMemosAdapter;
-	private LinearLayout mUndoPanel, mBindEvernotePanel;
+	private LinearLayout mBindEvernotePanel;
 	private SharedPreferences mSharedPreferences;
-	private Button mUndo, mBindEvernote;
-	private int mUndoPanelHeight, mBindEvernotePandelHeight;
+	private Button mBindEvernote;
+	private int mBindEvernotePandelHeight;
 	public static Evernote mEvernote;
 	public static String sShownRate = "ShownRate";
 	public static String sStartCount = "StartCount";
@@ -77,11 +68,8 @@ public class StartActivity extends ActionBarActivity implements
 		mEvernote = new Evernote(mContext);
 		MobclickAgent.onError(this);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
-		mUndoPanel = (LinearLayout) findViewById(R.id.undo_panel);
 		mBindEvernotePanel = (LinearLayout) findViewById(R.id.evernote_panel);
-		mUndo = (Button) findViewById(R.id.undo_btn);
 		mBindEvernote = (Button) findViewById(R.id.bind_evernote);
-		mUndoPanelHeight = mUndoPanel.getLayoutParams().height;
 		mBindEvernotePandelHeight = mBindEvernotePanel.getLayoutParams().height;
 
 		LoaderManager manager = getSupportLoaderManager();
@@ -89,7 +77,6 @@ public class StartActivity extends ActionBarActivity implements
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, this, this);
 		mMemosGrid.setAdapter(mMemosAdapter);
 
-		mUndo.setOnClickListener(this);
 		manager.initLoader(1, null, this);
 		mSharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
@@ -151,70 +138,9 @@ public class StartActivity extends ActionBarActivity implements
 		mMemosAdapter.swapCursor(null);
 	}
 
-	private DeleteAnimation m2DeleteAnimation = new DeleteAnimation(null);
-	private Memo mToDeleteMemo;
-	@SuppressLint("HandlerLeak")
-	private Handler mHidePanelHandler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			if (msg.what == TO_DELETE) {
-				m2DeleteAnimation.setDeleteMemo(mToDeleteMemo);
-			} else if (msg.what == NOT_TO_DELETE) {
-				m2DeleteAnimation.setDeleteMemo(null);
-			}
-			mUndoPanel.startAnimation(new MarginAnimation(mUndoPanel, 0, 0, 0,
-					-mUndoPanelHeight, m2DeleteAnimation));
-
-		};
-	};
-
-	private boolean isDisplay = false;;
-	private MarginAnimation m2ShowAnimation;
-	private Timer mAnimationTimer;
-
-	private final int TO_DELETE = 0;
-	private final int NOT_TO_DELETE = 1;
-
-	@Override
-	public void wakeRecoveryPanel(Memo memo) {
-
-		if (isDisplay) {
-			mAnimationTimer.cancel();
-			m2ShowAnimation.cancel();
-			RelativeLayout.LayoutParams mLayoutParams = (android.widget.RelativeLayout.LayoutParams) mUndoPanel
-					.getLayoutParams();
-			mLayoutParams.setMargins(0, 0, 0, -mUndoPanelHeight);
-			mUndoPanel.setLayoutParams(mLayoutParams);
-			deleteMemo(mToDeleteMemo);
-			MobclickAgent.onEvent(mContext, "delete_memo_from_swipe");
-		}
-		mToDeleteMemo = memo;
-		m2ShowAnimation = new MarginAnimation(mUndoPanel, 0, 0, 0, 0);
-		isDisplay = true;
-		mUndoPanel.startAnimation(m2ShowAnimation);
-		mAnimationTimer = new Timer();
-		mAnimationTimer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				Looper.prepare();
-				mHidePanelHandler.sendEmptyMessage(TO_DELETE);
-				Looper.loop();
-			}
-		}, 7000);
-
-	}
-
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.undo_btn) {
-			mAnimationTimer.cancel();
-			ContentValues values = mToDeleteMemo.toContentValues();
-			values.put(MemoDB.STATUS, Memo.STATUS_COMMON);
-			mHidePanelHandler.sendEmptyMessage(NOT_TO_DELETE);
-			getContentResolver().update(
-					ContentUris.withAppendedId(MemoProvider.MEMO_URI,
-							mToDeleteMemo.getId()), values, null, null);
-		} else if (v.getId() == R.id.bind_evernote) {
+		if (v.getId() == R.id.bind_evernote) {
 			mEvernote.auth();
 		}
 	}
@@ -227,46 +153,6 @@ public class StartActivity extends ActionBarActivity implements
 			mEvernote.onAuthFinish(resultCode);
 			break;
 		}
-	}
-
-	private void deleteMemo(Memo memo) {
-		mEvernote.sync();
-		MobclickAgent.onEvent(mContext, "delete_memo");
-		Logger.e("开始同步删除memo");
-	}
-
-	private class DeleteAnimation implements AnimationListener {
-
-		private Memo memo;
-
-		public DeleteAnimation setDeleteMemo(Memo memo) {
-			this.memo = memo;
-			return this;
-		}
-
-		public DeleteAnimation(Memo memo) {
-			setDeleteMemo(memo);
-		}
-
-		@Override
-		public void onAnimationStart(Animation animation) {
-
-		}
-
-		@Override
-		public void onAnimationEnd(Animation animation) {
-			isDisplay = false;
-			if (memo != null) {
-				deleteMemo(memo);
-				MobclickAgent.onEvent(mContext, "delete_memo_from_swipe");
-			}
-		}
-
-		@Override
-		public void onAnimationRepeat(Animation animation) {
-
-		}
-
 	}
 
 	@Override
@@ -368,10 +254,18 @@ public class StartActivity extends ActionBarActivity implements
 		return true;
 	}
 
+	private Menu mContextMenu;
 	private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
 		@Override
-		public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
+		public boolean onActionItemClicked(ActionMode arg0, MenuItem menuItem) {
+			switch (menuItem.getItemId()) {
+			case R.id.selected_counts:
+				break;
+
+			default:
+				break;
+			}
 			return false;
 		}
 
@@ -385,11 +279,16 @@ public class StartActivity extends ActionBarActivity implements
 		@Override
 		public void onDestroyActionMode(ActionMode arg0) {
 			mActionMode = null;
+			mContextMenu = null;
 			mMemosAdapter.setCheckMode(false);
 		}
 
 		@Override
-		public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
+		public boolean onPrepareActionMode(ActionMode arg0, Menu menu) {
+			mContextMenu = menu;
+			menu.findItem(R.id.selected_counts).setTitle(
+					mContext.getString(R.string.selected_count,
+							mMemosAdapter.getSelectedCount()));
 			return false;
 		}
 
@@ -403,5 +302,19 @@ public class StartActivity extends ActionBarActivity implements
 			return;
 		}
 		mActionMode = startSupportActionMode(mActionModeCallback);
+	}
+
+	@Override
+	public void onSelect() {
+		mContextMenu.findItem(R.id.selected_counts).setTitle(
+				mContext.getString(R.string.selected_count,
+						mMemosAdapter.getSelectedCount()));
+	}
+
+	@Override
+	public void onCancelSelect() {
+		mContextMenu.findItem(R.id.selected_counts).setTitle(
+				mContext.getString(R.string.selected_count,
+						mMemosAdapter.getSelectedCount()));
 	}
 }
