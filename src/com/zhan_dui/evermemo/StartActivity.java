@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -320,7 +321,26 @@ public class StartActivity extends ActionBarActivity implements
 		public boolean onActionItemClicked(ActionMode arg0, MenuItem menuItem) {
 			switch (menuItem.getItemId()) {
 			case R.id.delete:
-				mMemosAdapter.deleteSelectedMemos();
+				if (mMemosAdapter.getSelectedCount() == 0) {
+					Toast.makeText(mContext, R.string.delete_select_nothing,
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Builder builder = new Builder(mContext);
+					builder.setMessage(R.string.delete_all_confirm)
+							.setTitle(R.string.delete_title)
+							.setPositiveButton(R.string.delete_sure,
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											mMemosAdapter.deleteSelectedMemos();
+										}
+									})
+							.setNegativeButton(R.string.delete_cancel, null)
+							.create().show();
+				}
 				break;
 			default:
 				break;
