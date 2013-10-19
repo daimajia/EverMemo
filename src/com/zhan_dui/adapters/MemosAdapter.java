@@ -258,7 +258,7 @@ public class MemosAdapter extends CursorAdapter implements OnClickListener,
 			}
 			mCheckedItems.clear();
 			mOnItemSelectLisener.onCancelSelect();
-			new Evernote(mContext).sync(true, false);
+			new Evernote(mContext).sync(true, false, null);
 		}
 	}
 }

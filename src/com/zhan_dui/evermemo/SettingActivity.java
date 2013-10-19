@@ -1,6 +1,5 @@
 package com.zhan_dui.evermemo;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -10,11 +9,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -27,8 +27,8 @@ import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.sync.Evernote;
 import com.zhan_dui.sync.Evernote.EvernoteLoginCallback;
 
-public class SettingActivity extends Activity implements OnClickListener,
-		EvernoteLoginCallback, OnCheckedChangeListener {
+public class SettingActivity extends ActionBarActivity implements
+		OnClickListener, EvernoteLoginCallback, OnCheckedChangeListener {
 	private ViewGroup mBindEvernote;
 
 	public static final String OPEN_MEMO_WHEN_START_UP = "OPEN_MEMO_WHEN_START_UP";
@@ -41,7 +41,7 @@ public class SettingActivity extends Activity implements OnClickListener,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		overridePendingTransition(R.anim.in_push_right_to_left,
 				R.anim.in_stable);
 		mContext = this;
@@ -49,12 +49,14 @@ public class SettingActivity extends Activity implements OnClickListener,
 				.getDefaultSharedPreferences(mContext);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activtiy_setting);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(getString(R.string.setting));
+		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		mBindEvernote = (ViewGroup) findViewById(R.id.bind_evernote);
 		mBindText = (TextView) findViewById(R.id.bind_text);
 		mToggleButton = (ToggleButton) findViewById(R.id.open_toggle);
 		mBindEvernote.setOnClickListener(this);
 		mEvernote = new Evernote(mContext, this);
-		findViewById(R.id.back).setOnClickListener(this);
 		if (mEvernote.isLogin()) {
 			bindSuccess();
 		}
@@ -63,7 +65,6 @@ public class SettingActivity extends Activity implements OnClickListener,
 				OPEN_MEMO_WHEN_START_UP, false));
 		findViewById(R.id.rate).setOnClickListener(this);
 		findViewById(R.id.setting_start).setOnClickListener(this);
-		findViewById(R.id.back_text).setOnClickListener(this);
 	}
 
 	private void bindSuccess() {
@@ -117,10 +118,6 @@ public class SettingActivity extends Activity implements OnClickListener,
 									}
 								}).create().show();
 			}
-			break;
-		case R.id.back:
-		case R.id.back_text:
-			finish();
 			break;
 		case R.id.rate:
 			Uri uri = Uri.parse("market://details?id="
@@ -206,5 +203,18 @@ public class SettingActivity extends Activity implements OnClickListener,
 	protected void onPause() {
 		super.onPause();
 		MobclickAgent.onPause(this);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

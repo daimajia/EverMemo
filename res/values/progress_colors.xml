@@ -1,0 +1,7 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="progress_dark">#0299D2</color>
+    <color name="progress_normal">#0299DB</color>
+    <color name="progress_light">@android:color/white</color>
+
+</resources>

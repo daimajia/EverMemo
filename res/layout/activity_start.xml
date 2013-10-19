@@ -11,15 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="1dp"
         android:background="@color/divider_line_color" />
+
+    <ProgressBar
+        android:id="@+id/sync_progress"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/divide_line"
+        android:layout_marginBottom="1dp"
+        android:indeterminateDrawable="@drawable/ic_progress_indeterminate" />
 
     <com.huewu.pla.lib.MultiColumnListView
         xmlns:pla="http://schemas.android.com/apk/res-auto"
         android:id="@+id/memos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divide_line"
+        android:layout_below="@+id/sync_progress"
         android:longClickable="true"
         android:paddingLeft="@dimen/grid_padding_left"
         android:paddingRight="@dimen/grid_padding_right"

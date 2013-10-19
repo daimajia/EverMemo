@@ -8,7 +8,8 @@
         android:id="@+id/hover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/hover_background" >
+        android:background="@drawable/hover_background"
+        android:paddingBottom="5dp" >
 
         <ImageView
             android:id="@+id/uploading"
@@ -36,11 +37,11 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/grid_date_height"
             android:layout_alignParentBottom="true"
+            android:layout_marginTop="5dp"
             android:gravity="center|right"
             android:paddingRight="@dimen/item_time_padding_right"
             android:text="@null"
             android:textColor="@color/grid_date_color"
-            android:layout_marginTop="5dp"
             android:textSize="12sp" />
     </RelativeLayout>
 

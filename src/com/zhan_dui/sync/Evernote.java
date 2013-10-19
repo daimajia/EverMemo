@@ -10,6 +10,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import com.evernote.client.android.EvernoteSession;
@@ -98,7 +100,7 @@ public class Evernote {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLoginResult(true);
 			}
-			sync(true, true);
+			sync(true, true, null);
 		} else {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLoginResult(false);
@@ -487,28 +489,81 @@ public class Evernote {
 		cursor.close();
 	}
 
-	public synchronized void sync(final boolean syncUp, final boolean syncDown) {
-		new Thread() {
-			@Override
-			public void run() {
-				if (syncUp == false && syncDown == false) {
-					return;
-				}
-				if (mEvernoteSession.isLoggedIn() == false) {
-					Logger.e(LogTag, "未登录");
-					return;
-				}
-				try {
-					makeSureNotebookExsits(NOTEBOOK_NAME);
-					if (syncUp)
-						syncUp();
-					if (syncDown)
-						syncDown();
-				} catch (Exception e) {
-					return;
-				}
-			}
-		}.start();
+	public synchronized void sync(final boolean syncUp, final boolean syncDown,
+			Handler hanler) {
+		new SyncTask(syncUp, syncDown, hanler).execute();
+	}
 
+	public static final int SYNC_START = 1;
+	public static final int SYNC_END = 10;
+	public static final int SYNC_ERROR = 100;
+	public static final int SYNC_SUCCESS = 1000;
+
+	class SyncTask extends AsyncTask<Void, Integer, Void> {
+
+		Handler mHandler;
+		boolean mSyncUp;
+		boolean mSyncDown;
+
+		public SyncTask(Boolean syncUp, Boolean syncDown, Handler handler) {
+			this(syncUp, syncDown);
+			mHandler = handler;
+		}
+
+		private SyncTask(Boolean syncUp, Boolean syncDown) {
+			mSyncUp = syncUp;
+			mSyncDown = syncDown;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			if (mSyncUp == false && mSyncDown == false) {
+				return null;
+			}
+			if (mEvernoteSession.isLoggedIn() == false) {
+				Logger.e(LogTag, "未登录");
+				publishProgress(new Integer[] { SYNC_ERROR });
+				return null;
+			}
+			publishProgress(new Integer[] { SYNC_START });
+			try {
+				makeSureNotebookExsits(NOTEBOOK_NAME);
+				if (mSyncUp)
+					syncUp();
+				if (mSyncDown)
+					syncDown();
+				publishProgress(new Integer[] { SYNC_SUCCESS });
+			} catch (Exception e) {
+				publishProgress(new Integer[] { SYNC_ERROR });
+				return null;
+			} finally {
+				publishProgress(new Integer[] { SYNC_END });
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			if (mHandler == null) {
+				return;
+			}
+			switch (values[0]) {
+			case SYNC_START:
+				mHandler.sendEmptyMessage(SYNC_START);
+				break;
+			case SYNC_END:
+				mHandler.sendEmptyMessage(SYNC_END);
+				break;
+			case SYNC_ERROR:
+				mHandler.sendEmptyMessage(SYNC_ERROR);
+				break;
+			case SYNC_SUCCESS:
+				mHandler.sendEmptyMessage(SYNC_SUCCESS);
+				break;
+			default:
+				break;
+			}
+		}
 	}
 }

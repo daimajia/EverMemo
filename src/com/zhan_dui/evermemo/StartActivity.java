@@ -3,6 +3,7 @@ package com.zhan_dui.evermemo;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -58,12 +61,14 @@ public class StartActivity extends ActionBarActivity implements
 	public static Evernote mEvernote;
 	public static String sShownRate = "ShownRate";
 	public static String sStartCount = "StartCount";
+	private Menu mMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setLogo(R.drawable.ab_logo);
 		mContext = this;
 		mEvernote = new Evernote(mContext);
 		MobclickAgent.onError(this);
@@ -110,11 +115,11 @@ public class StartActivity extends ActionBarActivity implements
 		}
 
 		if (mSharedPreferences.getBoolean(
-				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
+				SettingActivity.OPEN_MEMO_WHEN_START_UP, true)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
 
-		mEvernote.sync(true, true);
+		mEvernote.sync(true, true, null);
 	}
 
 	@Override
@@ -161,6 +166,16 @@ public class StartActivity extends ActionBarActivity implements
 	protected void onResume() {
 		super.onResume();
 		MobclickAgent.onResume(this);
+
+		if (mMenu != null) {
+			MenuItem syncItem = mMenu.findItem(R.id.sync);
+			if (!mEvernote.isLogin()) {
+				syncItem.setTitle(R.string.menu_bind);
+			} else {
+				syncItem.setTitle(R.string.menu_sync);
+			}
+		}
+
 		if (mSharedPreferences.getInt(MemoActivity.sEditCount, 0) == 5
 				&& mSharedPreferences.getBoolean(sShownRate, false) == false) {
 
@@ -213,7 +228,7 @@ public class StartActivity extends ActionBarActivity implements
 
 			@Override
 			public void run() {
-				mEvernote.sync(true, true);
+				mEvernote.sync(true, true, null);
 			}
 		}, 30000, 50000);
 	}
@@ -229,6 +244,19 @@ public class StartActivity extends ActionBarActivity implements
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.start, menu);
+		mMenu = menu;
+		MenuItem syncItem = menu.findItem(R.id.sync);
+		if (!mEvernote.isLogin()) {
+			syncItem.setTitle(R.string.menu_bind);
+		} else {
+			syncItem.setTitle(R.string.menu_sync);
+		}
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.settiing:
@@ -236,7 +264,11 @@ public class StartActivity extends ActionBarActivity implements
 			startActivity(intent);
 			break;
 		case R.id.sync:
-			mEvernote.sync(true, true);
+			if (mEvernote.isLogin() == false) {
+				mEvernote.auth();
+			} else {
+				mEvernote.sync(true, true, new SyncHandler());
+			}
 			break;
 		case R.id.feedback:
 			Intent Email = new Intent(Intent.ACTION_SEND);
@@ -254,6 +286,24 @@ public class StartActivity extends ActionBarActivity implements
 		return false;
 	}
 
+	@SuppressLint("HandlerLeak")
+	class SyncHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case Evernote.SYNC_START:
+				findViewById(R.id.sync_progress).setVisibility(View.VISIBLE);
+				break;
+			case Evernote.SYNC_END:
+				findViewById(R.id.sync_progress).setVisibility(View.GONE);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -261,12 +311,6 @@ public class StartActivity extends ActionBarActivity implements
 			return true;
 		}
 		return super.onKeyUp(keyCode, event);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.start, menu);
-		return true;
 	}
 
 	private Menu mContextMenu;
@@ -332,4 +376,5 @@ public class StartActivity extends ActionBarActivity implements
 				mContext.getString(R.string.selected_count,
 						mMemosAdapter.getSelectedCount()));
 	}
+
 }

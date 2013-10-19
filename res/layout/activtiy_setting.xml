@@ -5,30 +5,6 @@
     android:background="@color/background_color"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_bar_height"
-        android:orientation="horizontal"
-        android:paddingLeft="5dp" >
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="@dimen/setting_image"
-            android:layout_height="@dimen/setting_image"
-            android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_back" />
-
-        <TextView
-            android:id="@+id/back_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/setting"
-            android:textSize="15sp" />
-    </LinearLayout>
-
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_line_height"
