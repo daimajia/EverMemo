@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:evermemo="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/li"
+        android:icon="@drawable/tb_li"
+        android:title="@string/menu_li"
+        evermemo:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/more"
+        android:icon="@drawable/abc_ic_menu_moreoverflow_normal_holo_light"
+        android:title="@string/menu_more"
+        evermemo:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/share_to_mocha"
+                android:title="@string/menu_share_to_mocha"/>
+            <item
+                android:id="@+id/share_to"
+                android:title="@string/menu_share_to"/>
+            <item
+                android:id="@+id/delete"
+                android:title="@string/menu_delete"/>
+        </menu>
+    </item>
+
+</menu>

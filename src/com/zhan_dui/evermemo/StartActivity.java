@@ -67,12 +67,12 @@ public class StartActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_start);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		getSupportActionBar().setLogo(R.drawable.ab_logo);
 		mContext = this;
 		mEvernote = new Evernote(mContext);
 		MobclickAgent.onError(this);
+		setContentView(R.layout.activity_start);
 		mMemosGrid = (MultiColumnListView) findViewById(R.id.memos);
 		mBindEvernotePanel = (LinearLayout) findViewById(R.id.evernote_panel);
 		mBindEvernote = (Button) findViewById(R.id.bind_evernote);

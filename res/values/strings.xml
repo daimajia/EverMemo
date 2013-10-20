@@ -61,12 +61,19 @@
     <!-- Memu -->
     <string name="menu_more">更多</string>
     <string name="menu_bind">绑定</string>
-    <string name="menu_sync">同步</string>
+    <string name="menu_sync">立即同步</string>
     <string name="menu_setting">设置</string>
     <string name="menu_feedback">反馈</string>
     <!-- Memu -->
     <!-- Context Menu -->
     <string name="selected_count">选择了%1$d个</string>
     <!-- Context Menu -->
+    <!-- Memo menu -->
+    <string name="menu_share_to">分享到..</string>
+    <string name="menu_share_to_mocha">分享到Mocha</string>
+    <string name="menu_delete">删除</string>
+    <string name="menu_li">生成列表</string>
+    
+    <!-- Memo menu -->
 
 </resources>

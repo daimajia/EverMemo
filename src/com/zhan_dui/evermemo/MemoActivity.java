@@ -12,48 +12,31 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
 import com.zhan_dui.data.Memo;
 import com.zhan_dui.data.MemoDB;
 import com.zhan_dui.data.MemoProvider;
 import com.zhan_dui.sync.Evernote;
-import com.zhan_dui.utils.DateHelper;
-import com.zhan_dui.utils.Logger;
-import com.zhan_dui.utils.MarginAnimation;
 
-public class MemoActivity extends FragmentActivity implements OnClickListener,
-		OnKeyListener, OnTouchListener {
+public class MemoActivity extends ActionBarActivity implements OnClickListener,
+		OnKeyListener {
 
 	private EditText mContentEditText;
-	private TextView mDateText;
 	private Memo memo;
 	private boolean mCreateNew;
 	private Context mContext;
-	private Button mList;
-	private Button mShare;
-	private Button mSave;
-	private ImageButton mDelete;
-	private View mBottomBar;
-	private ViewGroup mPullSaveLayout;
-	private TextView mPullSaveTextView;
-	private int mPullMarginTop;
 
 	private String mLastSaveContent;
 
@@ -71,8 +54,9 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
 		overridePendingTransition(R.anim.push_up, R.anim.push_down);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_memo);
 		mContentEditText = (EditText) findViewById(R.id.content);
 		Bundle bundle = getIntent().getExtras();
@@ -86,42 +70,22 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			mCreateNew = true;
 		}
 
-		mDateText = (TextView) findViewById(R.id.time);
-
-		mList = (Button) findViewById(R.id.list);
-		mShare = (Button) findViewById(R.id.share);
-		mBottomBar = findViewById(R.id.bottom_bar);
-		mSave = (Button) findViewById(R.id.save);
-		mPullSaveLayout = (ViewGroup) findViewById(R.id.pull_save);
-		mDelete = (ImageButton) findViewById(R.id.delete);
-		mPullSaveTextView = (TextView) mPullSaveLayout
-				.findViewById(R.id.pull_save_text);
-		mPullMarginTop = ((ViewGroup.MarginLayoutParams) mPullSaveLayout
-				.getLayoutParams()).topMargin;
-		mBottomBar.setOnClickListener(this);
-		mList.setOnClickListener(this);
-		mShare.setOnClickListener(this);
 		mContentEditText.setText(Html.fromHtml(memo.getContent()));
 
 		if (mCreateNew) {
-			mDateText.setText(R.string.new_memo);
+			// mDateText.setText(R.string.new_memo);
 			mContentEditText.requestFocus();
 			getWindow().setSoftInputMode(
 					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 			MobclickAgent.onEvent(mContext, "new_memo");
 		} else {
-			mDateText.setText(DateHelper.getMemoDate(mContext,
-					memo.getCreatedTime()));
+			// mDateText.setText(DateHelper.getMemoDate(mContext,
+			// memo.getCreatedTime()));
 			MobclickAgent.onEvent(mContext, "edit_memo");
 		}
 
 		mContentEditText.setOnKeyListener(this);
-		mPullLayoutParams = (ViewGroup.MarginLayoutParams) mPullSaveLayout
-				.getLayoutParams();
 		mEvernote = new Evernote(mContext);
-		findViewById(R.id.share).setOnClickListener(this);
-		mSave.setOnClickListener(this);
-		mDelete.setOnClickListener(this);
 		findViewById(R.id.edit_container).setOnClickListener(this);
 	}
 
@@ -149,12 +113,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 			break;
 		case R.id.list:
 			clickList();
-			break;
-		case R.id.share:
-			share();
-			break;
-		case R.id.save:
-			saveMemoAndLeave();
 			break;
 		case R.id.delete:
 			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -271,71 +229,6 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 		return false;
 	}
 
-	private ViewGroup.MarginLayoutParams mPullLayoutParams;
-
-	private int dy;
-	private int maxMarginTop = 60;
-	private final float DRAG_RATIO = 0.1f;
-	private boolean remeber = false;
-	private boolean mstarttomove = false;
-
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		if (mContentEditText.getScrollY() != 0)
-			return false;
-
-		if (mstarttomove) {
-			mContentEditText.setSelection(0);
-		}
-
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			Logger.e(LogTag, "Action Down");
-			dy = (int) event.getY();
-			return false;
-		case MotionEvent.ACTION_MOVE:
-			if (mContentEditText.getScrollY() != 0) {
-				return false;
-			} else if (!remeber) {
-				dy = (int) event.getY();
-				remeber = true;
-			}
-			int y = (int) event.getY();
-			Logger.e(LogTag, "Action Move" + (y - dy) + "  " + (y - dy)
-					* DRAG_RATIO);
-			int newTop = (int) (mPullLayoutParams.topMargin + (y - dy)
-					* DRAG_RATIO);
-			newTop = (newTop > maxMarginTop) ? maxMarginTop : newTop;
-			if (newTop > 0) {
-				mPullSaveTextView.setText(R.string.relaxe_save_leave);
-			} else {
-				mPullSaveTextView.setText(R.string.pull_save_leave);
-			}
-			if (newTop > mPullMarginTop) {
-				mPullLayoutParams.topMargin = newTop;
-				mPullSaveLayout.setLayoutParams(mPullLayoutParams);
-			}
-			if (y - dy != 0)
-				mstarttomove = true;
-			break;
-		case MotionEvent.ACTION_UP:
-			Logger.e(LogTag, "Action Up");
-			if (mPullLayoutParams.topMargin < 0) {
-				mPullSaveLayout.startAnimation(new MarginAnimation(
-						mPullSaveLayout, 0, mPullMarginTop, 0, 0));
-			}
-			if (mPullLayoutParams.topMargin > 0) {
-				mPullSaveLayout.startAnimation(new MarginAnimation(
-						mPullSaveLayout, 0, 0, 0, 0));
-				saveMemoAndLeave();
-			}
-			mstarttomove = false;
-			remeber = false;
-			break;
-		}
-		return true;
-	}
-
 	private void saveMemo(Boolean toLeave) {
 		if (mCreateNew
 				&& mContentEditText.getText().toString().trim().length() == 0) {
@@ -393,6 +286,33 @@ public class MemoActivity extends FragmentActivity implements OnClickListener,
 				saveMemo(false);
 			}
 		}, 5000, 10000);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.memo, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			saveMemoAndLeave();
+			break;
+		case R.id.li:
+			clickList();
+			break;
+		case R.id.delete:
+			deleteAndLeave();
+			break;
+		case R.id.share_to:
+			share();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void saveMemoAndLeave() {
