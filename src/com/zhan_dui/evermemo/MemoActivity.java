@@ -71,7 +71,6 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 		}
 
 		mContentEditText.setText(Html.fromHtml(memo.getContent()));
-
 		if (mCreateNew) {
 			// mDateText.setText(R.string.new_memo);
 			mContentEditText.requestFocus();

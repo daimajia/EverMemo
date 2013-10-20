@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.evernote.client.android.EvernoteSession;
 import com.huewu.pla.lib.MultiColumnListView;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 import com.zhan_dui.adapters.MemosAdapter;
 import com.zhan_dui.adapters.MemosAdapter.ItemLongPressedLisener;
 import com.zhan_dui.adapters.MemosAdapter.onItemSelectLisener;
@@ -121,6 +122,7 @@ public class StartActivity extends ActionBarActivity implements
 		}
 
 		mEvernote.sync(true, true, null);
+		UmengUpdateAgent.update(this);
 	}
 
 	@Override

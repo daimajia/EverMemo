@@ -163,6 +163,7 @@ public class Evernote {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLogout(true);
 			}
+			
 			MobclickAgent.onEvent(mContext, "UnBind_EverNote");
 		} catch (InvalidAuthenticationException e) {
 			if (mEvernoteLoginCallback != null) {
