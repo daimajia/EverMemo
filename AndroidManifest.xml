@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhan_dui.evermemo"
     android:versionCode="6"
-    android:versionName="1.0.9" >
+    android:versionName="1.1.0" >
 
     <uses-sdk
         android:minSdkVersion="9"
