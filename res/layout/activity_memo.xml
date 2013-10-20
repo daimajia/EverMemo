@@ -15,7 +15,10 @@
         android:id="@+id/edit_container"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/edit_padding_left"
+        android:paddingRight="@dimen/edit_padding_right" >
 
         <ScrollView
             android:layout_width="match_parent"
@@ -31,8 +34,6 @@
                 android:inputType="textMultiLine"
                 android:lineSpacingExtra="6dip"
                 android:paddingBottom="@dimen/edit_padding_bottom"
-                android:paddingLeft="@dimen/edit_padding_left"
-                android:paddingRight="@dimen/edit_padding_right"
                 android:paddingTop="@dimen/edit_padding_top"
                 android:text="@null"
                 android:textColor="@color/content_text_color" />
