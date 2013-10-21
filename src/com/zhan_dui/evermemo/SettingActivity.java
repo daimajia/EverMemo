@@ -41,7 +41,6 @@ public class SettingActivity extends ActionBarActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
 		overridePendingTransition(R.anim.in_push_right_to_left,
 				R.anim.in_stable);
 		mContext = this;
@@ -50,6 +49,8 @@ public class SettingActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activtiy_setting);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setTitle(getString(R.string.setting));
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		mBindEvernote = (ViewGroup) findViewById(R.id.bind_evernote);

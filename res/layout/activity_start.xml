@@ -15,12 +15,12 @@
 
     <ProgressBar
         android:id="@+id/sync_progress"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@+id/divide_line"
         android:layout_marginBottom="1dp"
-        android:indeterminateDrawable="@drawable/ic_progress_indeterminate" />
+        android:indeterminateDrawable="@drawable/ic_progress_indeterminate"
+        android:visibility="gone" />
 
     <com.huewu.pla.lib.MultiColumnListView
         xmlns:pla="http://schemas.android.com/apk/res-auto"
@@ -31,6 +31,7 @@
         android:longClickable="true"
         android:paddingLeft="@dimen/grid_padding_left"
         android:paddingRight="@dimen/grid_padding_right"
+        android:paddingTop="4dp"
         android:scrollbars="vertical"
         pla:plaColumnNumber="2"
         pla:plaLandscapeColumnNumber="3" >

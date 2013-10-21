@@ -68,7 +68,6 @@ public class StartActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		getSupportActionBar().setLogo(R.drawable.ab_logo);
 		mContext = this;
 		mEvernote = new Evernote(mContext);
@@ -338,6 +337,7 @@ public class StartActivity extends ActionBarActivity implements
 												DialogInterface dialog,
 												int which) {
 											mMemosAdapter.deleteSelectedMemos();
+
 										}
 									})
 							.setNegativeButton(R.string.delete_cancel, null)
@@ -367,9 +367,7 @@ public class StartActivity extends ActionBarActivity implements
 		@Override
 		public boolean onPrepareActionMode(ActionMode arg0, Menu menu) {
 			mContextMenu = menu;
-			menu.findItem(R.id.selected_counts).setTitle(
-					mContext.getString(R.string.selected_count,
-							mMemosAdapter.getSelectedCount()));
+			updateActionMode();
 			return false;
 		}
 
@@ -385,18 +383,26 @@ public class StartActivity extends ActionBarActivity implements
 		mActionMode = startSupportActionMode(mActionModeCallback);
 	}
 
+	public void updateActionMode() {
+		if (mMemosAdapter.getSelectedCount() <= 1) {
+			mContextMenu.findItem(R.id.selected_counts).setTitle(
+					mContext.getString(R.string.selected_one_count,
+							mMemosAdapter.getSelectedCount()));
+		} else {
+			mContextMenu.findItem(R.id.selected_counts).setTitle(
+					mContext.getString(R.string.selected_more_count,
+							mMemosAdapter.getSelectedCount()));
+		}
+	}
+
 	@Override
 	public void onSelect() {
-		mContextMenu.findItem(R.id.selected_counts).setTitle(
-				mContext.getString(R.string.selected_count,
-						mMemosAdapter.getSelectedCount()));
+		updateActionMode();
 	}
 
 	@Override
 	public void onCancelSelect() {
-		mContextMenu.findItem(R.id.selected_counts).setTitle(
-				mContext.getString(R.string.selected_count,
-						mMemosAdapter.getSelectedCount()));
+		updateActionMode();
 	}
 
 }

@@ -24,6 +24,8 @@
     <style name="MyActionBar" parent="Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@color/background_color</item>
         <item name="background">@color/background_color</item>
+        <item name="android:displayOptions" tools:targetApi="11">useLogo|showHome</item>
+        <item name="displayOptions">useLogo|showHome</item>
     </style>
 
 </resources>

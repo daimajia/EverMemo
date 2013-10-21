@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/selected_counts"
-        android:title="@string/selected_count"
-        evermemo:showAsAction="ifRoom"/>
+        android:title="@string/selected_one_count"
+        evermemo:showAsAction="always"/>
     <item
         android:id="@+id/delete"
         android:icon="@drawable/ic_ab_delete_dark"
-        android:title="@string/menu_more"
-        evermemo:showAsAction="ifRoom">
+        android:title="@string/menu_delete"
+        evermemo:showAsAction="always">
     </item>
 
 </menu>

@@ -32,6 +32,8 @@ public class MinusTextView extends TextView {
 		if (heightSize > width * 0.8) {
 			heightSize = (int) (width * 0.8);
 		}
+		
+		heightSize -= 70;
 
 		setMeasuredDimension(widthSize, heightSize);
 		requestLayout();

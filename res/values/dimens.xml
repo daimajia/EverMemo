@@ -20,14 +20,14 @@
 
 
     <!-- Memo GridView -->
-    <dimen name="grid_padding_left">4dp</dimen>
-    <dimen name="grid_padding_right">4dp</dimen>
-    <dimen name="grid_padding_top">2dp</dimen>
+    <dimen name="grid_padding_left">8dp</dimen>
+    <dimen name="grid_padding_right">8dp</dimen>
+    <dimen name="grid_padding_top">8dp</dimen>
     <!-- Memo GridView -->
 
 
     <!-- Memo item -->
-    <dimen name="item_outer_padding">1dp</dimen>
+    <dimen name="item_outer_padding">3dp</dimen>
     <dimen name="item_padding_left">4dp</dimen>
     <dimen name="item_padding_right">5dp</dimen>
     <dimen name="item_upload_width">22dp</dimen>

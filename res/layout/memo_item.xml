@@ -9,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/hover_background"
-        android:paddingBottom="5dp" >
+        android:paddingBottom="5dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp" >
 
         <ImageView
             android:id="@+id/uploading"
@@ -26,8 +29,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="5dp"
-            android:paddingLeft="@dimen/content_padding_right"
-            android:paddingRight="@dimen/content_padding_left"
             android:paddingTop="@dimen/item_text_padding_top"
             android:textColor="@color/content_text_color"
             android:textSize="16sp" />
@@ -37,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/grid_date_height"
             android:layout_alignParentBottom="true"
+            android:layout_below="@+id/content"
             android:layout_marginTop="5dp"
             android:gravity="center|right"
             android:paddingRight="@dimen/item_time_padding_right"

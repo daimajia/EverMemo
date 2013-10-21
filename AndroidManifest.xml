@@ -40,9 +40,7 @@
             android:multiprocess="true" >
         </provider>
 
-        <activity
-            android:name="com.zhan_dui.evermemo.StartActivity"
-            android:label="@string/app_name" >
+        <activity android:name="com.zhan_dui.evermemo.StartActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

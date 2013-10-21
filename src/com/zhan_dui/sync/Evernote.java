@@ -163,7 +163,7 @@ public class Evernote {
 			if (mEvernoteLoginCallback != null) {
 				mEvernoteLoginCallback.onLogout(true);
 			}
-			
+
 			MobclickAgent.onEvent(mContext, "UnBind_EverNote");
 		} catch (InvalidAuthenticationException e) {
 			if (mEvernoteLoginCallback != null) {
@@ -349,7 +349,7 @@ public class Evernote {
 					.createNoteStore()
 					.getNote(mEvernoteSession.getAuthToken(), guid, true,
 							false, false, false);
-			Logger.e("获取到的文本："+note.getContent());
+			Logger.e("获取到的文本：" + note.getContent());
 			ContentValues values = Memo.buildInsertMemoFromNote(note)
 					.toInsertContentValues();
 			mContentResolver.insert(MemoProvider.MEMO_URI, values);
