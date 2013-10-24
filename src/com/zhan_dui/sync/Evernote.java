@@ -493,7 +493,15 @@ public class Evernote {
 
 	public synchronized void sync(final boolean syncUp, final boolean syncDown,
 			Handler hanler) {
-		new SyncTask(syncUp, syncDown, hanler).execute();
+		if (hanler != null) {
+			hanler.sendEmptyMessage(SYNC_START);
+		}
+		toSync(syncUp, syncDown, hanler);
+	}
+
+	private synchronized void toSync(final boolean syncUp,
+			final boolean syncDown, Handler handler) {
+		new SyncTask(syncUp, syncDown, handler).execute();
 	}
 
 	public static final int SYNC_START = 1;

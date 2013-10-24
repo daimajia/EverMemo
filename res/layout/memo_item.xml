@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/hover_background"
         android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="9dp"
         android:paddingTop="5dp" >
 
         <ImageView
@@ -41,7 +41,6 @@
             android:layout_below="@+id/content"
             android:layout_marginTop="5dp"
             android:gravity="center|right"
-            android:paddingRight="@dimen/item_time_padding_right"
             android:text="@null"
             android:textColor="@color/grid_date_color"
             android:textSize="12sp" />

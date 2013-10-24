@@ -36,6 +36,7 @@
                 android:paddingBottom="@dimen/edit_padding_bottom"
                 android:paddingTop="@dimen/edit_padding_top"
                 android:text="@null"
+                android:minHeight="250dp"
                 android:textColor="@color/content_text_color" />
         </ScrollView>
     </LinearLayout>

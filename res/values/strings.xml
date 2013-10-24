@@ -13,6 +13,7 @@
     <string name="feedback">Feedback</string>
     <string name="start_from_memo">New memo when start-up</string>
     <string name="bind_evernote">Connect Evernote</string>
+    <string name="bind_evernote_btn">Connect</string>
     <string name="unbind_evernote">Disconnect with %1$s</string>
     <string name="unbind_evernote_username_null">Disconnect</string>
     <string name="setting">Settings</string>

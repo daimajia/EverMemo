@@ -1,5 +1,6 @@
 package com.zhan_dui.evermemo;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,8 +56,11 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 		mContext = this;
 		overridePendingTransition(R.anim.push_up, R.anim.push_down);
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayUseLogoEnabled(false);
+		getSupportActionBar().setDisplayShowHomeEnabled(false);
+		getSupportActionBar().setTitle(getString(R.string.app_memo));
 		setContentView(R.layout.activity_memo);
 		mContentEditText = (EditText) findViewById(R.id.content);
 		Bundle bundle = getIntent().getExtras();
@@ -64,7 +68,6 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 			memo = (Memo) bundle.getSerializable("memo");
 			mCreateNew = false;
 			mLastSaveContent = memo.getContent();
-
 		} else {
 			memo = new Memo();
 			mCreateNew = true;
@@ -72,14 +75,11 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 
 		mContentEditText.setText(Html.fromHtml(memo.getContent()));
 		if (mCreateNew) {
-			// mDateText.setText(R.string.new_memo);
-			mContentEditText.requestFocus();
 			getWindow().setSoftInputMode(
 					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			mContentEditText.requestFocus();
 			MobclickAgent.onEvent(mContext, "new_memo");
 		} else {
-			// mDateText.setText(DateHelper.getMemoDate(mContext,
-			// memo.getCreatedTime()));
 			MobclickAgent.onEvent(mContext, "edit_memo");
 		}
 
@@ -109,26 +109,6 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 					findViewById(R.id.edit_container)
 							.getApplicationWindowToken(),
 					InputMethodManager.SHOW_FORCED, 0);
-			break;
-		case R.id.list:
-			clickList();
-			break;
-		case R.id.delete:
-			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-			builder.setMessage(R.string.give_up_edit)
-					.setTitle(R.string.give_up_title)
-					.setPositiveButton(R.string.give_up_sure,
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									deleteAndLeave();
-									MobclickAgent.onEvent(mContext,
-											"delete_memo");
-								}
-							}).setNegativeButton(R.string.give_up_cancel, null)
-					.create().show();
 			break;
 		default:
 			break;
@@ -245,6 +225,7 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 		memo.setCursorPosition(mContentEditText.getSelectionStart());
 		ContentValues values = memo.toContentValues();
 		values.put(MemoDB.SYNCSTATUS, Memo.NEED_SYNC_UP);
+		values.put(MemoDB.UPDATEDTIME, new Date().getTime());
 		if (mCreateNew) {
 			mCreateNew = false;
 			Uri retUri = getContentResolver().insert(MemoProvider.MEMO_URI,
@@ -303,7 +284,21 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 			clickList();
 			break;
 		case R.id.delete:
-			deleteAndLeave();
+			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			builder.setMessage(R.string.give_up_edit)
+					.setTitle(R.string.give_up_title)
+					.setPositiveButton(R.string.give_up_sure,
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									deleteAndLeave();
+									MobclickAgent.onEvent(mContext,
+											"delete_memo");
+								}
+							}).setNegativeButton(R.string.give_up_cancel, null)
+					.create().show();
 			break;
 		case R.id.share_to:
 			share();
@@ -324,6 +319,8 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 					.putInt(sEditCount, count).commit();
 		}
 		mEvernote.sync(true, false, null);
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
@@ -335,7 +332,19 @@ public class MemoActivity extends ActionBarActivity implements OnClickListener,
 							memo.getId()), null, null);
 			mEvernote.sync(true, false, null);
 		}
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		finish();
 		overridePendingTransition(R.anim.out_push_up, R.anim.out_push_down);
 	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			findViewById(R.id.more).performClick();
+			return true;
+		}
+		return super.onKeyUp(keyCode, event);
+	}
+
 }

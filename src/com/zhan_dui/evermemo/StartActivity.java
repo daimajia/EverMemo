@@ -116,7 +116,7 @@ public class StartActivity extends ActionBarActivity implements
 		}
 
 		if (mSharedPreferences.getBoolean(
-				SettingActivity.OPEN_MEMO_WHEN_START_UP, true)) {
+				SettingActivity.OPEN_MEMO_WHEN_START_UP, false)) {
 			startActivity(new Intent(this, MemoActivity.class));
 		}
 
@@ -127,7 +127,7 @@ public class StartActivity extends ActionBarActivity implements
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		CursorLoader cursorLoader = new CursorLoader(mContext,
-				MemoProvider.MEMO_URI, null, null, null, MemoDB.CREATEDTIME
+				MemoProvider.MEMO_URI, null, null, null, MemoDB.UPDATEDTIME
 						+ " desc");
 		return cursorLoader;
 	}
@@ -337,7 +337,9 @@ public class StartActivity extends ActionBarActivity implements
 												DialogInterface dialog,
 												int which) {
 											mMemosAdapter.deleteSelectedMemos();
-
+											if (mActionMode != null) {
+												mActionMode.finish();
+											}
 										}
 									})
 							.setNegativeButton(R.string.delete_cancel, null)

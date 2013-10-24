@@ -12,9 +12,9 @@
         android:title="@string/menu_more"
         evermemo:showAsAction="ifRoom">
         <menu>
-            <item
+            <!-- <item
                 android:id="@+id/share_to_mocha"
-                android:title="@string/menu_share_to_mocha"/>
+                android:title="@string/menu_share_to_mocha"/> -->
             <item
                 android:id="@+id/share_to"
                 android:title="@string/menu_share_to"/>

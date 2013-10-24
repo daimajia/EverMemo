@@ -22,7 +22,7 @@
     <!-- Memo GridView -->
     <dimen name="grid_padding_left">8dp</dimen>
     <dimen name="grid_padding_right">8dp</dimen>
-    <dimen name="grid_padding_top">8dp</dimen>
+    <dimen name="grid_padding_top">4dp</dimen>
     <!-- Memo GridView -->
 
 
@@ -100,7 +100,7 @@
     <!-- Custome EditText -->
     <dimen name="edit_padding_left">15dp</dimen>
     <dimen name="edit_padding_right">15dp</dimen>
-    <dimen name="edit_padding_top">5dp</dimen>
+    <dimen name="edit_padding_top">12dp</dimen>
     <dimen name="edit_padding_bottom">5dp</dimen>
     <!-- Custome EditText -->
 

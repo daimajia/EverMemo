@@ -11,8 +11,9 @@
     <string name="proudly">Proudly made by Mudlab9\nCoded by Daimajia,Designed by Plidezus\nmade in Beijing&amp;Shanghai</string>
     <string name="rate_us">给我们好评</string>
     <string name="feedback">建议反馈</string>
-    <string name="start_from_memo">每次启动打开便签</string>
+    <string name="start_from_memo">每次启动打开新便签</string>
     <string name="bind_evernote">绑定Evernote</string>
+    <string name="bind_evernote_btn">绑定</string>
     <string name="unbind_evernote">解除与%1$s的绑定</string>
     <string name="unbind_evernote_username_null">解除绑定</string>
     <string name="setting">设置</string>
@@ -50,13 +51,13 @@
     <string name="email_chooser">选择发送方式</string>
     <string name="rate_for_evernote">为EverMemo评个五星吧！</string>
     <string name="rate_rate">去评价</string>
-    <string name="rate_feedback">反馈</string>
+    <string name="rate_feedback">我要吐槽!</string>
     <string name="team_email">team@mudlab9.com</string>
     <string name="bind_evernote_tip">绑定EverNote吗？</string>
-    <string name="bind_evernote">绑定</string>
+    <string name="bind_evernote">自动同步到Evernote</string>
     <!-- Memu -->
     <string name="menu_more">更多</string>
-    <string name="menu_bind">绑定</string>
+    <string name="menu_bind">绑定至EverNote</string>
     <string name="menu_sync">立即同步</string>
     <string name="menu_setting">设置</string>
     <string name="menu_feedback">反馈</string>
