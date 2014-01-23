@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EverMemo</string>
+    <string name="app_ever">Ever</string>
+    <string name="app_memo">Memo</string>
+    <string name="action_settings">Settings</string>
+    <string name="new_memo">new memo</string>
+    <string name="one_delete">1 memo deleted</string>
+    <string name="undo">Undo</string>
+    <string name="proudly">Proudly made by Mudlab9\nCoded by Daimajia,Designed by Plidezus\nmade in Beijing&amp;Shanghai</string>
+    <string name="rate_us">Rate for us</string>
+    <string name="start_from_memo">New memo when start-up</string>
+    <string name="bind_evernote_btn">Connect</string>
+    <string name="unbind_evernote">Disconnect with %1$s</string>
+    <string name="unbind_evernote_username_null">Disconnect</string>
+    <string name="setting">Settings</string>
+    <string name="unbind_title">Tips</string>
+    <string name="unbind_tips">Disconnect?</string>
+    <string name="unbind_sure">Sure</string>
+    <string name="unbind_cancel">Cancel</string>
+    <string name="open_memo_on">Yes</string>
+    <string name="open_memo_off">No</string>
+    <string name="can_not_open_market">Can not open the Market</string>
+    <string name="hint_suggesion">Write down your suggestion</string>
+    <string name="feedback">Feedback</string>
+    <string name="send">Send</string>
+    <string name="thanks">Thank you for your feedback</string>
+    <string name="share_title">Share to you</string>
+    <string name="share_via">Choose the App you want to share through</string>
+    <string name="unbind_success">Successfully disconnected</string>
+    <string name="unbind_failed">Disconnected failed</string>
+    <string name="bind_success">Successfully connected</string>
+    <string name="bind_failed">Failed to connect</string>
+    <string name="delete_confirm">Delete?</string>
+    <string name="delete_all_confirm">Delete all？</string>
+    <string name="delete_select_nothing">No memos selected</string>
+    <string name="delete_sure">Sure</string>
+    <string name="delete_cancel">Cancel</string>
+    <string name="delete_title">Tips</string>
+    <string name="give_up_edit">Delete Memo？</string>
+    <string name="give_up_sure">Sure</string>
+    <string name="give_up_cancel">Cancel</string>
+    <string name="give_up_title">Tips</string>
+    <string name="email_feedback">Feedback</string>
+    <string name="email_title">Hi,</string>
+    <string name="email_chooser">Choose</string>
+    <string name="rate_for_evernote">Rate for EverMemo！</string>
+    <string name="rate_rate">to Rate</string>
+    <string name="rate_feedback">Feedback</string>
+    <string name="team_email">team@mudlab9.com</string>
+    <string name="bind_evernote_tip">Connect EverNote？</string>
+    <string name="bind_evernote">Connect</string>
+    <!-- Memu -->
+    <string name="menu_more">More</string>
+    <string name="menu_bind">Connect</string>
+    <string name="menu_sync">Sync</string>
+    <string name="menu_setting">Settings</string>
+    <string name="menu_feedback">Feedback</string>
+    <!-- Memu -->
+    <!-- Context Menu -->
+    <string name="selected_one_count">Selected %1$d memo</string>
+    <string name="selected_more_count">Selected %1$d memos</string>
+    <!-- Context Menu -->
+    <!-- Memo menu -->
+    <string name="menu_share_to">Share to..</string>
+    <string name="menu_share_to_mocha">Share to Mocha</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_li">Genarate a list</string>
+
+    <!-- Memo menu -->
+
+</resources>

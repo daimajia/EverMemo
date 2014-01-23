@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.7.+'
+    }
+}
+
+
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+dependencies {
+    compile fileTree(dir: 'src/main/libs', include: '*.jar')
+    compile 'com.android.support:support-v4:19.0.+'
+    compile 'com.android.support:appcompat-v7:+'
+    compile project(':libraries:EverNoteEx')
+    compile project(':libraries:ExGridView')
+}
+
+
+
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.0.1'
+    
+    lintOptions {  
+          abortOnError false
+    }
+    sourceSets {
+        main{
+            assets {
+                srcDir 'src/main/assets'
+            }
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}

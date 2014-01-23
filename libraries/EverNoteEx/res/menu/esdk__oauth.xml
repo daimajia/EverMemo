@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:evermemo="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/esdk__switch_service"
+        android:title=""
+        evermemo:showAsAction="always"/>
+
+</menu>
