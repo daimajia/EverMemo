@@ -34,7 +34,7 @@ if you meet some problems when build this project, please feel free to [contact 
 About me
 ---------
 
-A student in [Beijing Normal University](http://en.wikipedia.org/wiki/Beijing_Normal_University),be crazy about CS. 
+A student in [Beijing Normal University](http://en.wikipedia.org/wiki/Beijing_Normal_University),be crazy about CS, and just want to make a good app. 
 
 *	[EverMemo Facebook](https://www.facebook.com/evermemoapp)
 *	[My Twitter](https://twitter.com/daimajia)
