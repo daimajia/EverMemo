@@ -3,7 +3,7 @@ EverMemo
 
 The simplest memo app.
 
-** About **
+About
 ----------
 
 &nbsp;&nbsp;The simplest way to take notes and memos on your phone. EverMemo enables quick note creation by 
