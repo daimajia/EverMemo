@@ -28,7 +28,7 @@ Step2:	run `gradle build` in root directory.
 
 -------------
 
-if you meet some problems when build this project, please feel free to [contact me](mailto:daimajia@gmail.com) or set up an issues. I'm very glad to receive from you. : )
+if you meet some problems when build this project, please feel free to [contact me](mailto:daimajia@gmail.com) or set up an issue. I'm very glad to receive from you. : )
 
 
 About me
@@ -38,5 +38,6 @@ A student in [Beijing Normal University](http://en.wikipedia.org/wiki/Beijing_No
 
 *	[EverMemo Facebook](https://www.facebook.com/evermemoapp)
 *	[My Twitter](https://twitter.com/daimajia)
+*	[My Weibo](http://weibo.com/daimajia)
 *	[Google plus](https://plus.google.com/)
 *	[Just talk with me](mailto:daimajia@gmail.com)
