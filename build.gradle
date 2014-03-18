@@ -25,11 +25,12 @@ dependencies {
 }
 
 
-
+ext.compileSdkVersion=19
+ext.buildToolsVersion="19.0.3"
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.1'
+    buildToolsVersion '19.0.3'
     
     lintOptions {  
           abortOnError false

@@ -1,4 +1,4 @@
-EverMemo
+EverMemo[![Build Status](https://travis-ci.org/daimajia/EverMemo.png?branch=master)](https://travis-ci.org/daimajia/EverMemo)
 ========
 
 The simplest memo app.
