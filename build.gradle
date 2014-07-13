@@ -3,10 +3,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}
 
 apply plugin: 'android'
 
@@ -18,19 +21,19 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'src/main/libs', include: '*.jar')
-    compile 'com.android.support:support-v4:19.0.+'
-    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:appcompat-v7:19.+'
     compile project(':libraries:EverNoteEx')
     compile project(':libraries:ExGridView')
 }
 
 
 ext.compileSdkVersion=19
-ext.buildToolsVersion="19.0.3"
+ext.buildToolsVersion="19.1.0"
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1.0'
     
     lintOptions {  
           abortOnError false
