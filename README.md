@@ -20,11 +20,7 @@ Desgined By [Plidezus](http://www.plidezus.com/) in Shanghai , Coded by [Me](htt
 How to build?
 ---------
 
-Step0:	install all version sdk, build tools, and support libraries.
-
-Step1:	install [gralde 1.9](http://www.gradle.org/downloads).
-
-Step2:	run `gradle build` in root directory.
+Step1:	run `./gradlew clean build` in root directory.
 
 -------------
 
